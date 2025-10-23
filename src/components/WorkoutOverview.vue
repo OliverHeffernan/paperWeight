@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import Workout from "../classes/Workout";
+import OverviewItem from '../components/OverviewItem.vue';
+defineProps<{
+    workout: Workout;
+}>();
+</script>
+<template>
+    <div class="softBubble overview">
+        <OverviewItem
+            icon="fa-solid fa-clock"
+            label="duration"
+            :value="workout.getDurationString()"
+        />
+        <OverviewItem
+            icon="fa-solid fa-dumbbell"
+            label="volume"
+            :value="workout.getVolume() + ' kg'"
+        />
+        <OverviewItem
+            icon="fa-solid fa-layer-group"
+            label="sets"
+            :value="workout.countSets()"
+        />
+        <OverviewItem
+            icon="fa-solid fa-flame"
+            label="sets"
+            :value="workout.getEnergy()"
+        />
+        <OverviewItem
+            icon="fa-solid fa-heart"
+            label="avg. heart rate"
+            :value="workout.getHeartRateString()"
+        />
+    </div>
+</template>
+<style scoped>
+.overview {
+    display: flex;
+    flex-wrap: wrap;
+}
+</style>

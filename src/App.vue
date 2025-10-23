@@ -1,0 +1,247 @@
+<template>
+    <RouterView />
+</template>
+
+<script setup lang="ts">
+
+import { RouterView } from 'vue-router';
+
+</script>
+
+<style>
+:root {
+	--prim: #0B1119;
+	--sec: #13202E;
+    /*--sec: #2c3e50;*/
+	--text: #FFFFFF;
+	--border: #656668;
+	--btnBG: #13202E;
+	--btnBorder: #6180BF;
+	--errorBorder: #FF4C71;
+}
+
+#app {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	/*text-align: center;*/
+	color: var(--text);
+	background-color: var(--prim);
+	margin-top: 60px;
+	margin: 0;
+	padding: 0;
+    font-size: 16px;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+* {
+	color: var(--text);
+}
+
+body, textarea, .side, button, input {
+	background-color: var(--prim);
+}
+
+input {
+	padding: 5px;
+	margin: 0;
+	font-size: 16px;
+	border: var(--border) 1px solid;
+	border-radius: 5px 5px 0 0;
+}
+
+input:hover {
+	border-bottom-color: color-mix(in srgb, var(--text) 50%, transparent);
+	border-bottom-width: 2px;
+}
+
+input:focus {
+	border-bottom-color: var(--text);
+	border-bottom-width: 2px;
+	outline: none;
+}
+
+textarea {
+	resize: none;
+	height: auto;
+	font-size: 16px;
+}
+
+.iconButton {
+	position: relative;
+	font-size: 16px;
+	border: none;
+	background: none;
+}
+
+.margins {
+	width: min(100vw - 80px, 800px);
+	margin: 0 auto;
+    padding-bottom: 20px;
+}
+
+#cardEditCont {
+	width: calc(100% - 30px);
+}
+
+.tableContent {
+	width: calc(50% - 10px);
+}
+
+.tableContent textarea {
+	width: calc(100% - 30px);
+	margin-left: 10px;
+
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.label {
+	width: 10px;
+}
+
+.bubbleButton {
+	position: relative;
+	padding: 15px;
+	border: solid 1px var(--btnBorder);
+	background-color: var(--btnBG);
+	font-size: 16px;
+	border-radius: 10px;
+	white-space: nowrap;
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 10px;
+}
+
+.bubbleButton i {
+	color: inherit;
+}
+
+.fullWidth {
+	margin-left: 8px;
+	width: calc(100% - 48px);
+}
+
+.tooltip {
+	position: absolute;
+	right: 100%;
+	font-size: 16px;
+	white-space: nowrap;
+	background-color: rgb(30,30,30);
+	color: white;
+	padding: 5px;
+	pointer-events: none;
+	border-radius: 8px 0 8px 8px;
+	transition: opacity 0.1s linear 0.4s;
+	transition-delay: 0s;
+	opacity: 0;
+	min-width: 200px;
+	max-width: 1000px;
+	text-wrap: wrap;
+	text-align: left;
+
+	box-shadow: 0 0 5px 0 rgba(255,255,255,0.5);
+}
+
+.right {
+	left: 100%;
+}
+
+.left {
+	right: 100%;
+}
+
+.down {
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.iconButton:hover .tooltip, button:hover .tooltip, .bubbleButton:hover .tooltip {
+	opacity: 1;
+	transition-delay: 0.8s;
+}
+
+.popupCont {
+	transition: opacity 0.2s;
+	display: flex;
+	z-index: 5;
+}
+
+.open {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.closed {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.popup {
+	background-color: var(--prim);
+	border: solid 1px var(--border);
+	padding: 20px;
+	padding-top: 40px;
+	border-radius: 20px;
+	width: auto;
+
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 16px;
+}
+
+.popup .iconButton {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.updown {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: auto 0;
+}
+
+.updown button {
+	margin: -5px;
+}
+
+.viewArea {
+    height: calc(100% - 85px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: auto;
+}
+
+.softBubble {
+    padding: 15px;
+    border: solid 1px var(--border);
+    /*background-color: color-mix(in srgb, var(--border) 20%, transparent);*/
+    box-shadow: 0 0 10px 0 rgba(255,255,255,0.1);
+    background-color: var(--sec);
+    font-size: 16px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.greyed {
+    opacity: 0.7;
+}
+</style>
