@@ -3,8 +3,10 @@ import NavBar from '../components/NavBar.vue';
 import WorkoutThumbnail from '../components/WorkoutThumbnail.vue';
 import { supabase } from '../lib/supabase';
 
+import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import Workout from "../classes/Workout";
+
 
 const workouts = ref<Workout[]>([]);
 

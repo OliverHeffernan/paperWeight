@@ -4,8 +4,25 @@
 
 <script setup lang="ts">
 
-import { RouterView } from 'vue-router';
+import { supabase } from './lib/supabase';
+import { useRouter, useRoute, RouterView } from 'vue-router';
 
+const router = useRouter();
+const route = useRoute();
+
+async function checkUser() {
+    if (route.name === "SignIn" || route.name === "SignUp") {
+        return;
+    }
+	const thing = await supabase.auth.getUser();
+	if (thing.data.user) {
+		return;
+	}
+
+	router.push({ name: "SignIn" });
+}
+
+checkUser();
 </script>
 
 <style>
