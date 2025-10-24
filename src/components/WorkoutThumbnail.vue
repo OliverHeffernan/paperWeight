@@ -1,5 +1,6 @@
 <script setup>
 import Workout from '../classes/Workout';
+import ThumbnailItem from './ThumbnailItem.vue';
 import { defineProps } from 'vue';
 defineProps(["workout"]);
 </script>
@@ -9,21 +10,24 @@ defineProps(["workout"]);
             {{workout.getTitle()}}
             <span class="greyed">{{workout.getDateString()}}</span>
         </h3>
-        <table>
-            <tr>
-                <td>
-                    <i class="fa-solid fa-dumbbell"></i>
-                    {{workout.getVolume()}} kg
-                </td>
-                <td v-if="workout.getDuration() !== 0">
-                    <i class="fa-solid fa-clock"></i>
-                    {{workout.getDurationString()}}
-                </td>
-            </tr>
-            <tr>
-                <td>{{workout.countSets()}} sets</td>
-            </tr>
-        </table>
+        <div class="items">
+            <ThumbnailItem
+                icon="fa-solid fa-dumbbell"
+                :label="workout.getVolumeString()"
+            />
+            <ThumbnailItem
+                icon="fa-solid fa-clock"
+                :label="workout.getDurationString()"
+            />
+            <ThumbnailItem
+                icon="fa-solid fa-list"
+                :label="workout.countSetsString()"
+            />
+            <ThumbnailItem
+                icon="fa-solid fa-fire"
+                :label="workout.getEnergyString()"
+            />
+        </div>
     </RouterLink>
 </template>
 <style scoped>
@@ -32,7 +36,7 @@ defineProps(["workout"]);
     border: solid 1px var(--border);
     border-radius: 10px;
     padding: 15px;
-    margin: 10px;
+    margin: 1px 10px;
     background-color: var(--cardBackground);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-decoration: none;
@@ -46,5 +50,11 @@ defineProps(["workout"]);
     color: var(--border);
     font-weight: normal;
     margin-left: 10px;
+}
+.items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
 }
 </style>

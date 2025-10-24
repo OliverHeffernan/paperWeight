@@ -82,12 +82,28 @@ export default class Workout {
         return volume;
     }
 
+    public getVolumeString(): string | null {
+        const volume: number = this.getVolume();
+        if (volume === 0) {
+            return null;
+        }
+        return `${volume} kg`;
+    }
+
     public countSets(): number {
         let sets: number = 0;
         for (const exercise of this.exercises) {
             sets += exercise.countSets();
         }
         return sets;
+    }
+
+    public countSetsString(): string|null {
+        const sets: number = this.countSets();
+        if (sets === 0) {
+            return null;
+        }
+        return `${sets} sets`;
     }
 
     public getId(): string {
@@ -103,8 +119,9 @@ export default class Workout {
         return (this.end_time.getTime() - this.start_time.getTime()) / 1000;
     }
 
-    public getDurationString(): string {
+    public getDurationString(): string|null {
         const totalSeconds = this.getDuration();
+        if (totalSeconds <= 0) return null;
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = Math.floor(totalSeconds % 60);

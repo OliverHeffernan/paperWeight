@@ -18,7 +18,7 @@ defineProps<{
             :value="workout.getVolume() + ' kg'"
         />
         <OverviewItem
-            icon="fa-solid fa-layer-group"
+            icon="fa-solid fa-list"
             label="sets"
             :value="workout.countSets()"
         />
