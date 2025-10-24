@@ -35,6 +35,7 @@ checkUser();
 	--btnBG: #13202E;
 	--btnBorder: #6180BF;
 	--errorBorder: #FF4C71;
+    --errorBG: #3C1C2A;
 }
 
 #app {

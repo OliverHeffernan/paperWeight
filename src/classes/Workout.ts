@@ -182,7 +182,6 @@ export default class Workout {
      * Retrieves the id of the workout. This is the key in the database.
      */
     public getId(): string {
-        console.log(this.workout_id);
         return this.workout_id;
     }
 

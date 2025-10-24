@@ -6,6 +6,7 @@ import { defineProps, defineEmits } from 'vue';
 interface Props {
     label: string;
     loading: boolean;
+    red?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -15,7 +16,7 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-    <button class="bubbleButton" :disabled="loading" @click="emit('click')">
+    <button :class="['bubbleButton', { red: props.red }]" :disabled="loading" @click="emit('click')">
         {{label}}
     </button>
 </template>
@@ -23,7 +24,7 @@ const emit = defineEmits<{
 <style scoped>
 .bubbleButton {
 	position: relative;
-	padding: 15px;
+	padding: 10px;
 	border: solid 1px var(--btnBorder);
 	background-color: var(--btnBG);
 	font-size: 16px;
@@ -31,7 +32,12 @@ const emit = defineEmits<{
 	white-space: nowrap;
 	margin-left: 0;
 	margin-right: 0;
-	margin-bottom: 10px;
+	/*margin-bottom: 10px;*/
+}
+
+.red {
+    border-color: var(--errorBorder);
+    background-color: var(--errorBG);
 }
 
 .bubbleButton i {

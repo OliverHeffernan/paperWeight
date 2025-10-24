@@ -5,6 +5,8 @@ import Workout from '../classes/Workout';
 import LoadingView from '../views/LoadingView.vue';
 import ThumbnailItem from './ThumbnailItem.vue';
 import IconButton from './IconButton.vue';
+import DeleteWorkoutModal from './DeleteWorkoutModal.vue';
+
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -12,6 +14,8 @@ const props = defineProps(["workout"]);
 const emit = defineEmits(["reload"]);
 
 const loading = ref<boolean>(false);
+
+const deleteModalVisible = ref<boolean>(false);
 
 async function deleteWorkout() {
     loading.value = true;
@@ -24,6 +28,12 @@ async function deleteWorkout() {
 </script>
 <template>
     <LoadingView v-if="loading" />
+    <DeleteWorkoutModal
+        :visible="deleteModalVisible"
+        :workout="workout"
+        @confirm="deleteWorkout(); deleteModalVisible = false"
+        @cancel="deleteModalVisible = false"
+    />
     <div class="thumbnail">
         <RouterLink class="link" :to="`/viewWorkout/${workout.getId()}`">
             <h3>
@@ -56,7 +66,7 @@ async function deleteWorkout() {
         <div id="deleteContainer">
             <IconButton
                 icon="fa-solid fa-trash"
-                @click="deleteWorkout()"
+                @click="deleteModalVisible = true"
             />
         </div>
     </div>
