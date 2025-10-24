@@ -1,3 +1,4 @@
+<!-- Sign up view -->
 <script setup>
 
 import { ref } from 'vue';
@@ -14,6 +15,10 @@ const password = ref('');
 const loading = ref(false);
 const errorMsg = ref('');
 
+/**
+ * Sign up with email and password.
+ * On success, redirect to email confirmation view.
+ */
 async function signUpWithEmail() {
 	try {
 		loading.value = true;

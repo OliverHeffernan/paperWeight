@@ -1,9 +1,12 @@
+<!-- display the number of pages that have been captured. And provide buttons to upload, and remove photos -->
+<!-- found in UploadView.vue -->
 <script setup lang="ts">
 import BubbleButton from '../components/BubbleButton.vue';
 
 defineProps<{
     pageCount: integer;
 }>();
+
 defineEmits<{
     (e: 'uploadWorkoutData'): void;
     (e: 'retakePhoto'): void;

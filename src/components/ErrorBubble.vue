@@ -1,3 +1,4 @@
+<!-- A component to display error messages in a styled bubble -->
 <script setup lang="ts">
 import { defineProps } from "vue";
 

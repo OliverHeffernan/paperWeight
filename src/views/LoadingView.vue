@@ -1,3 +1,4 @@
+<!-- A simple loading spinner component -->
 <template>
 	<div class="loading">
 		<i class="fa-solid fa-spinner"></i>

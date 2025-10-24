@@ -1,3 +1,4 @@
+<!-- Page to inform user to check their email for account finalisation -->
 <template>
 	<div class="cont">
 		<i class="fa-solid fa-envelope"></i>

@@ -1,17 +1,37 @@
+// imports
 import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
+
+/**
+ * Class representing a workout session.
+ * Stores details about the workout including exercises, duration, and other metrics.
+ * Provides methods to retrieve and manipulate workout data.
+ */
 export default class Workout {
+    // unique identifier for the workout. Key in the database.
     private workout_id: string;
+    // title of the workout.
     private title: string;
+    // start time of the workout.
     private start_time: Date;
+    // end time of the workout.
     private end_time: Date;
+    // creation time of the workout.
     private created_at: Date;
+    // array of exercises in the workout. In order.
     private exercises: Array<Exercise>;
+    // notes for the workout.
     private notes: string;
+    // energy expended during the workout in kilojoules.
     private energy: number | null;
+    // average heart rate during the workout in beats per minute.
     private heart_rate: number | null;
 
+    /**
+     * Creates an instance of Workout.
+     * @param object - A JSONWorkout object containing the workout data. This will typically be loaded from the database.
+     */
     public constructor(object: JSONWorkout) {
         this.exercises = [];
         this.title = object.title;
@@ -24,20 +44,27 @@ export default class Workout {
         this.energy = object.energy;
         this.heart_rate = object.heart_rate;
 
+        // creating objects for each of the exercises and adding them to the workout.
         for (const exerciseObject of object.exercises_full) {
             this.exercises.push(new Exercise(exerciseObject));
         }
     }
 
+    /**
+     * Deserializes the Workout instance into a JSONWorkout object.
+     * @returns A JSONWorkout object representing the workout data.
+     */
     public deserialize(): JSONWorkout {
         const exercisesArray: Array<JSONExercise> = [];
 
         const exerciseNames: Array<string> = [];
 
+        // deserializing each exercise in the workout.
         for (const exercise of this.exercises) {
             exercisesArray.push(exercise.deserialize());
             exerciseNames.push(exercise.getName());
         }
+
         return {
             title: this.title,
             workout_id: this.workout_id,
@@ -52,9 +79,19 @@ export default class Workout {
         };
     }
 
+    /**
+     * Retrieves the notes for the workout.
+     */
     public getNotes(): string { return this.notes; }
 
+    /**
+     * Retrieves the energy expended during the workout in kilojoules.
+     */
     public getEnergy(): number | null { return this.energy; }
+
+    /**
+     * Retrieves the energy expended during the workout as a formatted string.
+     */
     public getEnergyString(): string | null {
         const energy: number | null = this.getEnergy();
         if (energy === null) {
@@ -63,8 +100,14 @@ export default class Workout {
         return `${energy} kj`;
     }
 
+    /**
+     * Retrieves the average heart rate during the workout in beats per minute.
+     */
     public getHeartRate(): number | null { return this.heart_rate; }
 
+    /**
+     * Retrieves the average heart rate during the workout as a formatted string.
+     */
     public getHeartRateString(): string | null {
         if (this.heart_rate === null) {
             return null;
@@ -72,8 +115,17 @@ export default class Workout {
         return `${this.heart_rate} bpm`;
     }
 
+    /**
+     * Retrieves the exercises in the workout.
+     */
     public getExercises(): Array<Exercise> { return this.exercises; }
 
+    /**
+     * Calculates the total volume lifted during the workout.
+     * Volume is calculated as the sum of volumes of all exercises.
+     *
+     * @returns The total volume lifted during the workout in kilograms.
+     */
     public getVolume(): number {
         let volume: number = 0;
         for (const exercise of this.exercises) {
@@ -82,6 +134,9 @@ export default class Workout {
         return volume;
     }
 
+    /**
+     * Retrieves the total volume lifted during the workout as a formatted string.
+     */
     public getVolumeString(): string | null {
         const volume: number = this.getVolume();
         if (volume === 0) {
@@ -90,6 +145,9 @@ export default class Workout {
         return `${volume} kg`;
     }
 
+    /**
+     * Counts the total number of sets performed during the workout.
+     */
     public countSets(): number {
         let sets: number = 0;
         for (const exercise of this.exercises) {
@@ -98,6 +156,9 @@ export default class Workout {
         return sets;
     }
 
+    /**
+     * Retrieves the total number of sets performed during the workout as a formatted string.
+     */
     public countSetsString(): string|null {
         const sets: number = this.countSets();
         if (sets === 0) {
@@ -106,19 +167,31 @@ export default class Workout {
         return `${sets} sets`;
     }
 
+    /**
+     * Retrieves the id of the workout. This is the key in the database.
+     */
     public getId(): string {
         console.log(this.workout_id);
         return this.workout_id;
     }
 
+    /**
+     * Retrieves the title of the workout.
+     */
     public getTitle(): string {
         return this.title;
     }
 
+    /**
+     * Calculates the duration of the workout in seconds.
+     */
     public getDuration(): number {
         return (this.end_time.getTime() - this.start_time.getTime()) / 1000;
     }
 
+    /**
+     * Retrieves the duration of the workout as a formatted string.
+     */
     public getDurationString(): string|null {
         const totalSeconds = this.getDuration();
         if (totalSeconds <= 0) return null;
@@ -133,21 +206,16 @@ export default class Workout {
         return parts.join(' ');
     }
 
-    public getRelativeDate(): string {
-        const now: Date = new Date();
-        if (now.getMilliseconds() - this.start_time.getMilliseconds() < 86400000) {
-            return 'Today';
-        } else if (now.getMilliseconds() - this.start_time.getMilliseconds() < 172800000) {
-            return 'Yesterday';
-        } else {
-            return this.start_time.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-        }
-    }
-
+    /**
+     * Retrieves the start date and time of the workout as a formatted string.
+     */
     public getDateString(): string {
         return this.start_time.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + this.start_time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     }
 
+    /**
+     * Retrieves the start time of the workout.
+     */
     public getStartTime(): Date {
         return this.start_time;
     }

@@ -1,3 +1,5 @@
+<!-- A component to display an overview of a workout's key metrics -->
+<!-- found in ViewWorkout.vue -->
 <script setup lang="ts">
 import Workout from "../classes/Workout";
 import OverviewItem from '../components/OverviewItem.vue';

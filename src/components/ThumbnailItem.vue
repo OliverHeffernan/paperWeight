@@ -1,3 +1,5 @@
+<!-- Display a particular metric within the workout thumbnail -->
+<!-- found in WorkoutThumbnail.vue -->
 <script setup lang="ts">
 defineProps<{
     icon: string|null;

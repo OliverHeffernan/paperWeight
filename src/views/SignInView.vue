@@ -1,4 +1,6 @@
+<!-- Sign in page. -->
 <script lang="ts" setup >
+// imports
 import ErrorBubble from '../components/ErrorBubble.vue';
 import LoadingView from './LoadingView.vue';
 import BubbleButton from '../components/BubbleButton.vue';
@@ -16,6 +18,10 @@ const error: Ref<string | null> = ref<string | null>(null);
 const loading: Ref<boolean> = ref<boolean>(true);
 const success: Ref<boolean> = ref<boolean>(false);
 
+/**
+ * Handle user sign-in.
+ * If successful, redirect to home page.
+ */
 async function handleSignIn() {
 	try {
 		loading.value = true;
@@ -39,6 +45,7 @@ async function handleSignIn() {
 	}
 }
 
+// Check if user is already signed in
 async function checkUser() {
 	const thing = await supabase.auth.getUser();
 	if (!thing.data.user) {
@@ -60,7 +67,6 @@ checkUser();
 		<input v-model="email" type="email" placeholder="example@example.com">
 		<h3>Password</h3>
 		<input v-model="password" type="password" placeholder="password...">
-        <!--<button class="bubbleButton" :disabled="loading" @click="handleSignIn()">Sign In</button>-->
         <BubbleButton :loading="loading" label="Sign In" @click="handleSignIn()" />
         <p><RouterLink :to="{ name: 'SignUp' }">Don't have an account? Sign Up</RouterLink></p>
 

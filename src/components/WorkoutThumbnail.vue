@@ -1,3 +1,5 @@
+<!-- Component to display a thumbnail summary of a workout -->
+<!-- Found in HomeView.vue -->
 <script setup>
 import Workout from '../classes/Workout';
 import ThumbnailItem from './ThumbnailItem.vue';
@@ -26,6 +28,10 @@ defineProps(["workout"]);
             <ThumbnailItem
                 icon="fa-solid fa-fire"
                 :label="workout.getEnergyString()"
+            />
+            <ThumbnailItem
+                icon="fa-solid fa-heart"
+                :label="workout.getHeartRateString()"
             />
         </div>
     </RouterLink>

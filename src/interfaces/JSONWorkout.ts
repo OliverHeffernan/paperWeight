@@ -1,4 +1,9 @@
 import JSONExercise from "./JSONExercise";
+
+/**
+ * Interface representing a workout in JSON format.
+ * This is the form that workout data takes when stored in the database.
+ */
 export default interface JSONWorkout {
     title: string;
     workout_id: string;

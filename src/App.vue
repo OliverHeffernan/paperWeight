@@ -122,23 +122,6 @@ textarea {
 	width: 10px;
 }
 
-.bubbleButton {
-	position: relative;
-	padding: 15px;
-	border: solid 1px var(--btnBorder);
-	background-color: var(--btnBG);
-	font-size: 16px;
-	border-radius: 10px;
-	white-space: nowrap;
-	margin-left: 0;
-	margin-right: 0;
-	margin-bottom: 10px;
-}
-
-.bubbleButton i {
-	color: inherit;
-}
-
 .fullWidth {
 	margin-left: 8px;
 	width: calc(100% - 48px);

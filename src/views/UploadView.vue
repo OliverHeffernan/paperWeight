@@ -1,25 +1,36 @@
+<!-- Page to upload workout images and generate workout data -->
 <script setup lang="ts">
+// imports
 import NavBar from '../components/NavBar.vue';
 import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
 import UploadComponent from '../components/UploadComponent.vue';
-
-const loading = ref<integer>(0);
+import JSONWorkout from '../interfaces/JSONWorkout';
 
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'vue-router';
+
+// count the number of loading operations, to decide whether to show loading view.
+const loading = ref<integer>(0);
 const router = useRouter();
 
+// references to video and canvas elements for the camera display and image capture.
 const video = ref<HTMLVideoElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 
+// array to store uploaded image URLs and a counter for the number of pages (images).
 const urls = ref<string[]>([]);
 const pages = ref<integer>(0);
+
+// keep hold of the media stream to stop it when component is unmounted.
 const mediaStream = ref<MediaStream | null>(null);
 
+// start the camera on component mount.
 onMounted(async () => {
     const constraints = {
+        // portrait orientation
+        // use back facing camera
         video: {
             width: { ideal: 480 },
             height: { ideal: 640 },
@@ -44,12 +55,17 @@ onMounted(async () => {
     }
 })
 
+// stop the camera when component is unmounted.
 onBeforeUnmount(() => {
     if (mediaStream.value) {
         mediaStream.value.getTracks().forEach(track => track.stop());
     }
 });
 
+/**
+ * Capture an image from the video feed and upload it to Supabase storage.
+ * On success, store the image URL for later processing.
+ */
 const captureAndUpload = async () => {
     console.log("capturing");
     if (!video.value || !canvas.value) {
@@ -91,18 +107,16 @@ const captureAndUpload = async () => {
 
         console.log(data);
 
-        //console.log(await getWorkoutData([`https://gkyqqlkxpfskmtryfmyp.supabase.co/storage/v1/object/public/workoutImage/${data.path}`]));
-        //const workoutData = await getWorkoutData([`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`]);
-        //console.log("Generated workout data: ", workoutData);
-        //console.log(await getWorkoutData([`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`]));
-        //await uploadWorkoutData(workoutData);
         urls.value.push(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`);
         pages.value++;
- 
 
     }, 'image/jpeg', 0.8);
 }
 
+/**
+ * Extracts a Date object from the workout data for either start or end time.
+ * Fills in missing components with current date/time values.
+ */
 function extractTime(workoutData: object, start: boolean): Date | null {
     let timeObj: object = start ? workoutData.startTime : workoutData.endTime;
     if (!timeObj) return null;
@@ -117,26 +131,39 @@ function extractTime(workoutData: object, start: boolean): Date | null {
     return new Date(timeObj.year, timeObj.month - 1, timeObj.day, timeObj.hour, timeObj.minute, 0);
 }
 
-async function createWorkoutObject(workoutData: object): object {
+/**
+ * Creates a workout object formatted for database insertion from the generated workout data.
+ * @param workoutData The generated workout data object.
+ * @returns An object formatted for database insertion.
+ */
+async function createWorkoutObject(workoutData: object): JSONWorkout {
     loading.value++;
-    console.log("Creating workout object from data: ");
-    const startTime = extractTime(workoutData, true);
-    const endTime = extractTime(workoutData, false);
+    // get the start and end time
+    const startTime: Date | null = extractTime(workoutData, true);
+    const endTime: Date | null = extractTime(workoutData, false);
 
+    // extract exercise names. Store a list of exercise names in the workout object.
     let exercises: Array<string> = [];
     for (const exercise of workoutData.exercises || []) {
         exercises.push(exercise.exercise);
     }
 
+    // convert energy to kcal if in kJ
     let energy: number | null = workoutData.energy ? (workoutData.energy.amount || null) : null;
     if (energy != null && workoutData.energy.unit === "kJ") {
         energy = energy / 4.184;
     }
-    console.log(workoutData.exercises);
+    if (energy != null) energy = Math.round(energy);
 
+    // get the hearrate data if available
+    const heart_rate: number | null = workoutData.heart_rate || null;
+
+    // get the user id
     const user_id = (await supabase.auth.getUser()).data.user?.id;
+    // end the load process.
     loading.value--;
 
+    // return the object.
     return {
         user_id: user_id,
         //energy: Math.round(workoutData.calories) || 0,
@@ -146,17 +173,20 @@ async function createWorkoutObject(workoutData: object): object {
         exercises_full: workoutData.exercises || [],
         exercises: exercises,
         notes: workoutData.notes || "",
-        energy: Math.round(energy)
+        energy: energy,
+        heart_rate: heart_rate
     };
 }
 
-async function generateAndUploadWorkoutData() {
+/**
+ * Generate workout data from uploaded images and upload it to the database.
+ */
+async function generateAndUploadWorkoutData(): void {
     const workoutData = await getWorkoutData(urls.value);
     if (!workoutData) {
         console.error("No workout data generated");
         return;
     }
-
 
     const { data, error } = await uploadWorkoutData(workoutData);
     if (error) {
@@ -164,6 +194,7 @@ async function generateAndUploadWorkoutData() {
         return;
     }
 
+    // if successful, navigate to home page.
     router.push({ name: "Home" });
 }
 

@@ -1,3 +1,5 @@
+<!-- A component to display a particular metric within the overview section -->
+<!-- found in WorkoutOverview.vue -->
 <script setup lang="ts">
 defineProps<{
     label: string;

@@ -1,3 +1,4 @@
+<!-- Home page view, shows a list of workout thumbnails -->
 <script setup lang="ts">
 import NavBar from '../components/NavBar.vue';
 import WorkoutThumbnail from '../components/WorkoutThumbnail.vue';

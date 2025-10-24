@@ -1,3 +1,4 @@
+<!-- a navbar component, given a prop with the active route -->
 <script setup lang="ts">
 import NavBarButton from './NavBarButton.vue';
 import { defineProps } from 'vue';

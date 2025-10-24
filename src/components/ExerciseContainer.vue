@@ -1,3 +1,5 @@
+<!-- A component to display an exercise, given the exercise object. -->
+
 <script setup lang="ts">
 import Exercise from "../classes/Exercise";
 defineProps<{
