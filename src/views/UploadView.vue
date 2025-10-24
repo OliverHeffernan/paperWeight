@@ -6,7 +6,7 @@ import UploadComponent from '../components/UploadComponent.vue';
 
 const loading = ref<integer>(0);
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { supabase } from '../lib/supabase';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -16,6 +16,7 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 
 const urls = ref<string[]>([]);
 const pages = ref<integer>(0);
+const mediaStream = ref<MediaStream | null>(null);
 
 onMounted(async () => {
     const constraints = {
@@ -29,6 +30,7 @@ onMounted(async () => {
     if (video.value) {
         navigator.mediaDevices.getUserMedia(constraints)
             .then((stream) => {
+                mediaStream.value = stream;
                 if (video) {
                     video.value.srcObject = stream;
                 } else {
@@ -41,6 +43,12 @@ onMounted(async () => {
         );
     }
 })
+
+onBeforeUnmount(() => {
+    if (mediaStream.value) {
+        mediaStream.value.getTracks().forEach(track => track.stop());
+    }
+});
 
 const captureAndUpload = async () => {
     console.log("capturing");
