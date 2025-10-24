@@ -1,17 +1,36 @@
 <!-- Component to display a thumbnail summary of a workout -->
 <!-- Found in HomeView.vue -->
-<script setup>
+<script setup lang="ts">
 import Workout from '../classes/Workout';
+import LoadingView from '../views/LoadingView.vue';
 import ThumbnailItem from './ThumbnailItem.vue';
-import { defineProps } from 'vue';
-defineProps(["workout"]);
+import IconButton from './IconButton.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const props = defineProps(["workout"]);
+const emit = defineEmits(["reload"]);
+
+const loading = ref<boolean>(false);
+
+async function deleteWorkout() {
+    loading.value = true;
+    await props.workout.deleteWorkout();
+    setTimeout(() => {
+        emit('reload');
+        loading.value = false;
+    }, 500);
+}
 </script>
 <template>
-    <RouterLink class="thumbnail" :to="`/viewWorkout/${workout.getId()}`">
-        <h3>
-            {{workout.getTitle()}}
-            <span class="greyed">{{workout.getDateString()}}</span>
-        </h3>
+    <LoadingView v-if="loading" />
+    <div class="thumbnail">
+        <RouterLink class="link" :to="`/viewWorkout/${workout.getId()}`">
+            <h3>
+                {{workout.getTitle()}}
+                <span class="greyed">{{workout.getDateString()}}</span>
+            </h3>
+        </RouterLink>
         <div class="items">
             <ThumbnailItem
                 icon="fa-solid fa-dumbbell"
@@ -34,10 +53,17 @@ defineProps(["workout"]);
                 :label="workout.getHeartRateString()"
             />
         </div>
-    </RouterLink>
+        <div id="deleteContainer">
+            <IconButton
+                icon="fa-solid fa-trash"
+                @click="deleteWorkout()"
+            />
+        </div>
+    </div>
 </template>
 <style scoped>
 .thumbnail {
+    position: relative;
     display: block;
     border: solid 1px var(--border);
     border-radius: 10px;
@@ -45,6 +71,10 @@ defineProps(["workout"]);
     margin: 1px 10px;
     background-color: var(--cardBackground);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+.link {
     text-decoration: none;
 }
 
@@ -62,5 +92,10 @@ defineProps(["workout"]);
     flex-wrap: wrap;
     gap: 15px;
     margin-top: 10px;
+}
+#deleteContainer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 </style>

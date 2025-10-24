@@ -2,6 +2,7 @@
 import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
+import { supabase } from '../lib/supabase';
 
 /**
  * Class representing a workout session.
@@ -50,6 +51,14 @@ export default class Workout {
         }
     }
 
+    // actions
+    public async deleteWorkout() {
+        const { data, error } = await supabase.from('workouts').delete().eq('workout_id', this.workout_id);
+        if (error) {
+            console.error("Failed to delete workout:", error);
+        }
+    }
+
     /**
      * Deserializes the Workout instance into a JSONWorkout object.
      * @returns A JSONWorkout object representing the workout data.
@@ -78,6 +87,8 @@ export default class Workout {
             heart_rate: this.heart_rate
         };
     }
+
+    // getters
 
     /**
      * Retrieves the notes for the workout.

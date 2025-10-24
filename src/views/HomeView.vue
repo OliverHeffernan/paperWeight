@@ -12,17 +12,22 @@ import Workout from "../classes/Workout";
 const workouts = ref<Workout[]>([]);
 
 onMounted(async () => {
+    await loadWorkouts();
+});
+
+async function loadWorkouts() {
     const jsonWorkouts = await supabase
         .from('workouts')
         .select();
+
+    workouts.value = [];
 
     for (const workout of jsonWorkouts.data || []) {
         workouts.value.push(new Workout(workout));
     }
 
     workouts.value.sort((a, b) => b.getStartTime() - a.getStartTime());
-
-});
+}
 
 </script>
 <template>
@@ -33,6 +38,7 @@ onMounted(async () => {
                 v-for="workout in workouts"
                 :key="workout.getId()"
                 :workout="workout"
+                @reload="loadWorkouts()"
             />
         </div>
     </div>
