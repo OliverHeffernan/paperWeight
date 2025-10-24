@@ -55,6 +55,13 @@ export default class Workout {
     public getNotes(): string { return this.notes; }
 
     public getEnergy(): number | null { return this.energy; }
+    public getEnergyString(): string | null {
+        const energy: number | null = this.getEnergy();
+        if (energy === null) {
+            return null;
+        }
+        return `${energy} kj`;
+    }
 
     public getHeartRate(): number | null { return this.heart_rate; }
 
@@ -122,5 +129,9 @@ export default class Workout {
 
     public getDateString(): string {
         return this.start_time.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + this.start_time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    }
+
+    public getStartTime(): Date {
+        return this.start_time;
     }
 }

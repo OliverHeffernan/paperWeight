@@ -7,7 +7,7 @@ defineProps(["workout"]);
     <RouterLink class="thumbnail" :to="`/viewWorkout/${workout.getId()}`">
         <h3>
             {{workout.getTitle()}}
-            <span class="greyed">{{workout.getRelativeDate()}}</span>
+            <span class="greyed">{{workout.getDateString()}}</span>
         </h3>
         <table>
             <tr>
@@ -35,6 +35,7 @@ defineProps(["workout"]);
     margin: 10px;
     background-color: var(--cardBackground);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
 }
 
 .thumbnail td {

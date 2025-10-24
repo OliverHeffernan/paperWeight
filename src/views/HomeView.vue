@@ -12,13 +12,13 @@ onMounted(async () => {
     const jsonWorkouts = await supabase
         .from('workouts')
         .select();
-    console.log(jsonWorkouts);
 
     for (const workout of jsonWorkouts.data || []) {
         workouts.value.push(new Workout(workout));
     }
 
-    console.log(workouts.value);
+    workouts.value.sort((a, b) => b.getStartTime() - a.getStartTime());
+
 });
 
 </script>

@@ -23,9 +23,9 @@ defineProps<{
             :value="workout.countSets()"
         />
         <OverviewItem
-            icon="fa-solid fa-flame"
-            label="sets"
-            :value="workout.getEnergy()"
+            icon="fa-solid fa-fire"
+            label="energy"
+            :value="workout.getEnergyString()"
         />
         <OverviewItem
             icon="fa-solid fa-heart"

@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import NavBar from '../components/NavBar.vue';
+import BubbleButton from '../components/BubbleButton.vue';
+import LoadingView from './LoadingView.vue';
+import UploadComponent from '../components/UploadComponent.vue';
+
+const loading = ref<integer>(0);
 
 import { ref, onMounted } from 'vue';
 import { supabase } from '../lib/supabase';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const video = ref<HTMLVideoElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 
-onMounted(() => {
+const urls = ref<string[]>([]);
+const pages = ref<integer>(0);
+
+onMounted(async () => {
     const constraints = {
         video: {
             width: { ideal: 480 },
@@ -74,10 +84,12 @@ const captureAndUpload = async () => {
         console.log(data);
 
         //console.log(await getWorkoutData([`https://gkyqqlkxpfskmtryfmyp.supabase.co/storage/v1/object/public/workoutImage/${data.path}`]));
-        const workoutData = await getWorkoutData([`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`]);
-        console.log("Generated workout data: ", workoutData);
+        //const workoutData = await getWorkoutData([`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`]);
+        //console.log("Generated workout data: ", workoutData);
         //console.log(await getWorkoutData([`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`]));
-        await uploadWorkoutData(workoutData);
+        //await uploadWorkoutData(workoutData);
+        urls.value.push(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`);
+        pages.value++;
  
 
     }, 'image/jpeg', 0.8);
@@ -98,6 +110,7 @@ function extractTime(workoutData: object, start: boolean): Date | null {
 }
 
 async function createWorkoutObject(workoutData: object): object {
+    loading.value++;
     console.log("Creating workout object from data: ");
     const startTime = extractTime(workoutData, true);
     const endTime = extractTime(workoutData, false);
@@ -113,31 +126,56 @@ async function createWorkoutObject(workoutData: object): object {
     }
     console.log(workoutData.exercises);
 
+    const user_id = (await supabase.auth.getUser()).data.user?.id;
+    loading.value--;
+
     return {
-        user_id: (await supabase.auth.getUser()).data.user?.id,
-        energy: workoutData.calories || 0,
+        user_id: user_id,
+        //energy: Math.round(workoutData.calories) || 0,
         start_time: startTime ? startTime.toISOString() : null,
         end_time: endTime ? endTime.toISOString() : null,
         title: workoutData.title || "unnamed workout",
         exercises_full: workoutData.exercises || [],
         exercises: exercises,
         notes: workoutData.notes || "",
-        energy: energy
+        energy: Math.round(energy)
     };
 }
 
-async function uploadWorkoutData(workoutData: object) {
+async function generateAndUploadWorkoutData() {
+    const workoutData = await getWorkoutData(urls.value);
+    if (!workoutData) {
+        console.error("No workout data generated");
+        return;
+    }
+
+
+    const { data, error } = await uploadWorkoutData(workoutData);
+    if (error) {
+        console.error("Error uploading workout data: ", error);
+        return;
+    }
+
+    router.push({ name: "Home" });
+}
+
+async function uploadWorkoutData(workoutData: object): object | null {
+    loading.value++;
     const { data, error } = await supabase
         .from('workouts')
         .insert([await createWorkoutObject(workoutData)]);
     if (error) {
         console.error("Error uploading workout data: ", error);
-        return;
+        loading.value--;
+        return { data: data, error: error };
     }
     console.log("Workout data uploaded successfully: ", data);
+    loading.value--;
+    return { data: data, error: error };
 }
 
 async function getWorkoutData(imgURLs): object {
+    loading.value++;
     const { data, error } = await supabase.functions.invoke('generate-workout-data', {
         body: {
             name: "Functions",
@@ -147,13 +185,16 @@ async function getWorkoutData(imgURLs): object {
     if (error) {
         console.error("Error invoking function: ", error);
         console.log(data);
+        loading.value--;
         return "";
     }
+    loading.value--;
     return data;
 }
 
 </script>
 <template>
+    <LoadingView v-if="loading > 0" />
     <div class="viewArea">
         <video
             ref="video"
@@ -167,6 +208,11 @@ async function getWorkoutData(imgURLs): object {
             autoplay
         />
         <button class="captureButton" @click="captureAndUpload()"></button>
+        <UploadComponent
+            :pageCount="pages"
+            @uploadWorkoutData="generateAndUploadWorkoutData()"
+            @retakePhoto="urls.pop(); pages--"
+        />
         <canvas ref="canvas" class="hidden"></canvas>
     </div>
     <NavBar active="/upload" />
@@ -194,5 +240,16 @@ async function getWorkoutData(imgURLs): object {
 
 .hidden {
     display: none;
+}
+
+#urlsCount {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
 }
 </style>
