@@ -6,6 +6,7 @@ import LoadingView from '../views/LoadingView.vue';
 import NavBar from '../components/NavBar.vue';
 import WorkoutOverview from '../components/WorkoutOverview.vue';
 import ExerciseContainer from '../components/ExerciseContainer.vue';
+import SavingDisplay from '../components/SavingDisplay.vue';
 
 const props = defineProps(['workout_id']);
 
@@ -35,6 +36,7 @@ onMounted(async () => {
             <p class="softBubble" v-if="workout.getNotes() !== ''">{{ workout.getNotes() }}</p>
             <WorkoutOverview :workout="workout" />
             <ExerciseContainer v-for="exercise in workout.getExercises()" :key="exercise.getName()" :exercise="exercise" />
+            <SavingDisplay :workout="workout" />
 
         </div>
     </div>

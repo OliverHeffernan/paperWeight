@@ -1,5 +1,6 @@
 import JSONExercise from "../interfaces/JSONExercise";
 import JSONSet from "../interfaces/JSONSet";
+import Workout from "./Workout";
 
 /**
  * A class representing an exercise with its sets and notes.
@@ -12,6 +13,8 @@ export default class Exercise {
     private sets: Array<JSONSet>;
     // notes for the exercise.
     private notes: string;
+
+    private workout: Workout;
 
     /**
      * Creates an instance of Exercise.
@@ -28,11 +31,91 @@ export default class Exercise {
      * };
      * const exercise = new Exercise(exerciseData);
      */
-    public constructor(object: JSONExercise) {
+    public constructor(object: JSONExercise, workout: Workout) {
         this.name = object.exercise;
         this.sets = object.sets;
         this.notes = object.notes;
+        this.workout = workout;
     }
+
+    /**
+     * Deserializes the Exercise instance into a JSONExercise object.
+     *
+     * @returns A JSONExercise object representing the exercise data.
+     */
+    public deserialize(): JSONExercise {
+        return {
+            exercise: this.name,
+            sets: this.sets,
+            notes: this.notes
+        };
+    }
+
+    // editor functions
+    /**
+     * add a copy of the last set to the sets array
+     */
+    public addNewSet(): void {
+        if (this.sets.length === 0) {
+            this.sets.push({ reps: 0, weight: 0, unit: "kg", notes: "" });
+            return;
+        }
+        const lastSet: JSONSet = this.sets[this.sets.length - 1];
+        const newSet: JSONSet = {
+            reps: lastSet.reps,
+            weight: lastSet.weight,
+            unit: lastSet.unit,
+            notes: lastSet.notes
+        };
+        this.sets.push(newSet);
+
+        this.workout.changeMade();
+    }
+
+    public removeSet(index: number): void {
+        if (index < 0 || index >= this.sets.length) {
+            throw new Error("Index out of bounds");
+        }
+        this.sets.splice(index, 1);
+        this.workout.changeMade();
+    }
+
+    public removeFromWorkout(): void {
+        const exerciseIndex: number = this.workout.getExercises().indexOf(this);
+        if (exerciseIndex === -1) {
+            throw new Error("Exercise not found in workout");
+        }
+        this.workout.removeExercise(exerciseIndex);
+    }
+
+    /**
+     * Replaces the set at the specified index with the updated set.
+     *
+     * @param index - The index of the set to be updated.
+     * @param updatedSet - The new JSONSet object to replace the existing set.
+     *
+     * @throws Will throw an error if the index is out of bounds.
+     */
+    public updateSet(index: number, updatedSet: JSONSet): void {
+        if (index < 0 || index >= this.sets.length) {
+            throw new Error("Index out of bounds");
+        }
+        this.sets[index] = updatedSet;
+        this.workout.changeMade();
+    }
+
+    // basic setters
+    public setName(name: string): void {
+        this.name = name;
+        this.workout.changeMade();
+    }
+
+    public setNotes(notes: string): void {
+        this.notes = notes;
+        this.workout.changeMade();
+    }
+
+    // getters
 
     /**
      * Calculates the total volume of the exercise in kilograms.
@@ -62,6 +145,7 @@ export default class Exercise {
         return this.sets;
     }
 
+
     /**
      * Counts the number of sets in the exercise.
      *
@@ -87,18 +171,5 @@ export default class Exercise {
      */
     public getNotes(): string {
         return this.notes;
-    }
-
-    /**
-     * Deserializes the Exercise instance into a JSONExercise object.
-     *
-     * @returns A JSONExercise object representing the exercise data.
-     */
-    public deserialize(): JSONExercise {
-        return {
-            exercise: this.name,
-            sets: this.sets,
-            notes: this.notes
-        };
     }
 }

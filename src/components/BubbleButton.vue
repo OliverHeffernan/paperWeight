@@ -4,8 +4,8 @@
 import { defineProps, defineEmits } from 'vue';
 
 interface Props {
-    label: string;
-    loading: boolean;
+    label?: string;
+    loading?: boolean;
     red?: boolean;
 }
 
@@ -17,7 +17,8 @@ const emit = defineEmits<{
 </script>
 <template>
     <button :class="['bubbleButton', { red: props.red }]" :disabled="loading" @click="emit('click')">
-        {{label}}
+        <slot></slot>
+        {{label || ''}}
     </button>
 </template>
 
@@ -32,7 +33,6 @@ const emit = defineEmits<{
 	white-space: nowrap;
 	margin-left: 0;
 	margin-right: 0;
-	/*margin-bottom: 10px;*/
 }
 
 .red {

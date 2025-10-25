@@ -2,7 +2,7 @@
 import BubbleButton from './BubbleButton.vue';
 defineProps<{
     title: string;
-    message: string;
+    message?: string;
     confirmText: string;
     confirmRed?: boolean;
     cancelText: string;
@@ -18,7 +18,10 @@ const emit = defineEmits<{
     <div class="popupOverlay">
         <div class="popupContainer softBubble">
             <h2>{{ title }}</h2>
-            <p>{{ message }}</p>
+            <p>
+                {{ message }}
+                <slot></slot>
+            </p>
             <div class="buttonContainer">
                 <BubbleButton
                     :label="confirmText"
@@ -73,5 +76,9 @@ p {
     padding: 0;
     border-color: var(--btnBorder);
     background-color: var(--btnBG);
+}
+
+.popupContainer {
+    max-width: 90vw;
 }
 </style>

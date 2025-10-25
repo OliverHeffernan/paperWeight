@@ -87,6 +87,9 @@ textarea {
 	resize: none;
 	height: auto;
 	font-size: 16px;
+    border: var(--border) 1px solid;
+    border-radius: 5px 5px 0 0;
+    padding: 5px;
 }
 
 .iconButton {
@@ -244,5 +247,13 @@ textarea {
 
 .greyed {
     opacity: 0.7;
+}
+
+.borderlessButton {
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 0;
+    cursor: pointer;
 }
 </style>

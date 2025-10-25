@@ -28,6 +28,8 @@ export default class Workout {
     private energy: number | null;
     // average heart rate during the workout in beats per minute.
     private heart_rate: number | null;
+    private unsavedChanges: number = 0;
+    private saving: boolean = false;
 
     /**
      * Creates an instance of Workout.
@@ -47,7 +49,7 @@ export default class Workout {
 
         // creating objects for each of the exercises and adding them to the workout.
         for (const exerciseObject of object.exercises_full) {
-            this.exercises.push(new Exercise(exerciseObject));
+            this.exercises.push(new Exercise(exerciseObject, this));
         }
     }
 
@@ -57,6 +59,37 @@ export default class Workout {
         if (error) {
             console.error("Failed to delete workout:", error);
         }
+    }
+
+    public changeMade(): void {
+        this.unsavedChanges++;
+        if (this.saving) return;
+        this.saveChanges();
+    }
+
+    public async saveChanges(): Promise<void> {
+        this.saving = true;
+        const currentUnsavedChanges = this.unsavedChanges;
+        const { data, error } = await supabase.from('workouts').update(this.deserialize()).eq('workout_id', this.workout_id);
+        if (error) {
+            console.error("Failed to save workout changes:", error);
+        }
+        this.unsavedChanges -= currentUnsavedChanges;
+
+        // if more changes have been nmade since we started saving, save again.
+        if (this.unsavedChanges == 0) {
+            this.saving = false;
+            return;
+        }
+        this.saveChanges();
+    }
+
+    public removeExercise(index: number): void {
+        if (index < 0 || index >= this.exercises.length) {
+            throw new Error("Index out of bounds");
+        }
+        this.exercises.splice(index, 1);
+        this.changeMade();
     }
 
     /**
@@ -89,6 +122,10 @@ export default class Workout {
     }
 
     // getters
+    public savingInProgress(): boolean {
+        console.log("in progress");
+        return this.saving;
+    }
 
     /**
      * Retrieves the notes for the workout.

@@ -2,13 +2,22 @@
 
 <script setup lang="ts">
 import Exercise from "../classes/Exercise";
-defineProps<{
+import SetContainer from "./SetContainer.vue";
+import ExerciseEditModal from "./ExerciseEditModal.vue";
+import { ref } from "vue";
+const editing = ref<boolean>(false);
+const props = defineProps<{
     exercise: Exercise;
 }>();
 </script>
 <template>
+    <ExerciseEditModal
+        v-if="editing"
+        :exercise="exercise"
+        @cancel="editing = false"
+    />
     <div class="exerciseContainer softBubble">
-        <h2 class="exerciseTitle">{{ exercise.getName() }}</h2>
+        <h2 @click="editing = true" class="exerciseTitle">{{ exercise.getName() }}</h2>
         <table class="setsContainer">
             <thead>
                 <tr>
@@ -17,16 +26,15 @@ defineProps<{
                 </tr>
             </thead>
             <tbody>
-                <tr
+                <SetContainer
                     v-for="(set, index) in exercise.getSets()"
                     :key="index"
-                    class="setItem"
-                >
-                    <td class="setLabel">{{ index + 1 }}</td>
-                    <td class="setDetails">
-                        <span v-if="set.weight !== null"> {{ set.weight }} kg <i class="fa-solid fa-xmark"></i></span>
-                        {{ set.reps }} reps
-                    </td>
+                    :index="index"
+                    :set="set"
+                    :exercise="exercise"
+                />
+                <tr>
+                    <td colspan="2"><button @click="exercise.addNewSet()" class="borderlessButton"><i class="fa-solid fa-plus"></i>Add set</button></td>
                 </tr>
             </tbody>
             <tfoot>
@@ -39,46 +47,39 @@ defineProps<{
     </div>
 </template>
 
-<style scoped>
+<style>
 .exerciseContainer {
     padding: 0;
 }
 
-.setLabel {
-    margin-right: 5px;
-}
-
-.setDetails i {
-    font-size: 13px;
-}
 .exerciseTitle {
     padding: 10px;
     border-bottom: 1px solid var(--border);
     margin: 0;
 }
 
-table {
+.setsContainer {
     width: 100%;
     border-collapse: collapse;
 }
 
-th {
+.setsContainer th {
     text-align: left;
     padding: 10px;
     font-weight: normal;
 }
 
-td {
+.setsContainer td {
     text-align: left;
     padding: 10px;
 }
 
-tbody tr:nth-child(odd) td {
+.setsContainer tbody tr:nth-child(odd) td {
     background-color: var(--prim);
     border: none;
 }
 
-tfoot {
+.setsContainer tfoot {
     border-top: 1px solid var(--border);
 }
 </style>
