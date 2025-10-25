@@ -92,6 +92,17 @@ export default class Workout {
         this.changeMade();
     }
 
+    public addEmptyExercise(): void {
+        const newExerciseObject: JSONExercise = {
+            exercise: "New Exercise",
+            sets: [],
+            notes: ""
+        };
+        const newExercise: Exercise = new Exercise(newExerciseObject, this);
+        this.exercises.push(newExercise);
+        this.changeMade();
+    }
+
     /**
      * Deserializes the Workout instance into a JSONWorkout object.
      * @returns A JSONWorkout object representing the workout data.

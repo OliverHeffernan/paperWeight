@@ -7,6 +7,7 @@ interface Props {
     label?: string;
     loading?: boolean;
     red?: boolean;
+    fullWidth?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -16,7 +17,7 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-    <button :class="['bubbleButton', { red: props.red }]" :disabled="loading" @click="emit('click')">
+    <button :class="['bubbleButton', { red: props.red }, {fullWidth: props.fullWidth}]" :disabled="loading" @click="emit('click')">
         <slot></slot>
         {{label || ''}}
     </button>
@@ -38,6 +39,12 @@ const emit = defineEmits<{
 .red {
     border-color: var(--errorBorder);
     background-color: var(--errorBG);
+}
+
+.fullWidth {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
 }
 
 .bubbleButton i {

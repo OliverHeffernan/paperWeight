@@ -7,6 +7,7 @@ import NavBar from '../components/NavBar.vue';
 import WorkoutOverview from '../components/WorkoutOverview.vue';
 import ExerciseContainer from '../components/ExerciseContainer.vue';
 import SavingDisplay from '../components/SavingDisplay.vue';
+import BubbleButton from '../components/BubbleButton.vue';
 
 const props = defineProps(['workout_id']);
 
@@ -37,6 +38,12 @@ onMounted(async () => {
             <WorkoutOverview :workout="workout" />
             <ExerciseContainer v-for="exercise in workout.getExercises()" :key="exercise.getName()" :exercise="exercise" />
             <SavingDisplay :workout="workout" />
+            <BubbleButton
+                @click="workout.addEmptyExercise()"
+                fullWidth
+            >
+                <i class="fa-solid fa-plus"></i> Add Exercise
+            </BubbleButton>
 
         </div>
     </div>

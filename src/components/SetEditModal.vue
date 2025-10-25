@@ -6,6 +6,7 @@ import JSONSet from "../classes/JSONSet";
 import { ref, onUpdated, onMounted } from "vue";
 const weight = ref<number>(0);
 const reps = ref<number>(0);
+const notes = ref<string>("");
 
 const props = defineProps<{
     set: JSONSet;
@@ -21,7 +22,7 @@ function saveChanges() {
     const updatedSet: JSONSet = {
         weight: Number(weight.value),
         reps: Number(reps.value),
-        notes: props.set.notes || "",
+        notes: notes.value,
         unit: props.set.units || "kg"
     };
 
@@ -29,13 +30,18 @@ function saveChanges() {
     emit('cancel')
 }
 
+function fillInputs() {
+    weight.value = props.set.weight || 0;
+    reps.value = props.set.reps || 0;
+    notes.value = props.set.notes || "";
+}
+
 onMounted(() => {
-    weight.value = props.set.weight || 0;
-    reps.value = props.set.reps || 0;
+    fillInputs();
 });
+
 onUpdated(() =>{
-    weight.value = props.set.weight || 0;
-    reps.value = props.set.reps || 0;
+    fillInputs();
 });
 </script>
 <template>
@@ -64,16 +70,24 @@ onUpdated(() =>{
             />
             reps
         </div>
-        <BubbleButton
-            red
-            :loading="false"
-            @click="() => {
-                props.exercise.removeSet(props.index);
-                emit('cancel');
-            }"
-        >
-            <i class="fa-solid fa-trash"></i> Delete Set
-        </BubbleButton>
+        <div class="flexCol">
+            <textarea
+                id="setNotesInput"
+                v-model="notes"
+                rows="4"
+                placeholder="Set notes..."
+            ></textarea>
+            <BubbleButton
+                red
+                :loading="false"
+                @click="() => {
+                    props.exercise.removeSet(props.index);
+                    emit('cancel');
+                }"
+            >
+                <i class="fa-solid fa-trash"></i> Delete Set
+            </BubbleButton>
+        </div>
         </OptionPopup>
 </template>
 
@@ -91,4 +105,10 @@ onUpdated(() =>{
     font-size: 30px;
     font-weight: bold;
 }
+.flexCol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 </style>
