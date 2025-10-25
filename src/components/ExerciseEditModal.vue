@@ -64,6 +64,7 @@ onUpdated(() => {
         </div>
         <BubbleButton
             red
+            fullWidth
             :loading="false"
             @click="deleting = true"
         >
