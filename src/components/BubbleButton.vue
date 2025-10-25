@@ -34,6 +34,7 @@ const emit = defineEmits<{
 	white-space: nowrap;
 	margin-left: 0;
 	margin-right: 0;
+    transition: all 0.2s;
 }
 
 .red {
@@ -41,6 +42,9 @@ const emit = defineEmits<{
     background-color: var(--errorBG);
 }
 
+.red i {
+    color: inherit;
+}
 .fullWidth {
     width: 100%;
     box-sizing: border-box;

@@ -8,6 +8,8 @@ import { ref } from "vue";
 const editing = ref<boolean>(false);
 const props = defineProps<{
     exercise: Exercise;
+    showSets: boolean;
+    index: number;
 }>();
 </script>
 <template>
@@ -17,15 +19,24 @@ const props = defineProps<{
         @cancel="editing = false"
     />
     <div class="exerciseContainer softBubble">
-        <h2 @click="editing = true" class="exerciseTitle">{{ exercise.getName() }}</h2>
+        <h2 class="exerciseTitle">
+            <span @click="editing = true" class="clickable">
+                {{ exercise.getName() }}
+                <i class="fa-solid fa-pen-to-square"></i>
+            </span>
+            <div class="reorderHandles clickable" v-if="index !== 0">
+                <i @click="exercise.reorderUp()" class="fa-solid fa-chevron-up reorder"></i>
+            </div>
+
+        </h2>
         <table class="setsContainer">
-            <thead>
+            <thead v-if="showSets">
                 <tr>
                     <th class="greyed" colspan="1">set</th>
                     <th class="greyed" colspan="1">weight & reps</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody v-if="showSets">
                 <SetContainer
                     v-for="(set, index) in exercise.getSets()"
                     :key="index"
@@ -40,7 +51,10 @@ const props = defineProps<{
             <tfoot>
                 <tr>
                     <td class="setLabel"><b>sets:</b> {{ exercise.countSets() }}</td>
-                    <td class="setDetails"><b>volume:</b> {{ exercise.getVolume() }} kg</td>
+                    <td class="setDetails">
+                        <b>volume:</b> {{ exercise.getVolume() }} kg
+                        <i v-if="index !== exercise.getWorkout().countExercises() - 1"@click="exercise.reorderDown()" class="fa-solid fa-chevron-down reorder"></i>
+                    </td>
                 </tr>
             </tfoot>
         </table>
@@ -81,5 +95,18 @@ const props = defineProps<{
 
 .setsContainer tfoot {
     border-top: 1px solid var(--border);
+}
+
+.reorderHandles {
+    float: right;
+}
+
+.reorder {
+    font-size: 25px;
+    float: right;
+}
+
+h2 span i {
+    font-size: 16px;
 }
 </style>

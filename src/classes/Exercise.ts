@@ -8,7 +8,7 @@ import Workout from "./Workout";
  */
 export default class Exercise {
     // the name of the exercise, e.g. Bench Press.
-    private name: string;
+    public name: string;
     // an array of sets for the exercise.
     private sets: Array<JSONSet>;
     // notes for the exercise.
@@ -115,6 +115,22 @@ export default class Exercise {
         this.workout.changeMade();
     }
 
+    public reorderUp(): void {
+        const exercises: Array<Exercise> = this.workout.getExercises();
+        const index: number = exercises.indexOf(this);
+        if (index <= 0) return;
+        [exercises[index - 1], exercises[index]] = [exercises[index], exercises[index - 1]];
+        this.workout.setExercises(exercises);
+    }
+
+    public reorderDown(): void {
+        const exercises: Array<Exercise> = this.workout.getExercises();
+        const index: number = exercises.indexOf(this);
+        if (index === -1 || index >= exercises.length - 1) return;
+        [exercises[index + 1], exercises[index]] = [exercises[index], exercises[index + 1]];
+        this.workout.setExercises(exercises);
+    }
+
     // getters
 
     /**
@@ -171,5 +187,9 @@ export default class Exercise {
      */
     public getNotes(): string {
         return this.notes;
+    }
+
+    public getWorkout(): Workout {
+        return this.workout;
     }
 }

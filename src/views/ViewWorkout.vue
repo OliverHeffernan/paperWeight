@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onMounted, ref } from 'vue';
+import { defineProps, onMounted, ref, computed } from 'vue';
 import { supabase } from '../lib/supabase';
 import Workout from '../classes/Workout';
 import LoadingView from '../views/LoadingView.vue';
@@ -8,10 +8,12 @@ import WorkoutOverview from '../components/WorkoutOverview.vue';
 import ExerciseContainer from '../components/ExerciseContainer.vue';
 import SavingDisplay from '../components/SavingDisplay.vue';
 import BubbleButton from '../components/BubbleButton.vue';
+import draggable from "vuedraggable";
 
 const props = defineProps(['workout_id']);
 
 const workout = ref<Workout | null>(null);
+const showSets = ref<boolean>(true);
 
 onMounted(async () => {
     const { data, error } = await supabase
@@ -36,7 +38,20 @@ onMounted(async () => {
             <p class="greyed">{{ workout.getDateString() }}</p>
             <p class="softBubble" v-if="workout.getNotes() !== ''">{{ workout.getNotes() }}</p>
             <WorkoutOverview :workout="workout" />
-            <ExerciseContainer v-for="exercise in workout.getExercises()" :key="exercise.getName()" :exercise="exercise" />
+            <BubbleButton
+                @click="showSets = !showSets"
+                fullWidth
+            >
+                <i class="fa-solid" :class="showSets ? 'fa-eye-slash' : 'fa-eye'"></i>
+                {{ showSets ? 'Hide Sets' : 'Show Sets' }}
+            </BubbleButton>
+            <ExerciseContainer
+                v-for="(exercise, index) in workout.getExercises()"
+                :key="exercise.getName()"
+                :exercise="exercise"
+                :showSets="showSets"
+                :index="index"
+            />
             <SavingDisplay :workout="workout" />
             <BubbleButton
                 @click="workout.addEmptyExercise()"

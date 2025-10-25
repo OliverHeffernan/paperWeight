@@ -103,6 +103,11 @@ export default class Workout {
         this.changeMade();
     }
 
+    public setExercises(newExercises: Array<Exercise>): void {
+        this.exercises = newExercises;
+        this.changeMade();
+    }
+
     /**
      * Deserializes the Workout instance into a JSONWorkout object.
      * @returns A JSONWorkout object representing the workout data.
@@ -276,5 +281,9 @@ export default class Workout {
      */
     public getStartTime(): Date {
         return this.start_time;
+    }
+
+    public countExercises(): number {
+        return this.exercises.length;
     }
 }

@@ -92,6 +92,10 @@ textarea {
     padding: 5px;
 }
 
+textarea:focus {
+    outline: none;
+}
+
 .iconButton {
 	position: relative;
 	font-size: 16px;
@@ -254,6 +258,10 @@ textarea {
     border: none;
     font-size: 16px;
     padding: 0;
+    cursor: pointer;
+}
+
+.clickable {
     cursor: pointer;
 }
 </style>
