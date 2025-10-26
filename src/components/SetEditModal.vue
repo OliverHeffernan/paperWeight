@@ -111,4 +111,7 @@ onUpdated(() =>{
     gap: 10px;
 }
 
+#weightInput {
+    width: 150px;
+}
 </style>

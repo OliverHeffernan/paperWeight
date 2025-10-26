@@ -108,6 +108,31 @@ export default class Workout {
         this.changeMade();
     }
 
+    public setHeartRate(newHeartRate: number | null): void {
+        this.heart_rate = newHeartRate;
+        this.changeMade();
+    }
+
+    public setEnergy(newEnergy: number | null): void {
+        this.energy = newEnergy;
+        this.changeMade();
+    }
+
+    public setTitle(newTitle: string): void {
+        this.title = newTitle;
+        this.changeMade();
+    }
+
+    public setStartDate(newStartTime: Date): void {
+        this.start_time = newStartTime;
+        this.changeMade();
+    }
+
+    public setEndDate(newEndTime: Date): void {
+        this.end_time = newEndTime;
+        this.changeMade();
+    }
+
     /**
      * Deserializes the Workout instance into a JSONWorkout object.
      * @returns A JSONWorkout object representing the workout data.
@@ -281,6 +306,10 @@ export default class Workout {
      */
     public getStartTime(): Date {
         return this.start_time;
+    }
+
+    public getEndTime(): Date {
+        return this.end_time;
     }
 
     public countExercises(): number {

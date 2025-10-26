@@ -8,12 +8,15 @@ import WorkoutOverview from '../components/WorkoutOverview.vue';
 import ExerciseContainer from '../components/ExerciseContainer.vue';
 import SavingDisplay from '../components/SavingDisplay.vue';
 import BubbleButton from '../components/BubbleButton.vue';
+import WorkoutDetailsEditModal from '../components/WorkoutDetailsEditModal.vue';
 import draggable from "vuedraggable";
 
 const props = defineProps(['workout_id']);
 
 const workout = ref<Workout | null>(null);
 const showSets = ref<boolean>(true);
+
+const editingDetails = ref<boolean>(false);
 
 onMounted(async () => {
     const { data, error } = await supabase
@@ -32,9 +35,18 @@ onMounted(async () => {
 
 </script>
 <template>
+    <WorkoutDetailsEditModal
+        v-if="editingDetails && workout"
+        :workout="workout"
+        @cancel="editingDetails = false"
+    />
+
     <div class="viewArea" v-if="workout">
         <div class="margins">
-            <h2>{{ workout.getTitle() }}</h2>
+            <h2>
+                {{ workout.getTitle() }}
+                <i class="fa-solid fa-ellipsis clickable" @click="editingDetails = true"></i>
+            </h2>
             <p class="greyed">{{ workout.getDateString() }}</p>
             <p class="softBubble" v-if="workout.getNotes() !== ''">{{ workout.getNotes() }}</p>
             <WorkoutOverview :workout="workout" />

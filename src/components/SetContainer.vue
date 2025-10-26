@@ -24,6 +24,7 @@ const editing = ref<boolean>(false);
         <td class="setdetails">
             <span v-if="set.weight !== null"> {{ set.weight }} kg <i class="fa-solid fa-xmark"></i></span>
             {{ set.reps }} reps
+            <i class="fa-solid fa-note-sticky noteIcon" v-if="set.notes !== '' && set.notes !== null" ></i>
         </td>
     </tr>
 </template>
@@ -42,5 +43,9 @@ const editing = ref<boolean>(false);
 
 td {
     padding: 10px;
+}
+
+.noteIcon {
+    float: right;
 }
 </style>
