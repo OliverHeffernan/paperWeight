@@ -259,7 +259,10 @@ async function getWorkoutData(imgURLs): object {
 
 <style scoped>
 .cameraFeed {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     height: 100%;
     object-fit: cover;
 }
