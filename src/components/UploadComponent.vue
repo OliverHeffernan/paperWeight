@@ -31,6 +31,7 @@ defineEmits<{
 #urlsCount {
     display: flex;
     flex-direction: column;
+    gap: 15px;
     position: fixed;
     top: 20px;
     right: 20px;

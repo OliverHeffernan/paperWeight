@@ -16,14 +16,14 @@ defineProps<{
 
 <style scoped>
 .overview-item {
+    margin: 0;
+    padding: 0;
+    margin-right: 30px;
     display: flex;
     flex-direction: column;
     align-items: left;
-    padding: 10px;
     border: 1px solid var(--borderColor);
-    border-radius: 8px;
     background-color: var(--backgroundLight);
-    margin-bottom: 10px;
     text-align: left;
 }
 
