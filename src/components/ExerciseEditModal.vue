@@ -17,7 +17,6 @@ const emit = defineEmits<{
 }>();
 
 function saveChanges(): void {
-    console.log("Saving changes to exercise");
     props.exercise.setName(exerciseName.value);
     props.exercise.setNotes(exerciseNotes.value);
     emit('cancel');

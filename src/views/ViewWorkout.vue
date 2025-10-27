@@ -95,4 +95,9 @@ table h1 {
     padding: 0;
 }
 
+.margins {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 </style>

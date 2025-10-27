@@ -32,7 +32,6 @@ async function handleSignIn() {
 			email: email.value,
 			password: password.value,
 		});
-		console.log(data);
 
 		if (signInError) throw signInError;
 

@@ -35,6 +35,7 @@ checkUser();
 	--btnBG: #13202E;
 	--btnBorder: #6180BF;
 	--errorBorder: #FF4C71;
+    --goodBorder: #00ED9E;
     --errorBG: #3C1C2A;
 }
 
@@ -104,7 +105,7 @@ textarea:focus {
 }
 
 .margins {
-	width: min(100vw - 80px, 800px);
+	width: min(100vw - 40px, 800px);
 	margin: 0 auto;
     padding-bottom: 20px;
 }
@@ -244,7 +245,6 @@ textarea:focus {
     background-color: var(--sec);
     font-size: 16px;
     border-radius: 10px;
-    margin-top: 10px;
     margin-left: 0;
     margin-right: 0;
 }

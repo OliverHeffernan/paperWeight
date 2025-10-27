@@ -67,9 +67,8 @@ onBeforeUnmount(() => {
  * On success, store the image URL for later processing.
  */
 const captureAndUpload = async () => {
-    console.log("capturing");
     if (!video.value || !canvas.value) {
-        console.log("Video or canvas element not found");
+        console.error("Video or canvas element not found");
         return;
     }
     const { data: {user}, error } = await supabase.auth.getUser();
@@ -102,11 +101,6 @@ const captureAndUpload = async () => {
             console.error("Error uploading image: ", error);
             return;
         }
-
-        console.log("Image uploaded successfully: ", data);
-
-        console.log(data);
-
         urls.value.push(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`);
         pages.value++;
 
@@ -208,7 +202,6 @@ async function uploadWorkoutData(workoutData: object): object | null {
         loading.value--;
         return { data: data, error: error };
     }
-    console.log("Workout data uploaded successfully: ", data);
     loading.value--;
     return { data: data, error: error };
 }
@@ -223,7 +216,6 @@ async function getWorkoutData(imgURLs): object {
     });
     if (error) {
         console.error("Error invoking function: ", error);
-        console.log(data);
         loading.value--;
         return "";
     }
