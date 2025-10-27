@@ -308,6 +308,10 @@ export default class Workout {
         return this.start_time;
     }
 
+    public getStartTimeShortDateString(): string {
+        return this.start_time.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
     public getEndTime(): Date {
         return this.end_time;
     }

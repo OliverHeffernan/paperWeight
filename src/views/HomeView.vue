@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import Workout from "../classes/Workout";
+import getWorkouts from '../utils/getWorkouts';
 
 
 const workouts = ref<Workout[]>([]);
@@ -20,17 +21,7 @@ onMounted(async () => {
 });
 
 async function loadWorkouts() {
-    const jsonWorkouts = await supabase
-        .from('workouts')
-        .select();
-
-    workouts.value = [];
-
-    for (const workout of jsonWorkouts.data || []) {
-        workouts.value.push(new Workout(workout));
-    }
-
-    workouts.value.sort((a, b) => b.getStartTime() - a.getStartTime());
+    workouts.value = await getWorkouts();
     loading.value = false;
 }
 
