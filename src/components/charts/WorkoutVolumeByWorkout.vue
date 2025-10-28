@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import Workout from '../../classes/Workout';
+import { Histogram, HistogramBinLabels } from '../../utils/Histogram';
 
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 
 const props = defineProps<{
     workouts: Array<Workout> | null;
+    graphSize?: string;
+    graphPos?: number;
+    binSize?: string;
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -73,6 +77,7 @@ async function createChart() {
             y: workout.getVolume()
         }
     });
+    console.log(xy_values);
     
     // Get the computed styles of the root element
     const cssVar = getComputedStyle(document.documentElement);
@@ -81,14 +86,17 @@ async function createChart() {
     const workoutsData = [...props.workouts];
 
     const data = {
+        labels: HistogramBinLabels(xy_values, props.binSize, props.graphSize),
         datasets: [{
             label: 'My First Dataset',
-            data: xy_values,
-            fill: false,
+            data: Histogram(xy_values, props.binSize || 'day', props.graphSize),
+            //fill: false,
             borderColor: 'rgb(75, 192, 192)',
             borderWidth: 2,
+            /*
             tension: 0.0,
             showLine: true,
+            */
             pointRadius: 5,
         }]
     };
@@ -107,10 +115,11 @@ async function createChart() {
 
     // Configuration options
     const config = {
-        type: 'scatter',
+        type: 'bar',
         data: data,
         options: {
             responsive: true,
+            categoryPercentage: 1.13,
             animation: {
                 duration: 0 // Disable animations to prevent race conditions
             },
@@ -142,6 +151,7 @@ async function createChart() {
                 }
             },
             scales: {
+                /*
                 x: {
                     type: 'time',
                     time: {
@@ -154,6 +164,7 @@ async function createChart() {
                         font: font_options
                     },
                 },
+                */
                 y: {
                     ticks: {
                         maxTicksLimit: 3,
@@ -209,7 +220,9 @@ function updateChartData() {
     });
     
     // Update chart data without triggering Vue reactivity
-    chartInstance.value.data.datasets[0].data = xy_values;
+    console.log(props.graphSize);
+    chartInstance.value.data.datasets[0].data = Histogram(xy_values, props.binSize, props.graphSize);
+    chartInstance.value.data.labels = HistogramBinLabels(xy_values, props.binSize, props.graphSize);
     chartInstance.value.update('none'); // Use 'none' mode for better performance
 }
 

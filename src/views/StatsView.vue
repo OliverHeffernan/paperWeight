@@ -15,8 +15,23 @@ let workouts: Array<Workout> = [];
 const workoutsRef = ref<Array<Workout>>([]);
 const prevWorkoutsRef = ref<Array<Workout>>([]);
 const isLoading = ref<boolean>(true);
+const graphSize = ref<string>('week');
+
+function getBinSize(graphSize: string): string {
+    switch (graphSize) {
+        case 'week':
+            return 'day';
+        case 'month':
+            return 'day';
+        case 'year':
+            return 'month';
+        default:
+            return 'month';
+    }
+}
 
 async function updateWorkouts(timeframe: string) {
+    graphSize.value = timeframe;
     isLoading.value = true;
 
     if (timeframe === 'all') {
@@ -115,7 +130,12 @@ onMounted(async () => {
             <div v-if="isLoading">
                 <p>Loading workouts...</p>
             </div>
-            <WorkoutVolumeByWorkout v-else :workouts="workoutsRef" />
+            <WorkoutVolumeByWorkout
+                v-else
+                :workouts="workoutsRef"
+                :graphSize="graphSize"
+                :binSize="getBinSize(graphSize)"
+            />
         </div>
     </div>
     <NavBar active="/stats" />

@@ -16,6 +16,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "core-js": "^3.8.3",
     "date-fns": "^4.1.0",
+    "plotly.js-dist": "^3.1.2",
     "supabase": "^2.53.6",
     "vue": "^3.2.13",
     "vue-router": "^4.6.3"
