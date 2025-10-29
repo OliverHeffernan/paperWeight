@@ -5,6 +5,11 @@ const props = defineProps<{
     prevValue: number;
     dispValue: string;
     icon: string;
+    selected: boolean;
+}>();
+
+const emit = defineEmits<{
+    (e: 'click'): void;
 }>();
 
 function getChangePercentage(): string {
@@ -17,7 +22,11 @@ function getChangePercentage(): string {
 }
 </script>
 <template>
-    <div class="statBubble softBubble">
+    <div
+        class="statBubble softBubble clickable"
+        :class="{ selected: selected }"
+        @click="$emit('click')"
+    >
         <p>
             {{ label }}
             <i class="right fa-solid" :class="icon"></i>
@@ -51,6 +60,13 @@ function getChangePercentage(): string {
 .statBubble {
     min-width: 200px;
     flex-grow: 1;
-    height: 150px;
+}
+
+.selected {
+    border: solid 1px var(--btnBorder);
+}
+
+.statBubble p {
+    margin: 0;
 }
 </style>

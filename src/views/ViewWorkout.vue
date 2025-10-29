@@ -9,7 +9,6 @@ import ExerciseContainer from '../components/ExerciseContainer.vue';
 import SavingDisplay from '../components/SavingDisplay.vue';
 import BubbleButton from '../components/BubbleButton.vue';
 import WorkoutDetailsEditModal from '../components/WorkoutDetailsEditModal.vue';
-import draggable from "vuedraggable";
 
 const props = defineProps(['workout_id']);
 

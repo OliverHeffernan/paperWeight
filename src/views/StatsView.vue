@@ -16,17 +16,18 @@ const workoutsRef = ref<Array<Workout>>([]);
 const prevWorkoutsRef = ref<Array<Workout>>([]);
 const isLoading = ref<boolean>(true);
 const graphSize = ref<string>('week');
+const whatGraphed = ref<string>('volume');
 
 function getBinSize(graphSize: string): string {
     switch (graphSize) {
         case 'week':
             return 'day';
         case 'month':
-            return 'day';
+            return 'week';
         case 'year':
             return 'month';
         default:
-            return 'month';
+            return 'year';
     }
 }
 
@@ -40,7 +41,6 @@ async function updateWorkouts(timeframe: string) {
         isLoading.value = false;
         return;
     }
-    console.log('updateWorkouts called with:', timeframe);
     const end = new Date();
     const start = DateUtils.getStart(end, timeframe);
 
@@ -59,7 +59,6 @@ async function updateWorkouts(timeframe: string) {
         }
     }
 
-    console.log('Filtered workouts:', workoutsFiltered.length);
     workoutsRef.value = workoutsFiltered;
     await nextTick();
     isLoading.value = false;
@@ -67,9 +66,7 @@ async function updateWorkouts(timeframe: string) {
 
 onMounted(async () => {
     try {
-        console.log('Loading workouts...');
         workouts = await getWorkouts();
-        console.log('Loaded workouts:', workouts.length);
         await updateWorkouts('week');
         isLoading.value = false;
     } catch (error) {
@@ -80,7 +77,6 @@ onMounted(async () => {
         isLoading.value = false;
     }
 });
-
 
 </script>
 <template>
@@ -104,13 +100,17 @@ onMounted(async () => {
                     :prevValue="prevWorkoutsRef.length"
                     :dispValue="workoutsRef.length.toString()"
                     icon="fa-dumbbell"
+                    :selected="whatGraphed === 'workouts'"
+                    @click="whatGraphed = 'workouts'"
                 />
                 <DashboardStatBubble
                     label="Total Time"
                     :value="WorkoutArrayUtils.getTotalDuration(workoutsRef)"
                     :prevValue="WorkoutArrayUtils.getTotalDuration(prevWorkoutsRef)"
-                    :dispValue="DateUtils.getDurationString(WorkoutArrayUtils.getTotalDuration(workoutsRef))"
+                    :dispValue="DateUtils.getDurationString(WorkoutArrayUtils.getTotalDuration(workoutsRef))||'--'"
                     icon="fa-clock"
+                    :selected="whatGraphed === 'time'"
+                    @click="whatGraphed = 'time'"
                 />
                 <DashboardStatBubble
                     label="Total Energy"
@@ -118,6 +118,8 @@ onMounted(async () => {
                     :prevValue="WorkoutArrayUtils.getTotalEnergy(prevWorkoutsRef)"
                     :dispValue="WorkoutArrayUtils.getTotalEnergyString(workoutsRef)"
                     icon="fa-fire"
+                    :selected="whatGraphed === 'energy'"
+                    @click="whatGraphed = 'energy'"
                 />
                 <DashboardStatBubble
                     label="Total Volume"
@@ -125,6 +127,8 @@ onMounted(async () => {
                     :prevValue="WorkoutArrayUtils.getTotalVolume(prevWorkoutsRef)"
                     :dispValue="WorkoutArrayUtils.getTotalVolumeString(workoutsRef)"
                     icon="fa-weight-hanging"
+                    :selected="whatGraphed === 'volume'"
+                    @click="whatGraphed = 'volume'"
                 />
             </div>
             <div v-if="isLoading">
@@ -135,6 +139,7 @@ onMounted(async () => {
                 :workouts="workoutsRef"
                 :graphSize="graphSize"
                 :binSize="getBinSize(graphSize)"
+                :whatGraphed="whatGraphed"
             />
         </div>
     </div>

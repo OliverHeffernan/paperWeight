@@ -2,6 +2,7 @@
 import { onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import Workout from '../../classes/Workout';
 import { Histogram, HistogramBinLabels } from '../../utils/Histogram';
+import DataUtils from '../../utils/DataUtils';
 
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
@@ -11,6 +12,7 @@ const props = defineProps<{
     graphSize?: string;
     graphPos?: number;
     binSize?: string;
+    whatGraphed: string;
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -30,17 +32,13 @@ function destroyChart() {
 }
 
 async function createChart() {
-    console.log('Creating Workout Volume By Workout Chart');
     if (!canvasRef.value) {
-        console.log('Canvas not ready');
         return;
     }
     if (!props.workouts || props.workouts.length === 0) {
-        console.log('No workouts available');
         return;
     }
     if (isCreatingChart.value) {
-        console.log('Chart creation already in progress');
         return;
     }
 
@@ -64,20 +62,16 @@ async function createChart() {
 
     // Double-check canvas is still available
     if (!canvasRef.value) {
-        console.log('Canvas no longer available');
         isCreatingChart.value = false;
         return;
     }
 
-    console.log('Creating chart with', props.workouts.length, 'workouts');
-
     const xy_values = props.workouts.map((workout) => {
         return {
             x: workout.getStartTime(),
-            y: workout.getVolume()
+            y: workout.getItem(props.whatGraphed)
         }
     });
-    console.log(xy_values);
     
     // Get the computed styles of the root element
     const cssVar = getComputedStyle(document.documentElement);
@@ -129,7 +123,7 @@ async function createChart() {
                 },
                 title: {
                     display: true,
-                    text: 'Workout Volume (kg)',
+                    text: DataUtils.fullNameForType(props.whatGraphed),
                     font: font_options_title,
                     color: cssVar.getPropertyValue('--text'),
                 },
@@ -141,7 +135,7 @@ async function createChart() {
                         label: function(context) {
                             return [
                                 workoutsData[context.dataIndex]?.getTitle() || 'Unknown Workout',
-                                `Volume: ${context.parsed.y} kg`,
+                                DataUtils.stringifyItem(context.parsed.y, props.whatGraphed),
                                 `Date: ${new Date(context.parsed.x).toLocaleDateString()}`
                             ];
                         },
@@ -206,11 +200,9 @@ async function createChart() {
 
 function updateChartData() {
     if (!chartInstance.value || !props.workouts || props.workouts.length === 0) {
-        console.log('Cannot update chart - missing chart instance or workouts');
         return;
     }
     
-    console.log('Updating chart data with', props.workouts.length, 'workouts');
     
     const xy_values = props.workouts.map((workout) => {
         return {
@@ -220,7 +212,6 @@ function updateChartData() {
     });
     
     // Update chart data without triggering Vue reactivity
-    console.log(props.graphSize);
     chartInstance.value.data.datasets[0].data = Histogram(xy_values, props.binSize, props.graphSize);
     chartInstance.value.data.labels = HistogramBinLabels(xy_values, props.binSize, props.graphSize);
     chartInstance.value.update('none'); // Use 'none' mode for better performance
@@ -233,7 +224,6 @@ onMounted(async () => {
 
 // Watch for changes in workouts prop and update chart accordingly
 watch(() => props.workouts, async (newWorkouts, oldWorkouts) => {
-    console.log('Watch triggered - new workouts:', newWorkouts?.length || 0);
     
     // Only update if the array reference actually changed
     if (newWorkouts === oldWorkouts) return;
@@ -255,6 +245,11 @@ watch(() => props.workouts, async (newWorkouts, oldWorkouts) => {
 }, { 
     deep: false, // Don't watch deep changes - only array reference changes
     immediate: false // Don't run immediately since onMounted handles initial creation
+});
+
+watch(() => props.whatGraphed, async (newVal, oldVal) => {
+    await nextTick();
+    createChart();
 });
 
 onUnmounted(() => {

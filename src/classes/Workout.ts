@@ -164,7 +164,6 @@ export default class Workout {
 
     // getters
     public savingInProgress(): boolean {
-        console.log("in progress");
         return this.saving;
     }
 
@@ -318,5 +317,15 @@ export default class Workout {
 
     public countExercises(): number {
         return this.exercises.length;
+    }
+
+    public getItem(item: string): any {
+        switch (item) {
+            case "workouts": return 1;
+            case "time": return this.getDuration();
+            case "energy": return this.getEnergy();
+            case "volume": return this.getVolume();
+            default: throw new Error(`Unknown item: ${item}`);
+        }
     }
 }
