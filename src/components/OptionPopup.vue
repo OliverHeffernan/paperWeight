@@ -16,7 +16,7 @@ const emit = defineEmits<{
 </script>
 <template>
     <div class="popupOverlay">
-        <div class="popupContainer softBubble">
+        <div class="popupContainer softBubble marginsWidth">
             <h2>{{ title }}</h2>
             <p>
                 {{ message }}
@@ -50,7 +50,7 @@ const emit = defineEmits<{
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1500;
 }
 
 h2 {
@@ -72,13 +72,11 @@ p {
     padding: 5px;
 }
 
-.softBubble {
+.popupContainer {
     padding: 0;
+    margin: 0;
     border-color: var(--btnBorder);
     background-color: var(--btnBG);
-}
-
-.popupContainer {
-    max-width: 90vw;
+    box-sizing: border-box;
 }
 </style>

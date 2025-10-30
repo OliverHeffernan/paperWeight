@@ -3,7 +3,6 @@ import { defineProps, onMounted, ref, computed } from 'vue';
 import { supabase } from '../lib/supabase';
 import Workout from '../classes/Workout';
 import LoadingView from '../views/LoadingView.vue';
-import NavBar from '../components/NavBar.vue';
 import WorkoutOverview from '../components/WorkoutOverview.vue';
 import ExerciseContainer from '../components/ExerciseContainer.vue';
 import SavingDisplay from '../components/SavingDisplay.vue';
@@ -74,8 +73,6 @@ onMounted(async () => {
         </div>
     </div>
     <LoadingView v-if="!workout" />
-
-    <NavBar active="/home" />
 </template>
 
 <style scoped>

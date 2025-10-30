@@ -84,14 +84,15 @@ async function createChart() {
         datasets: [{
             label: 'My First Dataset',
             data: Histogram(xy_values, props.binSize || 'day', props.graphSize),
-            //fill: false,
             borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderWidth: 2,
+            borderRadius: 10,
             /*
             tension: 0.0,
             showLine: true,
-            */
             pointRadius: 5,
+            */
         }]
     };
 
@@ -113,7 +114,7 @@ async function createChart() {
         data: data,
         options: {
             responsive: true,
-            categoryPercentage: 1.13,
+            categoryPercentage: 1.0,
             animation: {
                 duration: 0 // Disable animations to prevent race conditions
             },

@@ -1,11 +1,17 @@
 <template>
     <RouterView />
+    <NavBar
+        :active="route.name"
+    />
 </template>
 
 <script setup lang="ts">
 
+import NavBar from './components/NavBar.vue';
 import { supabase } from './lib/supabase';
 import { useRouter, useRoute, RouterView } from 'vue-router';
+import { ref } from 'vue';
+const active = ref<string>("/home");
 
 const router = useRouter();
 const route = useRoute();
@@ -108,6 +114,14 @@ textarea:focus {
 	width: min(100vw - 40px, 800px);
 	margin: 0 auto;
     padding-bottom: 20px;
+}
+
+.marginsWidth {
+    width: min(100vw - 40px, 800px);
+    box-sizing: border-box;
+}
+.marginsWidth * {
+    box-sizing: border-box;
 }
 
 #cardEditCont {
@@ -229,12 +243,7 @@ textarea:focus {
 }
 
 .viewArea {
-    height: calc(100% - 85px);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    overflow: auto;
+    padding-bottom: 100px;
 }
 
 .softBubble {

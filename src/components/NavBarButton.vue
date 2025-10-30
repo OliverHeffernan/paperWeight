@@ -9,9 +9,12 @@ const props = defineProps<{
     route: string;
     active: string;
 }>();
+
+console.log(props.label);
+console.log(props.active);
 </script>
 <template>
-    <RouterLink :to="route" :class="'navLink' + (active === route ? ' active' : '')">
+    <RouterLink :to="route" :class="'navLink' + (active === label ? ' active' : '')">
         <i :class="icon"></i>
         <span class="navLabel">{{ label }}</span>
     </RouterLink>

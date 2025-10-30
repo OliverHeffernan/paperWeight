@@ -1,7 +1,6 @@
 <!-- Page to upload workout images and generate workout data -->
 <script setup lang="ts">
 // imports
-import NavBar from '../components/NavBar.vue';
 import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
 import UploadComponent from '../components/UploadComponent.vue';
@@ -246,7 +245,6 @@ async function getWorkoutData(imgURLs): object {
         />
         <canvas ref="canvas" class="hidden"></canvas>
     </div>
-    <NavBar active="/upload" />
 </template>
 
 <style scoped>

@@ -78,7 +78,6 @@ async function deleteWorkout() {
     border: solid 1px var(--border);
     border-radius: 10px;
     padding: 15px;
-    margin: 1px 10px;
     background-color: var(--cardBackground);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-decoration: none;

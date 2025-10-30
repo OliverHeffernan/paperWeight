@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick } from 'vue';
-import NavBar from '../components/NavBar.vue';
 import Selector from '../components/Selector.vue';
 import WorkoutVolumeByWorkout from '../components/charts/WorkoutVolumeByWorkout.vue';
 import DashboardStatBubble from '../components/DashboardStatBubble.vue';
@@ -143,7 +142,6 @@ onMounted(async () => {
             />
         </div>
     </div>
-    <NavBar active="/stats" />
 </template>
 <style scoped>
 p {
