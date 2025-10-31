@@ -7,11 +7,11 @@ export default class DataUtils {
             case 'workouts':
                 return value.toString() + (value === 1 ? ' workout' : ' workouts');
             case 'energy':
-                return value.toString() + ' kj';
+                return DataUtils.commaNumber(value) + ' kj';
             case 'volume':
-                return value.toString() + ' kg';
+                return DataUtils.commaNumber(value) + ' kg';
             default:
-                return value.toString();
+                return DataUtils.commaNumber(value);
         }
     }
 
@@ -28,5 +28,17 @@ export default class DataUtils {
             default:
                 return type;
         }
+    }
+
+    static commaNumber(value: number): string {
+        let output: string = "";
+        for (let i = 0; i < value.toString().length; i++) {
+            output += value.toString()[i];
+            const positionFromEnd = value.toString().length - i - 1;
+            if (positionFromEnd % 3 === 0 && positionFromEnd !== 0) {
+                output += ",";
+            }
+        }
+        return output;
     }
 }

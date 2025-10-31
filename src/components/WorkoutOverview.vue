@@ -17,7 +17,7 @@ defineProps<{
         <OverviewItem
             icon="fa-solid fa-dumbbell"
             label="volume"
-            :value="workout.getVolume() + ' kg'"
+            :value="workout.getVolumeString()"
         />
         <OverviewItem
             icon="fa-solid fa-list"

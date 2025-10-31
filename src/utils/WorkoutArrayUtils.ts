@@ -1,4 +1,5 @@
 import Workout from '../classes/Workout';
+import DataUtils from './DataUtils';
 export default class WorkoutArrayUtils {
     static getTotalDuration(workoutsArray: Array<Workout>): number {
         return workoutsArray.reduce((acc, workout) => acc + workout.getDuration(), 0);
@@ -10,7 +11,7 @@ export default class WorkoutArrayUtils {
 
     static getTotalEnergyString(workoutsArray: Array<Workout>): string {
         const totalEnergy = this.getTotalEnergy(workoutsArray);
-        return `${totalEnergy} kj`;
+        return `${DataUtils.commaNumber(totalEnergy)} kj`;
     }
 
     static getTotalVolume(workoutsArray: Array<Workout>): number {
@@ -19,6 +20,6 @@ export default class WorkoutArrayUtils {
     
     static getTotalVolumeString(workoutsArray: Array<Workout>): string {
         const totalVolume = this.getTotalVolume(workoutsArray);
-        return `${totalVolume} kg`;
+        return `${DataUtils.commaNumber(totalVolume)} kg`;
     }
 }

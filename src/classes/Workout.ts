@@ -3,6 +3,7 @@ import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
 import { supabase } from '../lib/supabase';
+import DataUtils from '../utils/DataUtils';
 
 /**
  * Class representing a workout session.
@@ -185,7 +186,7 @@ export default class Workout {
         if (energy === null) {
             return null;
         }
-        return `${energy} kj`;
+        return `${DataUtils.commaNumber(energy)} kj`;
     }
 
     /**
@@ -230,7 +231,7 @@ export default class Workout {
         if (volume === 0) {
             return null;
         }
-        return `${volume} kg`;
+        return `${DataUtils.commaNumber(volume)} kg`;
     }
 
     /**
