@@ -7,6 +7,7 @@ defineProps<{
     confirmRed?: boolean;
     cancelText: string;
     cancelRed?: boolean;
+    error?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -16,8 +17,18 @@ const emit = defineEmits<{
 </script>
 <template>
     <div class="popupOverlay">
-        <div class="popupContainer softBubble marginsWidth">
-            <h2>{{ title }}</h2>
+        <div
+            class="popupContainer softBubble marginsWidth"
+            :class="{ error: error }"
+        >
+            <h2>
+                <i 
+                    v-if="error"
+                    class="fa-solid fa-triangle-exclamation"
+                    style="color: var(--errorBorder); margin-right: 10px;"
+                ></i>
+                {{ title }}
+            </h2>
             <p>
                 {{ message }}
                 <slot></slot>
@@ -25,11 +36,12 @@ const emit = defineEmits<{
             <div class="buttonContainer">
                 <BubbleButton
                     :label="confirmText"
-                    :red="confirmRed || false"
+                    :red="(confirmRed || false) || (error || false)"
                     :loading="false"
                     @click="$emit('confirm')"
                 />
                 <BubbleButton
+                    v-if="cancelText"
                     :label="cancelText"
                     :red="cancelRed || false"
                     :loading="false"
@@ -59,6 +71,10 @@ h2 {
     padding: 10px;
 }
 
+.error h2 {
+    border-color: var(--errorBorder);
+}
+
 p {
     margin: 0;
     padding: 10px;
@@ -72,11 +88,20 @@ p {
     padding: 5px;
 }
 
+.error .buttonContainer {
+    border-top: solid 1px var(--errorBorder);
+}
+
 .popupContainer {
     padding: 0;
     margin: 0;
     border-color: var(--btnBorder);
     background-color: var(--btnBG);
     box-sizing: border-box;
+}
+
+.error {
+    border: solid 1px var(--errorBorder);
+    background-color: var(--errorBG);
 }
 </style>

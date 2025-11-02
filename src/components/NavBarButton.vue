@@ -10,8 +10,6 @@ const props = defineProps<{
     active: string;
 }>();
 
-console.log(props.label);
-console.log(props.active);
 </script>
 <template>
     <RouterLink :to="route" :class="'navLink' + (active === label ? ' active' : '')">

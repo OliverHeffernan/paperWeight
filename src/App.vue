@@ -1,7 +1,7 @@
 <template>
     <RouterView />
     <NavBar
-        :active="route.name"
+        :active="route.name || ''"
     />
 </template>
 

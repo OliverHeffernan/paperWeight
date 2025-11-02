@@ -8,6 +8,8 @@ import { supabase } from '../lib/supabase';
 import getWorkouts from '../utils/getWorkouts';
 import DateUtils from '../utils/DateUtils';
 import WorkoutArrayUtils from '../utils/WorkoutArrayUtils';
+import ErrorPopup from '../components/ErrorPopup.vue';
+import ErrorDisplay from '../classes/ErrorDisplay';
 
 import { ref, onMounted } from 'vue';
 let workouts: Array<Workout> = [];
@@ -16,6 +18,8 @@ const prevWorkoutsRef = ref<Array<Workout>>([]);
 const isLoading = ref<boolean>(true);
 const graphSize = ref<string>('week');
 const whatGraphed = ref<string>('volume');
+
+const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 
 function getBinSize(graphSize: string): string {
     switch (graphSize) {
@@ -69,6 +73,7 @@ onMounted(async () => {
         await updateWorkouts('week');
         isLoading.value = false;
     } catch (error) {
+        errorDisplay.value.setError('Failed to load workouts. Please try again later.');
         console.error('Failed to load workouts:', error);
         // Set empty array so component doesn't break
         workouts = [];
@@ -79,6 +84,7 @@ onMounted(async () => {
 
 </script>
 <template>
+    <ErrorPopup :error="errorDisplay" />
     <div class="viewArea">
         <div class="margins">
             <h1>Workout Dashboard</h1>

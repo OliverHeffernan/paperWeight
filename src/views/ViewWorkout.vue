@@ -9,12 +9,18 @@ import SavingDisplay from '../components/SavingDisplay.vue';
 import BubbleButton from '../components/BubbleButton.vue';
 import WorkoutDetailsEditModal from '../components/WorkoutDetailsEditModal.vue';
 
+import ErrorPopup from '../components/ErrorPopup.vue';
+import ErrorDisplay from '../classes/ErrorDisplay';
+
 const props = defineProps(['workout_id']);
 
 const workout = ref<Workout | null>(null);
 const showSets = ref<boolean>(true);
+const loading = ref<boolean>(true);
 
 const editingDetails = ref<boolean>(false);
+
+const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 
 onMounted(async () => {
     const { data, error } = await supabase
@@ -25,14 +31,23 @@ onMounted(async () => {
 
     if (error) {
         console.error('Error fetching workout:', error);
+        if (error.code == 'PGRST116') {
+            errorDisplay.value.setError('Workout not found', "The requested workout does not exist.");
+            loading.value = false;
+            return;
+        }
+        errorDisplay.value.setError('Error fetching workout', "Please try again.");
+        loading.value = false;
         return;
     }
 
     workout.value = new Workout(data);
+    loading.value = false;
 });
 
 </script>
 <template>
+    <error-popup :error="errorDisplay" />
     <WorkoutDetailsEditModal
         v-if="editingDetails && workout"
         :workout="workout"
@@ -72,7 +87,7 @@ onMounted(async () => {
 
         </div>
     </div>
-    <LoadingView v-if="!workout" />
+    <LoadingView v-if="loading" />
 </template>
 
 <style scoped>

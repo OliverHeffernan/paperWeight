@@ -5,6 +5,8 @@ import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
 import UploadComponent from '../components/UploadComponent.vue';
 import JSONWorkout from '../interfaces/JSONWorkout';
+import ErrorPopup from '../components/ErrorPopup.vue';
+import ErrorDisplay from '../classes/ErrorDisplay';
 
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { supabase } from '../lib/supabase';
@@ -25,6 +27,8 @@ const pages = ref<integer>(0);
 // keep hold of the media stream to stop it when component is unmounted.
 const mediaStream = ref<MediaStream | null>(null);
 
+const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
+
 // start the camera on component mount.
 onMounted(async () => {
     const constraints = {
@@ -44,10 +48,12 @@ onMounted(async () => {
                 if (video) {
                     video.value.srcObject = stream;
                 } else {
+                    errorDisplay.value.setError("Error creating video feed", "Video element not found");
                     console.error("Video element not found");
                 }
             })
             .catch((err) => {
+                errorDisplay.value.setError("Error accessing camera", err.message);
                 console.error("Error accessing camera: ", err);
             }
         );
@@ -68,17 +74,20 @@ onBeforeUnmount(() => {
 const captureAndUpload = async () => {
     if (!video.value || !canvas.value) {
         console.error("Video or canvas element not found");
+        errorDisplay.value.setError("Error capturing image", "Video or canvas element not found");
         return;
     }
     const { data: {user}, error } = await supabase.auth.getUser();
     if (error || !user) {
         console.error("User not authenticated");
+        errorDisplay.value.setError("User not authenticated", error?.message || "No user found");
         return;
     }
     canvas.value.width = video.value.videoWidth;
     canvas.value.height = video.value.videoHeight;
     const context = canvas.value.getContext('2d');
     if (!context) {
+        errorDisplay.value.setError("Error capturing image", "Failed to get canvas context");
         console.error("Failed to get canvas context");
         return;
     }
@@ -86,6 +95,7 @@ const captureAndUpload = async () => {
 
     canvas.value.toBlob(async (blob) => {
         if (!blob) {
+            errorDisplay.value.setError("Error capturing image", "Failed to capture image blob");
             console.error("Failed to capture image");
             return;
         }
@@ -97,6 +107,7 @@ const captureAndUpload = async () => {
                 upsert: false
             });
         if (error) {
+            errorDisplay.value.setError("Error uploading image", error.message);
             console.error("Error uploading image: ", error);
             return;
         }
@@ -177,12 +188,14 @@ async function createWorkoutObject(workoutData: object): JSONWorkout {
 async function generateAndUploadWorkoutData(): void {
     const workoutData = await getWorkoutData(urls.value);
     if (!workoutData) {
+        errorDisplay.value.setError("Error generating workout data", "No workout data generated. Please try again by clicking the upload button again.");
         console.error("No workout data generated");
         return;
     }
 
     const { data, error } = await uploadWorkoutData(workoutData);
     if (error) {
+        errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
         console.error("Error uploading workout data: ", error);
         return;
     }
@@ -198,6 +211,7 @@ async function uploadWorkoutData(workoutData: object): object | null {
         .insert([await createWorkoutObject(workoutData)]);
     if (error) {
         console.error("Error uploading workout data: ", error);
+        errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
         loading.value--;
         return { data: data, error: error };
     }
@@ -215,6 +229,9 @@ async function getWorkoutData(imgURLs): object {
     });
     if (error) {
         console.error("Error invoking function: ", error);
+
+        errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
+
         loading.value--;
         return "";
     }
@@ -225,6 +242,7 @@ async function getWorkoutData(imgURLs): object {
 </script>
 <template>
     <LoadingView v-if="loading > 0" />
+    <ErrorPopup :error="errorDisplay" />
     <div class="viewArea">
         <video
             ref="video"
