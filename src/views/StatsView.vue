@@ -18,6 +18,7 @@ const prevWorkoutsRef = ref<Array<Workout>>([]);
 const isLoading = ref<boolean>(true);
 const graphSize = ref<string>('week');
 const whatGraphed = ref<string>('volume');
+const backTimes = ref<number>(0);
 
 const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 
@@ -44,7 +45,7 @@ async function updateWorkouts(timeframe: string) {
         isLoading.value = false;
         return;
     }
-    const end = new Date();
+    const end = DateUtils.getEnd(DateUtils.addPeriod(new Date(), timeframe, -backTimes.value), timeframe);
     const start = DateUtils.getStart(end, timeframe);
 
     const startPrevious = DateUtils.getStartOfPrevious(start, timeframe);
@@ -96,8 +97,15 @@ onMounted(async () => {
                     { label: 'This Year', value: 'year' },
                     { label: 'All Time', value: 'all' }
                 ]"
-                @select="updateWorkouts($event)"
+                @select="backTimes = 0; updateWorkouts($event)"
             />
+            <div v-if="graphSize !== 'all'" class="periodSelect">
+                <i class="fa-solid fa-chevron-left clickable floatleft" @click="backTimes = backTimes + 1; updateWorkouts(graphSize);"></i>
+                <div class="center">
+                    {{ DateUtils.getPeriodString(graphSize, backTimes) }}
+                </div>
+                <i v-if="backTimes !== 0" class="fa-solid fa-chevron-right clickable floatright" @click="backTimes = backTimes > 0 ? backTimes - 1 : 0; updateWorkouts(graphSize);"></i>
+            </div>
             <div class="flex">
                 <DashboardStatBubble
                     label="Total Workouts"
@@ -145,6 +153,7 @@ onMounted(async () => {
                 :graphSize="graphSize"
                 :binSize="getBinSize(graphSize)"
                 :whatGraphed="whatGraphed"
+                :backTimes="backTimes"
             />
         </div>
     </div>
@@ -165,5 +174,29 @@ p {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.floatright {
+    position: absolute;
+    right: 0;
+}
+
+.floatleft {
+    position: absolute;
+    left: 0;
+}
+
+.center {
+    padding: 0 30px;
+}
+
+.periodSelect {
+    position: relative;
+    display: flex;
+    font-weight: 600;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 </style>

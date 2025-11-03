@@ -1,5 +1,16 @@
 export default class DateUtils {
 
+    static addPeriod(date: Date, unit: string, amount: number): Date {
+        const d = new Date(date);
+        switch (unit) {
+            case 'day': d.setDate(d.getDate() + amount); break;
+            case 'week': d.setDate(d.getDate() + amount * 7); break;
+            case 'month': d.setMonth(d.getMonth() + amount); break;
+            case 'year': d.setFullYear(d.getFullYear() + amount); break;
+        }
+        return d;
+    }
+
     static getStartOfTerm(backTimes: number, term: string): Date | null {
         switch (term) {
             case 'month':
@@ -119,6 +130,19 @@ export default class DateUtils {
         }
     }
 
+    static getEnd(date: Date, timeframe: string): Date {
+        switch (timeframe) {
+            case 'week':
+                return DateUtils.getEndOfWeek(date);
+            case 'month':
+                return DateUtils.getEndOfMonth(date);
+            case 'year':
+                return DateUtils.getEndOfYear(date);
+            default:
+                return date;
+        }
+    }
+
     static getStartOfPrevious(date: Date, timeframe: string): Date {
         switch (timeframe) {
             case 'week':
@@ -143,5 +167,28 @@ export default class DateUtils {
         if (minutes > 0) parts.push(`${minutes}m`);
         if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
         return parts.join(' ');
+    }
+
+    static getPeriodString(graphSize: string, backTimes: number): string {
+        const now = new Date();
+        const start = DateUtils.addPeriod(DateUtils.getStart(now, graphSize), graphSize, -backTimes);
+        const end = DateUtils.addPeriod(DateUtils.getEnd(now, graphSize), graphSize, - backTimes);
+        switch (graphSize) {
+            case 'month':
+                return `
+                    ${start.toLocaleString('default', { month: 'long'})} 
+                    ${start.getFullYear()}
+                `
+            case 'year':
+                return `${start.getFullYear()}`;
+            case 'week':
+                return `
+                    ${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} – 
+                    ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                `;
+            default:
+                return '';
+        }
+
     }
 }

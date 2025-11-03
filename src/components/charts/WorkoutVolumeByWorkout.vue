@@ -3,6 +3,7 @@ import { onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import Workout from '../../classes/Workout';
 import { Histogram, HistogramBinLabels } from '../../utils/Histogram';
 import DataUtils from '../../utils/DataUtils';
+import DateUtils from '../../utils/DateUtils';
 
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
@@ -10,7 +11,7 @@ import 'chartjs-adapter-date-fns';
 const props = defineProps<{
     workouts: Array<Workout> | null;
     graphSize?: string;
-    graphPos?: number;
+    backTimes?: number;
     binSize?: string;
     whatGraphed: string;
 }>();
@@ -76,14 +77,15 @@ async function createChart() {
     // Get the computed styles of the root element
     const cssVar = getComputedStyle(document.documentElement);
 
+
     // Store workouts data for tooltip callback to avoid reactivity issues
     const workoutsData = [...props.workouts];
 
     const data = {
-        labels: HistogramBinLabels(xy_values, props.binSize, props.graphSize),
+        labels: HistogramBinLabels(xy_values, props.binSize, props.graphSize, props.backTimes),
         datasets: [{
             label: 'My First Dataset',
-            data: Histogram(xy_values, props.binSize || 'day', props.graphSize),
+            data: Histogram(xy_values, props.binSize || 'day', props.graphSize, props.backTimes),
             borderColor: 'rgb(75, 192, 192)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderWidth: 2,
@@ -135,9 +137,7 @@ async function createChart() {
                     callbacks: {
                         label: function(context) {
                             return [
-                                workoutsData[context.dataIndex]?.getTitle() || 'Unknown Workout',
                                 DataUtils.stringifyItem(context.parsed.y, props.whatGraphed),
-                                `Date: ${new Date(context.parsed.x).toLocaleDateString()}`
                             ];
                         },
                     },
@@ -214,7 +214,7 @@ function updateChartData() {
     
     // Update chart data without triggering Vue reactivity
     chartInstance.value.data.datasets[0].data = Histogram(xy_values, props.binSize, props.graphSize);
-    chartInstance.value.data.labels = HistogramBinLabels(xy_values, props.binSize, props.graphSize);
+    chartInstance.value.data.labels = HistogramBinLabels(xy_values, props.binSize, props.graphSize, props.backTimes);
     chartInstance.value.update('none'); // Use 'none' mode for better performance
 }
 
