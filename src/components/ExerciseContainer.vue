@@ -4,6 +4,7 @@
 import Exercise from "../classes/Exercise";
 import SetContainer from "./SetContainer.vue";
 import ExerciseEditModal from "./ExerciseEditModal.vue";
+import Set from "../classes/Set";
 import { ref } from "vue";
 const editing = ref<boolean>(false);
 const props = defineProps<{

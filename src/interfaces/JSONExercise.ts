@@ -7,4 +7,5 @@ export default interface JSONExercise {
     exercise: string;
     sets: Array<JSONSet>;
     notes: string;
+    id: string | null;
 }

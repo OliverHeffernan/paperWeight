@@ -8,7 +8,7 @@ export default async function getWorkouts(): Promise<Array<Workout>> {
     const workouts: Array<Workout> = [];
 
     for (const workout of jsonWorkouts.data || []) {
-        workouts.push(new Workout(workout));
+        workouts.push(await Workout.create(workout));
     }
 
     workouts.sort((a, b) => b.getStartTime().getTime() - a.getStartTime().getTime());

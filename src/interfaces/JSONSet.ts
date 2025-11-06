@@ -4,8 +4,9 @@
  * This is also the form that it takes inside an Exercise object.
  */
 export default interface JSONSet {
-    reps: number;
-    weight: number;
-    unit: string;
-    notes: string;
+    reps?: number;
+    weight?: number;
+    unit?: string;
+    notes?: string;
+    id?: string | null;
 }

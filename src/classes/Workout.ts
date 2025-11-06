@@ -36,8 +36,7 @@ export default class Workout {
      * Creates an instance of Workout.
      * @param object - A JSONWorkout object containing the workout data. This will typically be loaded from the database.
      */
-    public constructor(object: JSONWorkout) {
-        this.exercises = [];
+    public constructor(object: JSONWorkout, exercises: Array<Exercise>) {
         this.title = object.title;
         this.workout_id = object.workout_id;
         this.start_time = new Date(object.start_time);
@@ -48,10 +47,24 @@ export default class Workout {
         this.energy = object.energy;
         this.heart_rate = object.heart_rate;
 
-        // creating objects for each of the exercises and adding them to the workout.
+        this.exercises = exercises;
+    }
+
+    public static async create(object: JSONWorkout): Promise<Workout> {
+        const exercises: Array<Exercise> = [];
         for (const exerciseObject of object.exercises_full) {
-            this.exercises.push(new Exercise(exerciseObject, this));
+            const exercise = await Exercise.create(exerciseObject, null); // Temporary null, will set workout later
+            exercises.push(exercise);
         }
+
+        const workout = new Workout(object, exercises);
+        
+        // Now set the workout reference in each exercise
+        for (const exercise of exercises) {
+            exercise.setWorkout(workout);
+        }
+
+        return workout;
     }
 
     // actions
@@ -97,7 +110,8 @@ export default class Workout {
         const newExerciseObject: JSONExercise = {
             exercise: "New Exercise",
             sets: [],
-            notes: ""
+            notes: "",
+            id: null
         };
         const newExercise: Exercise = new Exercise(newExerciseObject, this);
         this.exercises.push(newExercise);

@@ -26,7 +26,7 @@ export default async function getWorkoutsTimeframe(frame: string): Promise<Array
     const workouts: Array<Workout> = [];
 
     for (const workout of jsonWorkouts.data || []) {
-        workouts.push(new Workout(workout));
+        workouts.push(await Workout.create(workout));
     }
 
     workouts.sort((a, b) => b.getStartTime().getTime() - a.getStartTime().getTime());
@@ -34,7 +34,6 @@ export default async function getWorkoutsTimeframe(frame: string): Promise<Array
 }
 
 async function getWorkoutsInTimeframe(start: Date, end: Date): Promise<Array<Workout>> {
-    console.log(start);
     const jsonWorkouts = await supabase
         .from('workouts')
         .select()
@@ -44,11 +43,10 @@ async function getWorkoutsInTimeframe(start: Date, end: Date): Promise<Array<Wor
     const workouts: Array<Workout> = [];
 
     for (const workout of jsonWorkouts.data || []) {
-        workouts.push(new Workout(workout));
+        workouts.push(await Workout.create(workout));
     }
 
     workouts.sort((a, b) => b.getStartTime().getTime() - a.getStartTime().getTime());
-    console.log(workouts);
     return workouts;
 }
 

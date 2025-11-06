@@ -2,14 +2,15 @@
 import BubbleButton from "./BubbleButton.vue";
 import OptionPopup from "./OptionPopup.vue";
 import Exercise from "../classes/Exercise";
-import JSONSet from "../classes/JSONSet";
+import JSONSet from "../interfaces/JSONSet";
+import Set from "../classes/Set";
 import { ref, onUpdated, onMounted } from "vue";
 const weight = ref<number>(0);
 const reps = ref<number>(0);
 const notes = ref<string>("");
 
 const props = defineProps<{
-    set: JSONSet;
+    set: Set;
     exercise: Exercise;
     index: number;
 }>();
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 }>();
 
 function saveChanges() {
+    /*
     const updatedSet: JSONSet = {
         weight: Number(weight.value),
         reps: Number(reps.value),
@@ -27,13 +29,18 @@ function saveChanges() {
     };
 
     props.exercise.updateSet(props.index, updatedSet);
+    */
+    props.set.setWeight(Number(weight.value));
+    props.set.setReps(Number(reps.value));
+    props.set.setNotes(notes.value);
+    props.set.updateDB();
     emit('cancel')
 }
 
 function fillInputs() {
-    weight.value = props.set.weight || 0;
-    reps.value = props.set.reps || 0;
-    notes.value = props.set.notes || "";
+    weight.value = props.set.getWeight() || 0;
+    reps.value = props.set.getReps() || 0;
+    notes.value = props.set.getNotes() || "";
 }
 
 onMounted(() => {

@@ -21,11 +21,8 @@ export function Histogram(
 
     const graphStart = DateUtils.addPeriod(DateUtils.getStartOfTerm(0, graphSize) || minDate, graphSize, -backTimes);
     const graphEnd = DateUtils.addPeriod(DateUtils.getEndOfTerm(0, graphSize) || maxDate, graphSize, -backTimes);
-    console.log(graphStart, graphEnd);
     // Generate all bucket boundaries
-    console.log(binSize);
     const buckets = generateBuckets(graphStart, graphEnd, binSize);
-    console.log(buckets);
     
     // Initialize result array with zeros
     const result = new Array(buckets.length - 1).fill(0);
@@ -38,7 +35,6 @@ export function Histogram(
         }
     }
 
-    console.log(result);
     return result;
 }
 
@@ -65,7 +61,6 @@ export function HistogramBinLabels(
 
     const graphStart = DateUtils.addPeriod(DateUtils.getStartOfTerm(0, graphSize) || minDate, graphSize, -backTimes);
     const graphEnd = DateUtils.addPeriod(DateUtils.getEndOfTerm(0, graphSize) || maxDate, graphSize, -backTimes);
-    console.log(graphEnd);
 
     const buckets = generateBuckets(graphStart, graphEnd, binSize);
     return buckets.slice(0, -1).map((start, i) => formatBucketLabel(start, buckets[i + 1], binSize));
@@ -73,7 +68,6 @@ export function HistogramBinLabels(
 
 // Generate all bucket start dates from start to end
 function generateBuckets(start: Date, end: Date, binSize: 'day' | 'week' | 'month' | 'year'): Date[] {
-    console.log(start, end);
     //const buckets: Date[] = [new Date(start)];
     const buckets: Date[] = [];
     let current = startOfBin(start, binSize);
@@ -81,7 +75,6 @@ function generateBuckets(start: Date, end: Date, binSize: 'day' | 'week' | 'mont
     const endPlusOne = addPeriod(end, binSize, 1);
 
     while (current <= endPlusOne) {
-        console.log("kia ora");
         buckets.push(new Date(current));
         current = startOfBin(addPeriod(current, binSize, 1), binSize);
     }

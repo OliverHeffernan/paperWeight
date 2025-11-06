@@ -41,7 +41,7 @@ onMounted(async () => {
         return;
     }
 
-    workout.value = new Workout(data);
+    workout.value = await Workout.create(data);
     loading.value = false;
 });
 

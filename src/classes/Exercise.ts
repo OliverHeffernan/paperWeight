@@ -1,6 +1,9 @@
 import JSONExercise from "../interfaces/JSONExercise";
 import JSONSet from "../interfaces/JSONSet";
+import Set from "./Set";
 import Workout from "./Workout";
+
+import { supabase } from "../lib/supabase";
 
 /**
  * A class representing an exercise with its sets and notes.
@@ -10,11 +13,12 @@ export default class Exercise {
     // the name of the exercise, e.g. Bench Press.
     public name: string;
     // an array of sets for the exercise.
-    private sets: Array<JSONSet>;
+    private sets: Array<Set>;
     // notes for the exercise.
     private notes: string;
 
-    private workout: Workout;
+    private workout: Workout | null;
+    private id: string | null;
 
     /**
      * Creates an instance of Exercise.
@@ -31,11 +35,89 @@ export default class Exercise {
      * };
      * const exercise = new Exercise(exerciseData);
      */
-    public constructor(object: JSONExercise, workout: Workout) {
+    public constructor(object: JSONExercise, workout: Workout | null, sets: Array<Set> = []) {
         this.name = object.exercise;
-        this.sets = object.sets;
-        this.notes = object.notes;
+        //this.sets = object.sets;
         this.workout = workout;
+        //this.sets = object.sets.map((setData: JSONSet) => new Set(setData, this));
+        this.notes = object.notes;
+        this.id = object.id;
+
+        for (const set of sets) {
+            // set the exercise reference in each set
+            set.setExercise(this);
+        }
+        this.sets = sets;
+
+        this.getId();
+    }
+
+    public static async create(object: JSONExercise, workout: Workout | null): Promise<Exercise> {
+        const sets: Array<Set> = [];
+        for (const setData of object.sets) {
+            const set = await Set.create(setData, null); // Temporary null, will set exercise later
+            sets.push(set);
+        }
+        return new Exercise(object, workout, sets);
+    }
+
+    public async getId(): Promise<string | null> {
+        if (this.id) { return this.id; }
+
+        const { data, error } = await supabase
+            .from('exercises')
+            .select()
+            .eq('name', this.name.toLowerCase());
+
+        if (error) {
+            throw new Error(`Failed to fetch exercise ID: ${error.message}`);
+        }
+
+        if (data === null || data.length === 0) {
+            return await this.createNewId();
+        }
+
+        this.id = data[0].id;
+        this.name = data[0].name;
+        return this.id;
+    }
+
+    public async createNewIdIfNeeded(): Promise<string | null> {
+        const { data, error } = await supabase
+            .from('exercises')
+            .select()
+            .eq('name', this.name);
+
+        if (error) {
+            throw new Error(`Failed to fetch exercise ID: ${error.message}`);
+        }
+
+        if (data === null || data.length === 0) {
+            return await this.createNewId();
+        }
+
+        this.id = data[0].id;
+        this.name = data[0].name;
+        return this.id;
+    }
+
+    public async createNewId(): Promise<string | null> {
+
+        const { data, error } = await supabase
+            .from('exercises')
+            .insert([{
+                name: this.name.toLowerCase()
+
+            }])
+            .select('id')
+            .single();
+
+        if (error) {
+            throw new Error(`Failed to create new exercise ID: ${error.message}`);
+        }
+
+        this.id = data.id;
+        return this.id;
     }
 
     /**
@@ -46,8 +128,9 @@ export default class Exercise {
     public deserialize(): JSONExercise {
         return {
             exercise: this.name,
-            sets: this.sets,
-            notes: this.notes
+            sets: this.sets.map((set: Set) => set.deserialize()),
+            notes: this.notes,
+            id: this.id
         };
     }
 
@@ -57,35 +140,43 @@ export default class Exercise {
      */
     public addNewSet(): void {
         if (this.sets.length === 0) {
-            this.sets.push({ reps: 0, weight: 0, unit: "kg", notes: "" });
+            const id: string | null = null;
+            const newSet = new Set({ reps: 0, weight: 0, unit: "kg", notes: "", id }, this);
+            this.sets.push(newSet);
+            newSet.createNewId(); // Create ID after set is added
+            if (this.workout) this.workout.changeMade();
             return;
         }
-        const lastSet: JSONSet = this.sets[this.sets.length - 1];
-        const newSet: JSONSet = {
-            reps: lastSet.reps,
-            weight: lastSet.weight,
-            unit: lastSet.unit,
-            notes: lastSet.notes
-        };
+        const lastSet: Set = this.sets[this.sets.length - 1];
+        const newSet: Set = new Set({
+            reps: lastSet.getReps(),
+            weight: lastSet.getWeight(),
+            unit: "kg",
+            notes: lastSet.getNotes(),
+            id: null
+        }, this);
         this.sets.push(newSet);
+        newSet.createNewId(); // Create ID after set is added
 
-        this.workout.changeMade();
+        if (this.workout) this.workout.changeMade();
     }
 
     public removeSet(index: number): void {
         if (index < 0 || index >= this.sets.length) {
             throw new Error("Index out of bounds");
         }
+        const removedSet: Set = this.sets[index];
         this.sets.splice(index, 1);
-        this.workout.changeMade();
+        removedSet.deleteFromDB();
+        if (this.workout) this.workout.changeMade();
     }
 
     public removeFromWorkout(): void {
+        if (!this.workout) return;
         const exerciseIndex: number = this.workout.getExercises().indexOf(this);
         if (exerciseIndex === -1) {
             throw new Error("Exercise not found in workout");
         }
-        this.workout.removeExercise(exerciseIndex);
     }
 
     /**
@@ -100,22 +191,32 @@ export default class Exercise {
         if (index < 0 || index >= this.sets.length) {
             throw new Error("Index out of bounds");
         }
-        this.sets[index] = updatedSet;
-        this.workout.changeMade();
+        const editingSet: Set = this.sets[index];
+        editingSet.setReps(updatedSet.reps);
+        editingSet.setWeight(updatedSet.weight);
+        editingSet.setNotes(updatedSet.notes);
+        //this.sets[index] = updatedSet;
+        if (this.workout) this.workout.changeMade();
     }
 
     // basic setters
     public setName(name: string): void {
         this.name = name;
-        this.workout.changeMade();
+        this.createNewId();
+        if (this.workout) this.workout.changeMade();
+    }
+
+    public setWorkout(workout: Workout): void {
+        this.workout = workout;
     }
 
     public setNotes(notes: string): void {
         this.notes = notes;
-        this.workout.changeMade();
+        if (this.workout) this.workout.changeMade();
     }
 
     public reorderUp(): void {
+        if (!this.workout) return;
         const exercises: Array<Exercise> = this.workout.getExercises();
         const index: number = exercises.indexOf(this);
         if (index <= 0) return;
@@ -124,6 +225,7 @@ export default class Exercise {
     }
 
     public reorderDown(): void {
+        if (!this.workout) return;
         const exercises: Array<Exercise> = this.workout.getExercises();
         const index: number = exercises.indexOf(this);
         if (index === -1 || index >= exercises.length - 1) return;
@@ -143,10 +245,7 @@ export default class Exercise {
     public getVolume(): number {
         let volume: number = 0;
         for (const set of this.sets) {
-            let setVolume = set.reps * set.weight;
-            if (set.unit === "lbs") {
-                setVolume = setVolume * 0.453592; // Convert pounds to kilograms
-            }
+            let setVolume = set.getReps() * set.getWeight();
             volume += setVolume;
         }
         return volume;
@@ -157,7 +256,7 @@ export default class Exercise {
      *
      * @returns An array of JSONSet objects representing the sets of the exercise.
      */
-    public getSets(): Array<JSONSet> {
+    public getSets(): Array<Set> {
         return this.sets;
     }
 
@@ -189,7 +288,20 @@ export default class Exercise {
         return this.notes;
     }
 
-    public getWorkout(): Workout {
+    public async waitForWorkout(): Promise<void> {
+        while (!this.workout) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+    }
+
+    public async getWorkoutId(): Promise<string> {
+        await this.waitForWorkout();
+        if (!this.workout) { return ""; }
+        return this.workout.getId();
+    }
+
+    public getWorkout(): Workout | null {
         return this.workout;
     }
+
 }
