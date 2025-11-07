@@ -58,11 +58,27 @@ export default class Workout {
         }
 
         const workout = new Workout(object, exercises);
-        
+
         // Now set the workout reference in each exercise
         for (const exercise of exercises) {
             exercise.setWorkout(workout);
         }
+
+        if (object.workout_id) return workout;
+
+        const jsonWorkout: object = workout.deserialize();
+        delete (jsonWorkout as any).workout_id; 
+        const { data, error } = await supabase
+            .from('workouts')
+            .insert(workout.deserialize())
+            .select('workout_id')
+            .single();
+
+        if (error) {
+            throw new Error(`Failed to insert new workout into DB: ${error.message}`);
+        }
+
+        workout.workout_id = data.workout_id;
 
         return workout;
     }
@@ -84,7 +100,7 @@ export default class Workout {
     public async saveChanges(): Promise<void> {
         this.saving = true;
         const currentUnsavedChanges = this.unsavedChanges;
-        const { data, error } = await supabase.from('workouts').update(this.deserialize()).eq('workout_id', this.workout_id);
+        const { error } = await supabase.from('workouts').update(this.deserialize()).eq('workout_id', this.workout_id);
         if (error) {
             console.error("Failed to save workout changes:", error);
         }
