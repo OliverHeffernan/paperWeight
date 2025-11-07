@@ -15,4 +15,6 @@ export default interface JSONWorkout {
     notes: string;
     energy: number | null;
     heart_rate: number | null;
+    volume: number | null;
+    set_count: number | null;
 }

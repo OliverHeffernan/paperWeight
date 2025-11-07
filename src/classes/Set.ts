@@ -1,7 +1,6 @@
 import { supabase } from "../lib/supabase";
 import JSONSet from "../interfaces/JSONSet";
 import Exercise from "./Exercise";
-import { lbsToKgs } from "../utils/UnitUtils";
 
 export default class Set {
     private reps: number = 0;
@@ -31,14 +30,6 @@ export default class Set {
         this.weight = object.weight || 0;
         this.notes = object.notes || "";
         this.id = object.id || null;
-        
-        // Don't call createNewId() or getFromDB() here - defer until after exercise construction
-        /*
-        if (object.id) {
-            this.getFromDB();
-            return;
-        }
-        */
         this.createNewId();
     }
 

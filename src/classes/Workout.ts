@@ -173,7 +173,9 @@ export default class Workout {
             exercises: exerciseNames,
             notes: this.notes,
             energy: this.energy,
-            heart_rate: this.heart_rate
+            heart_rate: this.heart_rate,
+            volume: this.getVolume(),
+            set_count: this.countSets()
         };
     }
 

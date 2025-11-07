@@ -9,16 +9,15 @@ const props = defineProps<{
 <template>
     <nav class="nav-bar">
         <NavBarButton
-            label="Stats"
-            icon="fas fa-chart-bar"
-            route="/stats"
-            :active="active"
-        />
-
-        <NavBarButton
             label="Home"
             icon="fas fa-home"
             route="/home"
+            :active="active"
+        />
+        <NavBarButton
+            label="Stats"
+            icon="fas fa-chart-bar"
+            route="/stats"
             :active="active"
         />
 

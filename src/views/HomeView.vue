@@ -8,10 +8,10 @@ import { supabase } from '../lib/supabase';
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
 import Workout from "../classes/Workout";
-import getWorkouts from '../utils/getWorkouts';
+import WorkoutInfo from "../interfaces/WorkoutInfo";
+import { getWorkoutsInfo } from '../utils/getWorkouts';
 
-
-const workouts = ref<Workout[]>([]);
+const workouts = ref<Array<WorkoutInfo>>([]);
 
 const loading = ref<boolean>(true);
 
@@ -20,7 +20,7 @@ onMounted(async () => {
 });
 
 async function loadWorkouts() {
-    workouts.value = await getWorkouts();
+    workouts.value = await getWorkoutsInfo();
     loading.value = false;
 }
 
