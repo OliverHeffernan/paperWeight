@@ -1,7 +1,6 @@
 <!-- a navbar component, given a prop with the active route -->
 <script setup lang="ts">
 import NavBarButton from './NavBarButton.vue';
-import { defineProps } from 'vue';
 const props = defineProps<{
     active: string;
 }>();
@@ -11,7 +10,7 @@ const props = defineProps<{
         <NavBarButton
             label="Home"
             icon="fas fa-home"
-            route="/home"
+            route="/"
             :active="active"
         />
         <NavBarButton

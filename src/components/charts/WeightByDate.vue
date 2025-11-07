@@ -84,7 +84,6 @@ async function createChart() {
             label: '',
             data: xy_values,
             ...styling,
-            tension: 0.2
         }]
     };
 

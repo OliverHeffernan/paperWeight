@@ -33,7 +33,7 @@ defineEmits<{
     flex-direction: column;
     gap: 15px;
     position: fixed;
-    top: 20px;
+    top: 70px;
     right: 20px;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;

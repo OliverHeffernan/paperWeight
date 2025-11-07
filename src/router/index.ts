@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import SignInView from '../views/SignInView.vue';
 import SignUpView from '../views/SignUpView.vue';
@@ -12,7 +12,7 @@ import ExerciseView from '../views/ExerciseView.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/',
+        path: '/signin',
         name: 'SignIn',
         component: SignInView,
     },
@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
         component: EmailConfirmationView,
     },
     {
-        path: '/home',
+        path: '/',
         name: 'Home',
         component: HomeView,
     },
@@ -61,7 +61,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 });
 

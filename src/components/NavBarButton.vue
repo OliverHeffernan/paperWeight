@@ -1,6 +1,5 @@
 <!-- a navigation bar component, found in Navbar.vue -->
 <script setup lang="ts">
-import { defineProps } from 'vue';
 import { useRouter, RouterLink  } from 'vue-router';
 const router = useRouter();
 const props = defineProps<{
