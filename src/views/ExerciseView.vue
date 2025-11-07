@@ -82,6 +82,7 @@ function deleteExercise() {
     if (!exercise.value) return;
     if (workouts.value.length > 0) {
         errorDisplay.value.setError('Cannot delete exercise', 'This exercise is used in existing workouts and cannot be deleted.');
+        loading.value = false;
         return;
     }
     deletePopup.value = true;
