@@ -9,4 +9,5 @@ export default interface JSONSet {
     unit?: string;
     notes?: string;
     id?: string | null;
+    workout_id?: string | null;
 }

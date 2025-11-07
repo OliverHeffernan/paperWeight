@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { supabase } from '../lib/supabase';
 import Workout from '../classes/Workout';
 import LoadingView from '../views/LoadingView.vue';

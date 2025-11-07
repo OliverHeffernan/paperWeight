@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
-import Workout from '../../classes/Workout';
-import { Histogram, HistogramBinLabels } from '../../utils/Histogram';
-import DataUtils from '../../utils/DataUtils';
-import DateUtils from '../../utils/DateUtils';
-import { styling } from '../../utils/ChartUtils';
-
+import { ref, nextTick, onMounted, watch } from 'vue';
+import Set from '../classes/Set';
 import Chart from 'chart.js/auto';
-import 'chartjs-adapter-date-fns';
-
-const props = defineProps<{
-    workouts: Array<Workout> | null;
-    graphSize?: string;
-    backTimes?: number;
-    binSize?: string;
-    whatGraphed: string;
-}>();
+import { styling } from '../../utils/ChartUtils';
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const chartInstance = ref<Chart | null>(null);
 const isCreatingChart = ref<boolean>(false);
 const chartId = ref<number>(0);
+
+const props = defineProps<{
+    sets: Array<{
+        set: Set,
+        date: Date,
+    }>
+}>();
+
+onMounted(async() => {
+    await nextTick();
+    await createChart();
+});
 
 function destroyChart() {
     if (chartInstance.value) {
@@ -37,7 +36,7 @@ async function createChart() {
     if (!canvasRef.value) {
         return;
     }
-    if (!props.workouts || props.workouts.length === 0) {
+    if (!props.sets || props.sets.length === 0) {
         return;
     }
     if (isCreatingChart.value) {
@@ -68,36 +67,24 @@ async function createChart() {
         return;
     }
 
-    const xy_values = props.workouts.map((workout) => {
+    const xy_values = props.sets.map((object) => {
         return {
-            x: workout.getStartTime(),
-            y: workout.getItem(props.whatGraphed)
+            y: object.set.getWeight(),
+            x: object.date
         }
     });
+
+    xy_values.sort((a, b) => a.x.getTime() - b.x.getTime());
     
     // Get the computed styles of the root element
     const cssVar = getComputedStyle(document.documentElement);
 
-
-    // Store workouts data for tooltip callback to avoid reactivity issues
-    const workoutsData = [...props.workouts];
-
     const data = {
-        labels: HistogramBinLabels(
-            xy_values,
-            props.binSize,
-            props.graphSize,
-            props.backTimes
-        ),
         datasets: [{
-            label: 'My First Dataset',
-            data: Histogram(
-                xy_values,
-                props.binSize || 'day',
-                props.graphSize,
-                props.backTimes
-            ),
-            ...styling
+            label: '',
+            data: xy_values,
+            ...styling,
+            tension: 0.2
         }]
     };
 
@@ -115,7 +102,7 @@ async function createChart() {
 
     // Configuration options
     const config = {
-        type: 'bar',
+        type: 'line',
         data: data,
         options: {
             responsive: true,
@@ -124,38 +111,32 @@ async function createChart() {
                 duration: 0 // Disable animations to prevent race conditions
             },
             plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: true,
-                    text: DataUtils.fullNameForType(props.whatGraphed),
-                    font: font_options_title,
-                    color: cssVar.getPropertyValue('--text'),
-                },
                 tooltip: {
                     enabled: true,
                     mode: 'nearest',
                     intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            return [
-                                DataUtils.stringifyItem(context.parsed.y, props.whatGraphed),
-                            ];
-                        },
-                    },
                     bodyFont: font_options
 
-                }
+                },
+                legend: {
+                    display: false
+                },
             },
             scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        time: {
+                            tooltipFormat: 'MMM YYYY',
+                            unit: 'month',
+                            displayFormats: {
+                                month: 'MMM YYYY'
+                            }
+                        }
+                    }
+                },
                 y: {
-                    ticks: {
-                        maxTicksLimit: 3,
-                        font: font_options
-                    },
-                    position: 'right',
-                    startAtZero: false,
+                    beginAtZero: false,
                 }
             }
         }
@@ -188,32 +169,8 @@ async function createChart() {
     }
 }
 
-function updateChartData() {
-    if (!chartInstance.value || !props.workouts || props.workouts.length === 0) {
-        return;
-    }
-    
-    
-    const xy_values = props.workouts.map((workout) => {
-        return {
-            x: workout.getStartTime(),
-            y: workout.getVolume()
-        }
-    });
-    
-    // Update chart data without triggering Vue reactivity
-    chartInstance.value.data.datasets[0].data = Histogram(xy_values, props.binSize, props.graphSize);
-    chartInstance.value.data.labels = HistogramBinLabels(xy_values, props.binSize, props.graphSize, props.backTimes);
-    chartInstance.value.update('none'); // Use 'none' mode for better performance
-}
 
-onMounted(async () => {
-    await nextTick(); // Ensure DOM is ready
-    createChart();
-});
-
-// Watch for changes in workouts prop and update chart accordingly
-watch(() => props.workouts, async (newWorkouts, oldWorkouts) => {
+watch(() => props.sets, async (newWorkouts, oldWorkouts) => {
     
     // Only update if the array reference actually changed
     if (newWorkouts === oldWorkouts) return;
@@ -241,20 +198,10 @@ watch(() => props.whatGraphed, async (newVal, oldVal) => {
     await nextTick();
     createChart();
 });
-
-onUnmounted(() => {
-    if (chartInstance.value) {
-        chartInstance.value.destroy();
-        chartInstance.value = null;
-    }
-    isCreatingChart.value = false;
-});
-
-
 </script>
 
 <template>
     <div class="softBubble">
-        <canvas ref="canvasRef" id="workoutVolumeChart"></canvas>
+        <canvas ref="canvasRef" id="weightByDateChart"></canvas>
     </div>
 </template>

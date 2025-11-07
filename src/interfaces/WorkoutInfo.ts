@@ -1,3 +1,4 @@
+import { supabase } from '../lib/supabase';
 export default class WorkoutInfo {
     title: string;
     workout_id: string;
@@ -106,5 +107,16 @@ export default class WorkoutInfo {
 
     public countSetsString(): string | null {
         return this.set_count !== null ? `${this.set_count} sets` : null;
+    }
+
+    public async deleteWorkout() {
+        const { error } = await supabase
+            .from('workouts')
+            .delete()
+            .eq('workout_id', this.workout_id);
+
+        if (error) {
+            console.error(`Error deleting workout ID ${this.workout_id}:`, error);
+        }
     }
 }

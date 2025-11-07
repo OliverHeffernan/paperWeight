@@ -98,6 +98,7 @@ export default class Exercise {
 
         this.id = data[0].id;
         this.name = data[0].name;
+        this.workout?.changeMade();
         return this.id;
     }
 
@@ -169,6 +170,10 @@ export default class Exercise {
         this.sets.splice(index, 1);
         removedSet.deleteFromDB();
         if (this.workout) this.workout.changeMade();
+
+        supabase.from('sets')
+            .delete()
+            .eq('id', removedSet.getId());
     }
 
     public removeFromWorkout(): void {
@@ -192,17 +197,21 @@ export default class Exercise {
             throw new Error("Index out of bounds");
         }
         const editingSet: Set = this.sets[index];
-        editingSet.setReps(updatedSet.reps);
-        editingSet.setWeight(updatedSet.weight);
-        editingSet.setNotes(updatedSet.notes);
+        editingSet.setReps(updatedSet.reps || 0);
+        editingSet.setWeight(updatedSet.weight || 0);
+        editingSet.setNotes(updatedSet.notes || "");
         //this.sets[index] = updatedSet;
         if (this.workout) this.workout.changeMade();
     }
 
     // basic setters
-    public setName(name: string): void {
+    public async setName(name: string) {
         this.name = name;
-        this.createNewId();
+        await this.createNewIdIfNeeded();
+        for (const set of this.sets) {
+            set.setExercise(this);
+            await set.updateDB();
+        }
         if (this.workout) this.workout.changeMade();
     }
 
@@ -303,5 +312,4 @@ export default class Exercise {
     public getWorkout(): Workout | null {
         return this.workout;
     }
-
 }

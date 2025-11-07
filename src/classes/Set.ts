@@ -8,6 +8,7 @@ export default class Set {
     private notes: string = "";
     private id: string | null = null;
     private exercise: Exercise | null;
+    private workout_id: string | null = null;
 
     public static async create(object: JSONSet, exercise: Exercise | null): Promise<Set> {
         if (object.id) {
@@ -19,6 +20,7 @@ export default class Set {
             if (error) {
                 throw new Error(`Failed to fetch set from DB: ${error.message}`);
             }
+
             return new Set(data as JSONSet, exercise);
         }
         return new Set(object, exercise);
@@ -30,7 +32,11 @@ export default class Set {
         this.weight = object.weight || 0;
         this.notes = object.notes || "";
         this.id = object.id || null;
-        this.createNewId();
+        this.workout_id = object.workout_id || null;
+        //this.createNewId();
+        if (this.id == null) {
+            this.createNewId();
+        }
     }
 
     public async initialDBCheck(): Promise<void> {
@@ -94,7 +100,7 @@ export default class Set {
         if (this.exercise === null) {
             throw new Error("Cannot create set without associated exercise.");
         }
-        const workoutId: string = await this.exercise.getWorkoutId();
+        const workoutId: string | null = this.getWorkoutId();
         const exerciseId = await this.exercise.getId();
         const { data, error } = await supabase
             .from('sets')
@@ -140,15 +146,6 @@ export default class Set {
 
     // actions
     public deserialize(): JSONSet {
-        /*
-        return {
-            reps: this.reps,
-            weight: this.weight,
-            unit: "kg",
-            notes: this.notes,
-            id: this.id
-        };
-        */
         return {
             id: this.id
         }
@@ -185,5 +182,9 @@ export default class Set {
 
     public getId(): string | null {
         return this.id;
+    }
+
+    public getWorkoutId(): string | null {
+        return this.workout_id;
     }
 }

@@ -20,7 +20,12 @@ const props = defineProps<{
             route="/stats"
             :active="active"
         />
-
+        <NavBarButton
+            label="Exercises"
+            icon="fas fa-dumbbell"
+            route="/exercises"
+            :active="active"
+        />
         <NavBarButton
             label="Upload"
             icon="fas fa-camera"
@@ -41,6 +46,7 @@ const props = defineProps<{
     position: fixed;
     bottom: 0;
     width: 100%;
+    border-top: 1px solid var(--border);
 }
 </style>
 

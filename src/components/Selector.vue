@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, Ref } from 'vue';
 import Option from '../interfaces/Option.ts';
 const props = defineProps<{
     options: Array<Option>;

@@ -7,6 +7,8 @@ import HomeView from '../views/HomeView.vue';
 import UploadView from '../views/UploadView.vue';
 import ViewWorkout from '../views/ViewWorkout.vue';
 import StatsView from '../views/StatsView.vue';
+import ExercisesView from '../views/ExercisesView.vue';
+import ExerciseView from '../views/ExerciseView.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -41,11 +43,21 @@ const routes: Array<RouteRecordRaw> = [
         props: true,
     },
     {
+        path: '/exercise/:exercise_id',
+        name: 'View Exercise',
+        component: ExerciseView,
+        props: true,
+    },
+    {
         path: '/stats',
         name: 'Stats',
         component: StatsView
+    },
+    {
+        path: '/exercises',
+        name: 'Exercises',
+        component: ExercisesView
     }
-
 ];
 
 const router = createRouter({

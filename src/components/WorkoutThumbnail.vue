@@ -83,9 +83,6 @@ async function deleteWorkout() {
     text-decoration: none;
 }
 
-.link {
-    text-decoration: none;
-}
 
 .thumbnail td {
     padding-right: 15px;

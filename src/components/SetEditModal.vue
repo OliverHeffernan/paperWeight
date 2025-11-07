@@ -20,16 +20,6 @@ const emit = defineEmits<{
 }>();
 
 function saveChanges() {
-    /*
-    const updatedSet: JSONSet = {
-        weight: Number(weight.value),
-        reps: Number(reps.value),
-        notes: notes.value,
-        unit: props.set.units || "kg"
-    };
-
-    props.exercise.updateSet(props.index, updatedSet);
-    */
     props.set.setWeight(Number(weight.value));
     props.set.setReps(Number(reps.value));
     props.set.setNotes(notes.value);

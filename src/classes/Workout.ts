@@ -69,7 +69,7 @@ export default class Workout {
 
     // actions
     public async deleteWorkout() {
-        const { data, error } = await supabase.from('workouts').delete().eq('workout_id', this.workout_id);
+        const { error } = await supabase.from('workouts').delete().eq('workout_id', this.workout_id);
         if (error) {
             console.error("Failed to delete workout:", error);
         }
@@ -157,10 +157,24 @@ export default class Workout {
 
         const exerciseNames: Array<string> = [];
 
+        const uniqueExerciseIds: Set<string> = new Set<string>();
+        const uniqueSetIds: Set<string> = new Set<string>();
+
         // deserializing each exercise in the workout.
         for (const exercise of this.exercises) {
-            exercisesArray.push(exercise.deserialize());
+            const deserializedExercise: JSONExercise = exercise.deserialize();
+            exercisesArray.push(deserializedExercise);
             exerciseNames.push(exercise.getName());
+
+            for (const set of deserializedExercise.sets) {
+                const setId: string | null | undefined = set.id;
+                if (!setId) continue;
+                uniqueSetIds.add(setId);
+            }
+
+            const id: string | null = deserializedExercise.id;
+            if (id === null) continue;
+            uniqueExerciseIds.add(id);
         }
 
         return {
@@ -175,7 +189,9 @@ export default class Workout {
             energy: this.energy,
             heart_rate: this.heart_rate,
             volume: this.getVolume(),
-            set_count: this.countSets()
+            set_count: this.countSets(),
+            exercise_ids: Array.from(uniqueExerciseIds),
+            set_ids: Array.from(uniqueSetIds)
         };
     }
 
