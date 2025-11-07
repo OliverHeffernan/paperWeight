@@ -21,8 +21,13 @@ export default class Set {
                 throw new Error(`Failed to fetch set from DB: ${error.message}`);
             }
 
+            console.log(exercise);
             return new Set(data as JSONSet, exercise);
         }
+        if (object.workout_id) {
+            return new Set(object, exercise);
+        }
+        object.workout_id = exercise ? exercise.getWorkout()?.getId() || null : null;
         return new Set(object, exercise);
     }
 
@@ -100,7 +105,7 @@ export default class Set {
         if (this.exercise === null) {
             throw new Error("Cannot create set without associated exercise.");
         }
-        const workoutId: string | null = this.getWorkoutId();
+        const workoutId: string | null = await this.exercise.getWorkoutId();
         const exerciseId = await this.exercise.getId();
         const { data, error } = await supabase
             .from('sets')

@@ -48,7 +48,7 @@ async function getSets() {
 
     const setsArray: Array<Set> = [];
     for (const item of data) {
-        setsArray.push(new Set(item));
+        setsArray.push(await Set.create(item, exercise.value));
     }
 
     for (const set of setsArray) {
