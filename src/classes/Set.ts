@@ -34,7 +34,7 @@ export default class Set {
         this.id = object.id || null;
         this.workout_id = object.workout_id || null;
         //this.createNewId();
-        if (this.id == null) {
+        if (this.id == null || this.id === undefined) {
             this.createNewId();
         }
     }
