@@ -1,10 +1,13 @@
 // imports
+import { useRouter } from 'vue-router';
 import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
 import JSONDate from '../interfaces/JSONDate';
 import { supabase } from '../lib/supabase';
 import DataUtils from '../utils/DataUtils';
+
+const router = useRouter();
 
 /**
  * Class representing a workout session.
@@ -51,6 +54,20 @@ export default class Workout {
         this.exercises = exercises;
     }
 
+    public static async createEmpty(): Promise<{ data: object | null, error: object | null }> {
+        const now = new Date();
+        const { data, error } = await supabase
+            .from('workouts')
+            .insert({
+                title: "New Workout",
+                start_time: now.toISOString(),
+                end_time: now.toISOString(),
+                created_at: now.toISOString(),
+            })
+            .select('workout_id')
+            .single();
+        return { data, error };
+    }
 
     public static async create(object: JSONWorkout): Promise<Workout> {
         const exercises: Array<Exercise> = [];

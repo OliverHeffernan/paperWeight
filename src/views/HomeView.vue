@@ -1,5 +1,6 @@
 <!-- Home page view, shows a list of workout thumbnails -->
 <script setup lang="ts">
+import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from '../views/LoadingView.vue';
 import WorkoutThumbnail from '../components/WorkoutThumbnail.vue';
 import NoWorkouts from '../components/NoWorkouts.vue';
@@ -29,6 +30,12 @@ async function loadWorkouts() {
     <LoadingView v-if="loading" />
     <div class="viewArea">
         <div class="thumbnailContainer margins">
+            <BubbleButton
+                @click="Workout.createEmpty()"
+            >
+                <i class="fa-solid fa-plus"></i>
+                New Empty Workout
+            </BubbleButton>
             <WorkoutThumbnail
                 v-for="workout in workouts"
                 :key="workout.getId()"
