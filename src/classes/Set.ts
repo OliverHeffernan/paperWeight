@@ -18,7 +18,8 @@ export default class Set {
                 .eq('id', object.id)
                 .single();
             if (error) {
-                throw new Error(`Failed to fetch set from DB: ${error.message}`);
+                object.id = null;
+                return new Set(object, exercise);
             }
 
             console.log(exercise);
@@ -106,7 +107,7 @@ export default class Set {
             throw new Error("Cannot create set without associated exercise.");
         }
         const workoutId: string | null = await this.exercise.getWorkoutId();
-        const exerciseId = await this.exercise.getId();
+        const exerciseId = await this.exercise.createNewIdIfNeeded();
         const { data, error } = await supabase
             .from('sets')
             .insert({
@@ -137,7 +138,7 @@ export default class Set {
                 reps: this.reps,
                 weight: this.weight,
                 notes: this.notes,
-                exercise_id: this.exercise ? await this.exercise.getId() : ""
+                exercise_id: this.exercise ? await this.exercise.createNewIdIfNeeded() : ""
             })
             .eq('id', this.id);
 
@@ -183,6 +184,8 @@ export default class Set {
 
     public setExercise(exercise: Exercise): void {
         this.exercise = exercise;
+        this.workout_id = exercise.getWorkout()?.getId() || null;
+        this.updateDB();
     }
 
     public getId(): string | null {

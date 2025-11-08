@@ -35,7 +35,8 @@ onMounted(async () => {
                 { label: 'best weight', value: 'weight' },
                 { label: 'best volume', value: 'volume' },
                 { label: 'count workouts', value: 'workouts' },
-                { label: 'count sets', value: 'sets' }
+                { label: 'count sets', value: 'sets' },
+                { label: 'sets/workout avg', value: 'setsPerWorkout' }
             ]"
             @select="whichPR = $event"
         />

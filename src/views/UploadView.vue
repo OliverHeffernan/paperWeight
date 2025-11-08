@@ -5,6 +5,7 @@ import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
 import UploadComponent from '../components/UploadComponent.vue';
 import JSONWorkout from '../interfaces/JSONWorkout';
+import Workout from '../classes/Workout';
 import ErrorPopup from '../components/ErrorPopup.vue';
 import ErrorDisplay from '../classes/ErrorDisplay';
 
@@ -218,6 +219,7 @@ async function uploadWorkoutData(workoutData: object): object | null {
     }
     */
     const workout = await Workout.create(workoutData);
+    console.log("Created workout object: ", workout);
     loading.value--;
     if (!workout) {
         errorDisplay.value.setError("Error creating workout object", "Please try again by clicking the upload button again.");

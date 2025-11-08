@@ -48,6 +48,13 @@ onMounted(async() => {
         <td class="number" v-if="whichPR === 'sets'">
             {{ setCount !== null ? setCount : '' }}
         </td>
+        <td class="number" v-if="whichPR === 'setsPerWorkout'">
+            {{
+                workoutCount && workoutCount > 0 && setCount !== null
+                    ? (setCount / workoutCount).toFixed(2)
+                    : ''
+            }}
+        </td>
     </tr>
 </template>
 

@@ -74,7 +74,7 @@ export default class Exercise {
         }
 
         if (data === null || data.length === 0) {
-            return await this.createNewId();
+            return await this.createNewIdIfNeeded();
         }
 
         this.id = data[0].id;
@@ -86,11 +86,12 @@ export default class Exercise {
         const { data, error } = await supabase
             .from('exercises')
             .select()
-            .eq('name', this.name);
+            .eq('name', this.name.toLowerCase());
 
         if (error) {
             throw new Error(`Failed to fetch exercise ID: ${error.message}`);
         }
+        console.log(data);
 
         if (data === null || data.length === 0) {
             return await this.createNewId();
@@ -103,17 +104,18 @@ export default class Exercise {
     }
 
     public async createNewId(): Promise<string | null> {
+        const { data: {user} } = await supabase.auth.getUser();
 
         const { data, error } = await supabase
             .from('exercises')
             .insert([{
-                name: this.name.toLowerCase()
-
+                name: this.name.toLowerCase(),
             }])
             .select('id')
             .single();
 
         if (error) {
+            console.error(error);
             throw new Error(`Failed to create new exercise ID: ${error.message}`);
         }
 
@@ -217,6 +219,9 @@ export default class Exercise {
 
     public setWorkout(workout: Workout): void {
         this.workout = workout;
+        for (const set of this.sets) {
+            set.setExercise(this);
+        }
     }
 
     public setNotes(notes: string): void {

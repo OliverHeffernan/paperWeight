@@ -2,6 +2,7 @@
 import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
+import JSONDate from '../interfaces/JSONDate';
 import { supabase } from '../lib/supabase';
 import DataUtils from '../utils/DataUtils';
 
@@ -39,9 +40,9 @@ export default class Workout {
     public constructor(object: JSONWorkout, exercises: Array<Exercise>) {
         this.title = object.title;
         this.workout_id = object.workout_id;
-        this.start_time = new Date(object.start_time);
-        this.end_time = new Date(object.end_time);
-        this.created_at = new Date(object.created_at);
+        this.start_time = object.start_time ? new Date(object.start_time) : new Date();
+        this.end_time = object.end_time ? new Date(object.end_time): new Date();
+        this.created_at = object.created_at ? new Date(object.created_at) : new Date();
         this.notes = object.notes;
 
         this.energy = object.energy;
@@ -50,12 +51,33 @@ export default class Workout {
         this.exercises = exercises;
     }
 
+
     public static async create(object: JSONWorkout): Promise<Workout> {
         const exercises: Array<Exercise> = [];
         for (const exerciseObject of object.exercises_full) {
             const exercise = await Exercise.create(exerciseObject, null); // Temporary null, will set workout later
             exercises.push(exercise);
         }
+
+        if (object.startTime) {
+            const startTime = Workout.dateFromJSONDate(object.startTime);
+            object.start_time = startTime.toISOString();
+        }
+
+        if (object.endTime) {
+            const endTime = Workout.dateFromJSONDate(object.endTime);
+            object.end_time = endTime.toISOString();
+        }
+
+        if (!object.start_time) {
+            object.start_time = new Date().toISOString();
+        }
+
+        if (!object.end_time) {
+            object.end_time = object.start_time;
+        }
+
+        console.log(object);
 
         const workout = new Workout(object, exercises);
 
@@ -79,6 +101,9 @@ export default class Workout {
         }
 
         workout.workout_id = data.workout_id;
+        for (const exercise of workout.exercises) {
+            exercise.setWorkout(workout);
+        }
 
         return workout;
     }
@@ -376,5 +401,69 @@ export default class Workout {
             case "volume": return this.getVolume();
             default: throw new Error(`Unknown item: ${item}`);
         }
+    }
+    public static dateFromJSONDate(jsonDate: JSONDate): Date {
+        const now = new Date();
+
+        // Validate and sanitize year (reasonable range: 1900-2100)
+        let year = now.getFullYear();
+        if (jsonDate.year !== null && jsonDate.year !== undefined &&
+            typeof jsonDate.year === 'number' &&
+            jsonDate.year >= 1900 && jsonDate.year <= 2100) {
+            year = Math.floor(jsonDate.year);
+        }
+
+        // Validate and sanitize month (1-12)
+        let month = now.getMonth();
+        if (jsonDate.month !== null && jsonDate.month !== undefined &&
+            typeof jsonDate.month === 'number' &&
+            jsonDate.month >= 1 && jsonDate.month <= 12) {
+            month = Math.floor(jsonDate.month) - 1; // Convert to 0-based
+        }
+
+        // Validate and sanitize hour (0-23)
+        let hour = now.getHours();
+        if (jsonDate.hour !== null && jsonDate.hour !== undefined &&
+            typeof jsonDate.hour === 'number' &&
+            jsonDate.hour >= 0 && jsonDate.hour <= 23) {
+            hour = Math.floor(jsonDate.hour);
+        }
+
+        // Validate and sanitize minute (0-59)
+        let minute = now.getMinutes();
+        if (jsonDate.minute !== null && jsonDate.minute !== undefined &&
+            typeof jsonDate.minute === 'number' &&
+            jsonDate.minute >= 0 && jsonDate.minute <= 59) {
+            minute = Math.floor(jsonDate.minute);
+        }
+
+        // Validate and sanitize day (more complex - depends on month/year)
+        let day = now.getDate();
+        if (jsonDate.day !== null && jsonDate.day !== undefined &&
+            typeof jsonDate.day === 'number' && jsonDate.day >= 1) {
+
+            // Get the maximum valid day for the given month/year
+            const tempDate = new Date(year, month + 1, 0); // Last day of the month
+            const maxDaysInMonth = tempDate.getDate();
+
+            if (jsonDate.day <= maxDaysInMonth) {
+                day = Math.floor(jsonDate.day);
+            }
+            // If day is invalid (e.g., Feb 30), keep current day or use last valid day
+            else {
+                day = Math.min(day, maxDaysInMonth);
+            }
+        }
+
+        // Create the date with validated components
+        const date = new Date(year, month, day, hour, minute, 0, 0);
+
+        // Final safety check - if somehow the date is still invalid, return current time
+        if (isNaN(date.getTime())) {
+            console.warn('Failed to create valid date from JSONDate:', jsonDate, 'Using current time instead');
+            return new Date();
+        }
+
+        return date;
     }
 }
