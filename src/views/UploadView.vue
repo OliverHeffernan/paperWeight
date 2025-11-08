@@ -219,7 +219,6 @@ async function uploadWorkoutData(workoutData: object): object | null {
     }
     */
     const workout = await Workout.create(workoutData);
-    console.log("Created workout object: ", workout);
     loading.value--;
     if (!workout) {
         errorDisplay.value.setError("Error creating workout object", "Please try again by clicking the upload button again.");

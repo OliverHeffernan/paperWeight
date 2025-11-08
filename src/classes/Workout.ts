@@ -77,7 +77,6 @@ export default class Workout {
             object.end_time = object.start_time;
         }
 
-        console.log(object);
 
         const workout = new Workout(object, exercises);
 

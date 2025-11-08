@@ -91,7 +91,6 @@ export default class Exercise {
         if (error) {
             throw new Error(`Failed to fetch exercise ID: ${error.message}`);
         }
-        console.log(data);
 
         if (data === null || data.length === 0) {
             return await this.createNewId();

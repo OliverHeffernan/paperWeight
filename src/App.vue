@@ -58,6 +58,8 @@ checkUser();
     --goodBorder: #00ED9E;
     --errorBG: #3C1C2A;
     --gold: #FFD700;
+    --accent: rgb(75, 192, 192);
+    --accentTransparent: rgba(75, 192, 192, 0.2);
 }
 
 .backBar {

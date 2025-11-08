@@ -1,7 +1,10 @@
+const cssVar = getComputedStyle(document.documentElement);
 export const styling = {
-    borderColor: 'rgb(75, 192, 192)',
-    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+    borderColor: cssVar.getPropertyValue('--accent'),
+    backgroundColor: cssVar.getPropertyValue('--accentTransparent'),
     borderWidth: 2,
     borderRadius: 10,
+    pointRadius: 5,
+    pointHoverRadius: 10,
 };
 

@@ -3,6 +3,7 @@ import { ref, onMounted, Ref } from 'vue';
 import Option from '../interfaces/Option.ts';
 const props = defineProps<{
     options: Array<Option>;
+    colorSwap?: boolean;
 }>();
 
 //const emit = defineEmits(props.options.map(option => option.value));
@@ -23,14 +24,18 @@ onMounted(() => {
 </script>
 <template>
     <div class="container">
-        <div class="selector">
+        <div
+            class="selector"
+            :class="{ 'colorSwap': colorSwap }"
+        >
             <div
                 v-for="option in options"
                 :key="option.value"
                 :class="{
                     selectorOption: true,
                     clickable: true,
-                    selected: option.value === value
+                    selected: option.value === value,
+                    colorSwap: colorSwap
                 }"
                 @click="value = option.value; $emit('select', option.value)"
             >
@@ -55,6 +60,10 @@ onMounted(() => {
     border-radius: 30px;
 }
 
+.selector.colorSwap {
+    background-color: var(--prim);
+}
+
 .selectorOption {
     padding: 8px 12px;
     border-radius: 30px;
@@ -63,5 +72,9 @@ onMounted(() => {
 
 .selected {
     background-color: var(--prim);
+}
+
+.selected.colorSwap {
+    background-color: var(--sec);
 }
 </style>

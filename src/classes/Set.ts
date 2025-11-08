@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import JSONSet from "../interfaces/JSONSet";
+import Workout from "./Workout";
 import Exercise from "./Exercise";
 
 export default class Set {
@@ -22,7 +23,6 @@ export default class Set {
                 return new Set(object, exercise);
             }
 
-            console.log(exercise);
             return new Set(data as JSONSet, exercise);
         }
         if (object.workout_id) {
@@ -194,5 +194,9 @@ export default class Set {
 
     public getWorkoutId(): string | null {
         return this.workout_id;
+    }
+
+    public getVolume(): number {
+        return this.reps * this.weight;
     }
 }

@@ -2,12 +2,22 @@
 import { ref, nextTick, onMounted, watch } from 'vue';
 import Set from '../classes/Set';
 import Chart from 'chart.js/auto';
+import chartTrendline from 'chartjs-plugin-trendline';
 import { styling } from '../../utils/ChartUtils';
+import Selector from '../Selector.vue';
+import Option from '../../interfaces/Option';
+import GraphToolTip from '../GraphToolTip.vue';
+
+const whatGraphed = ref<string>('weight');
+
+Chart.register(chartTrendline);
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const chartInstance = ref<Chart | null>(null);
 const isCreatingChart = ref<boolean>(false);
 const chartId = ref<number>(0);
+const toolTipText = ref<Array<string> | null>(null);
+const toolTipSet = ref<Set | null>(null);
 
 const props = defineProps<{
     sets: Array<{
@@ -24,6 +34,7 @@ onMounted(async() => {
 function destroyChart() {
     if (chartInstance.value) {
         try {
+            chartInstance.value.tooltip.setActiveElements([], {x: 0, y: 0});
             chartInstance.value.destroy();
         } catch (error) {
             console.warn('Error destroying chart:', error);
@@ -51,6 +62,7 @@ async function createChart() {
     
     // Destroy existing chart instance if it exists
     destroyChart();
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     // Wait a frame to ensure the canvas is ready
     await nextTick();
@@ -69,8 +81,10 @@ async function createChart() {
 
     const xy_values = props.sets.map((object) => {
         return {
-            y: object.set.getWeight(),
-            x: object.date
+            y: whatGraphed.value === "volume" ? object.set.getVolume() : object.set.getWeight(),
+            x: object.date,
+            set: object.set,
+            graphed: whatGraphed.value
         }
     });
 
@@ -84,6 +98,12 @@ async function createChart() {
             label: '',
             data: xy_values,
             ...styling,
+            trendlineExponential: {
+                colorMin: cssVar.getPropertyValue('--accentTransparent'),
+                colorMax: cssVar.getPropertyValue('--accentTransparent'),
+                lineStyle: "solid",
+                width: 2,
+            }
         }]
     };
 
@@ -96,12 +116,12 @@ async function createChart() {
         family: 'Avenir',
         size: 20,
         weight: '900',
-        color: '#FFFFFF'
+        color: cssVar.getPropertyValue('--text')
     };
 
     // Configuration options
     const config = {
-        type: 'line',
+        type: 'scatter',
         data: data,
         options: {
             responsive: true,
@@ -112,30 +132,66 @@ async function createChart() {
             plugins: {
                 tooltip: {
                     enabled: true,
-                    mode: 'nearest',
                     intersect: false,
-                    bodyFont: font_options
+                    bodyFont: font_options,
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    titleColor: 'rgba(0,0,0,0)',
+                    bodyColor: 'rgba(0,0,0,0)',
+                    footerColor: 'rgba(0,0,0,0)',
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context: any) {
+                            if (!context.parsed) return '';
+                            const set: Set = context.raw.set as Set;
+                            toolTipSet.value = set;
+                            if (context.raw.graphed === 'volume') {
+                                const date = new Date(context.parsed.x);
+                                const volume = context.parsed.y;
 
+                                toolTipText.value = [
+                                    `${volume} kgs`,
+                                    `${set.getReps()} x ${set.getWeight()} kgs`,
+                                    `${date.toLocaleDateString()}`,
+                                    "click to view the workout"
+                                ];
+                                return;
+                            }
+                            const date = new Date(context.parsed.x);
+                            const weight = context.parsed.y;
+                            toolTipText.value = [
+                                `${date.toLocaleDateString()}: ${weight} kgs`,
+                                "click to view the workout"
+                            ];
+                        }
+                    }
                 },
                 legend: {
-                    display: false
+                    display: false,
                 },
             },
             scales: {
                 x: {
                     type: 'time',
                     time: {
-                        time: {
-                            tooltipFormat: 'MMM YYYY',
-                            unit: 'month',
-                            displayFormats: {
-                                month: 'MMM YYYY'
-                            }
+                        tooltipFormat: 'd MMM yyyy',
+                        unit: 'day',
+                        displayFormats: {
+                            month: 'MMM yyyy',
+                            day: 'MMM d',
+                            hour: 'MMM d'
                         }
+                    },
+                    ticks: {
+                        font: font_options,
+                        maxTicksLimit: 5,
                     }
                 },
                 y: {
                     beginAtZero: false,
+                    ticks: {
+                        font: font_options,
+                        maxTicksLimit: 5,
+                    }
                 }
             }
         }
@@ -193,14 +249,30 @@ watch(() => props.sets, async (newWorkouts, oldWorkouts) => {
     immediate: false // Don't run immediately since onMounted handles initial creation
 });
 
-watch(() => props.whatGraphed, async (newVal, oldVal) => {
+watch(() => whatGraphed.value, async (newVal, oldVal) => {
     await nextTick();
     createChart();
 });
 </script>
 
 <template>
+    <GraphToolTip
+        :content="toolTipText"
+        :set="toolTipSet"
+    />
     <div class="softBubble">
+        <Selector
+            :options="[
+                { label: 'Weight', value: 'weight' },
+                { label: 'Volume', value: 'volume' }
+            ]"
+            colorSwap
+            @select="whatGraphed = $event as string"
+        />
         <canvas ref="canvasRef" id="weightByDateChart"></canvas>
     </div>
 </template>
+
+<style scoped>
+
+</style>
