@@ -159,6 +159,7 @@ export default class Workout {
         if (index < 0 || index >= this.exercises.length) {
             throw new Error("Index out of bounds");
         }
+        this.exercises[index].removeAllSets();
         this.exercises.splice(index, 1);
         this.changeMade();
     }

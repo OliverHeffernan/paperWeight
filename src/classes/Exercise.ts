@@ -177,12 +177,19 @@ export default class Exercise {
             .eq('id', removedSet.getId());
     }
 
+    public removeAllSets(): void {
+        for (let i = 0; i < this.sets.length; i++) {
+            this.removeSet(0);
+        }
+    }
+
     public removeFromWorkout(): void {
         if (!this.workout) return;
         const exerciseIndex: number = this.workout.getExercises().indexOf(this);
         if (exerciseIndex === -1) {
             throw new Error("Exercise not found in workout");
         }
+        this.workout.removeExercise(exerciseIndex);
     }
 
     /**
