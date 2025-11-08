@@ -127,6 +127,9 @@ export default class Workout {
     // actions
     public async deleteWorkout() {
         const { error } = await supabase.from('workouts').delete().eq('workout_id', this.workout_id);
+        for (const exercise of this.exercises) {
+            exercise.removeAllSets();
+        }
         if (error) {
             console.error("Failed to delete workout:", error);
         }
