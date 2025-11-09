@@ -3,9 +3,12 @@
 <script setup lang="ts">
 import Workout from "../classes/Workout";
 import OverviewItem from '../components/OverviewItem.vue';
-defineProps<{
+import { ref, watch } from "vue";
+const pbs = ref<number>(0);
+const props = defineProps<{
     workout: Workout;
 }>();
+
 </script>
 <template>
     <div class="softBubble overview">

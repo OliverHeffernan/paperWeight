@@ -3,12 +3,43 @@ import JSONSet from "../interfaces/JSONSet";
 import Set from "../classes/Set";
 import Exercise from "../classes/Exercise";
 import SetEditModal from "./SetEditModal.vue";
-import { ref } from "vue";
-defineProps<{
+import { ref, onMounted } from "vue";
+const props = defineProps<{
     set: Set;
+    previousSet: Set | null;
     index: number;
     exercise: Exercise;
+    weightPbSets: Array<string>;
 }>();
+
+const previousSetId = ref<string>("");
+const setId = ref<string>("");
+
+onMounted(async() => {
+    setId.value = await props.set.getId();
+    if (props.previousSet) {
+        previousSetId.value = await props.previousSet.getId();
+    }
+    console.log(`Set ID: ${setId.value}`);
+    console.log(props.weightPbSets);
+    if (props.weightPbSets.includes(setId.value)) {
+        console.log(`Set ${setId.value} is a weight PB`);
+    }
+});
+
+function isWeightPB(): boolean {
+    if (!props.previousSet) {
+        return props.weightPbSets.includes(setId.value);
+    }
+    const prevWeight = props.previousSet.getWeight();
+    const currWeight = props.set.getWeight();
+
+    if (prevWeight !== currWeight) {
+        return props.weightPbSets.includes(setId.value);
+    }
+    return props.weightPbSets.includes(setId.value)
+        && !props.weightPbSets.includes(previousSetId.value);
+}
 
 const editing = ref<boolean>(false);
 </script>
@@ -26,6 +57,8 @@ const editing = ref<boolean>(false);
             <span v-if="set.getWeight() !== null"> {{ set.getWeight() }} kg <i class="fa-solid fa-xmark"></i></span>
             {{ set.getReps() }} reps
             <i class="fa-solid fa-note-sticky noteIcon" v-if="set.getNotes() !== '' && set.getNotes() !== null" ></i>
+
+            <i class="fa-solid fa-medal" v-if="isWeightPB()"></i>
         </td>
     </tr>
 </template>
@@ -48,5 +81,9 @@ td {
 
 .noteIcon {
     float: right;
+}
+
+.fa-medal {
+    color: var(--gold);
 }
 </style>

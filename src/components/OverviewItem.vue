@@ -8,7 +8,7 @@ defineProps<{
 }>();
 </script>
 <template>
-    <div v-if="value" class="overview-item">
+    <div v-if="value !== null" class="overview-item">
         <p class="overview-title">{{ label }}</p>
         <h1 class="overview-value"><i :class="icon + ' overview-icon'"></i>{{ value }}</h1>
     </div>

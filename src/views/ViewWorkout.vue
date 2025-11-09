@@ -17,6 +17,7 @@ const props = defineProps(['workout_id']);
 const workout = ref<Workout | null>(null);
 const showSets = ref<boolean>(true);
 const loading = ref<boolean>(true);
+const weightPbSets = ref<Array<string>>([]);
 
 const editingDetails = ref<boolean>(false);
 
@@ -43,6 +44,17 @@ onMounted(async () => {
 
     workout.value = await Workout.create(data);
     loading.value = false;
+
+    const weightPbsRequest = await supabase
+        .rpc('get_weight_pbs', { pb_exercise_ids: await workout.value.getExerciseIds() });
+    if (weightPbsRequest.error) {
+        console.error('Error fetching weight PBs:', weightPbsRequest.error);
+        return;
+    }
+    console.log(weightPbsRequest.data);
+    if (weightPbsRequest.data && Array.isArray(weightPbsRequest.data)) {
+        weightPbSets.value = weightPbsRequest.data.map((item: any) => item.id);
+    }
 });
 
 </script>
@@ -76,6 +88,7 @@ onMounted(async () => {
                 :exercise="exercise"
                 :showSets="showSets"
                 :index="index"
+                :weightPbSets="weightPbSets"
             />
             <SavingDisplay :workout="workout" />
             <BubbleButton

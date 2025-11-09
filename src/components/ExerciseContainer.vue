@@ -1,5 +1,4 @@
 <!-- A component to display an exercise, given the exercise object. -->
-
 <script setup lang="ts">
 import Exercise from "../classes/Exercise";
 import SetContainer from "./SetContainer.vue";
@@ -11,6 +10,7 @@ const props = defineProps<{
     exercise: Exercise;
     showSets: boolean;
     index: number;
+    weightPbSets: Array<string>;
 }>();
 </script>
 <template>
@@ -43,7 +43,9 @@ const props = defineProps<{
                     :key="index"
                     :index="index"
                     :set="set"
+                    :previousSet="index > 0 ? exercise.getSets()[index - 1] : null"
                     :exercise="exercise"
+                    :weightPbSets="weightPbSets"
                 />
                 <tr>
                     <td colspan="2"><button @click="exercise.addNewSet()" class="borderlessButton"><i class="fa-solid fa-plus"></i>Add set</button></td>

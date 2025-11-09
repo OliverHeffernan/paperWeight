@@ -323,4 +323,14 @@ export default class Exercise {
     public getWorkout(): Workout | null {
         return this.workout;
     }
+
+    public countPBSets(): number {
+        let count: number = 0;
+        for (const set of this.sets) {
+            if (set.isItWeightPB()) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

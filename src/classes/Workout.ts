@@ -252,7 +252,8 @@ export default class Workout {
             volume: this.getVolume(),
             set_count: this.countSets(),
             exercise_ids: Array.from(uniqueExerciseIds),
-            set_ids: Array.from(uniqueSetIds)
+            set_ids: Array.from(uniqueSetIds),
+            count_pbs: this.countPBSets(),
         };
     }
 
@@ -485,5 +486,24 @@ export default class Workout {
         }
 
         return date;
+    }
+
+    public async getExerciseIds(): Promise<Array<string>> {
+        const ids: Array<string> = [];
+        for (const exercise of this.exercises) {
+            const id: string | null = await exercise.getId();
+            if (id !== null) {
+                ids.push(id);
+            }
+        }
+        return ids;
+    }
+
+    public countPBSets(): number {
+        let count: number = 0;
+        for (const exercise of this.exercises) {
+            count += exercise.countPBSets();
+        }
+        return count;
     }
 }

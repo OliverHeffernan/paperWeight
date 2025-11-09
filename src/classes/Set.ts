@@ -10,6 +10,7 @@ export default class Set {
     private id: string | null = null;
     private exercise: Exercise | null;
     private workout_id: string | null = null;
+    private isWeightPB: boolean = false;
 
     public static async create(object: JSONSet, exercise: Exercise | null): Promise<Set> {
         if (object.id) {
@@ -180,6 +181,14 @@ export default class Set {
 
     public setNotes(notes: string): void {
         this.notes = notes;
+    }
+
+    public setWeightPB(): void {
+        this.isWeightPB = true;
+    }
+
+    public isItWeightPB(): boolean {
+        return this.isWeightPB;
     }
 
     public setExercise(exercise: Exercise): void {

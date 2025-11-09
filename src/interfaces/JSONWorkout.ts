@@ -20,6 +20,8 @@ export default interface JSONWorkout {
     heart_rate: number | null;
     volume: number | null;
     set_count: number | null;
-    exercise_ids?: Array<string>
-    set_ids?: Array<string>
+    exercise_ids?: Array<string>;
+    set_ids?: Array<string>;
+    count_pbs?: number;
+
 }
