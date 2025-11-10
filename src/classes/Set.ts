@@ -139,7 +139,7 @@ export default class Set {
                 reps: this.reps,
                 weight: this.weight,
                 notes: this.notes,
-                exercise_id: this.exercise ? await this.exercise.createNewIdIfNeeded() : ""
+                exercise_id: this.exercise ? await this.exercise.getId() : ""
             })
             .eq('id', this.id);
 
