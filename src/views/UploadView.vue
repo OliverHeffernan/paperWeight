@@ -302,14 +302,4 @@ async function getWorkoutData(imgURLs): object {
     display: none;
 }
 
-#urlsCount {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 16px;
-}
 </style>

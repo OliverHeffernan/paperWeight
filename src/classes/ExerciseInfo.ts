@@ -100,6 +100,12 @@ export default class ExerciseInfo {
             .delete()
             .eq('id', this.id);
 
+        // remove any remaining unreferenced sets
+        supabase
+            .from('sets')
+            .delete()
+            .eq('exercise_id', this.id);
+
         if (error) {
             console.error(`Error deleting exercise ID ${this.id}:`, error);
             return false;
