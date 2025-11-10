@@ -1,20 +1,18 @@
 // imports
-import { useRouter } from 'vue-router';
 import Exercise from './Exercise';
 import JSONWorkout from '../interfaces/JSONWorkout';
 import JSONExercise from '../interfaces/JSONExercise';
 import JSONDate from '../interfaces/JSONDate';
 import { supabase } from '../lib/supabase';
 import DataUtils from '../utils/DataUtils';
-
-const router = useRouter();
+import WorkoutInfoFunctions from '../interfaces/WorkoutInfoFunctions';
 
 /**
  * Class representing a workout session.
  * Stores details about the workout including exercises, duration, and other metrics.
  * Provides methods to retrieve and manipulate workout data.
  */
-export default class Workout {
+export default class Workout implements WorkoutInfoFunctions {
     // unique identifier for the workout. Key in the database.
     private workout_id: string;
     // title of the workout.
@@ -374,9 +372,9 @@ export default class Workout {
     /**
      * Retrieves the duration of the workout as a formatted string.
      */
-    public getDurationString(): string|null {
+    public getDurationString(): string {
         const totalSeconds = this.getDuration();
-        if (totalSeconds <= 0) return null;
+        if (totalSeconds <= 0) return '0s';
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = Math.floor(totalSeconds % 60);

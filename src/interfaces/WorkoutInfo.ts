@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
-export default class WorkoutInfo {
+import WorkoutInfoFunctions from '../interfaces/WorkoutInfoFunctions';
+export default class WorkoutInfo implements WorkoutInfoFunctions {
     title: string;
     workout_id: string;
     start_time: string;
@@ -89,8 +90,8 @@ export default class WorkoutInfo {
         return this.heart_rate !== null ? `${this.heart_rate} bpm` : null;
     }
 
-    public getVolume(): number | null {
-        return this.volume;
+    public getVolume(): number {
+        return this.volume || 0;
     }
 
     public getVolumeString(): string | null {
@@ -99,6 +100,16 @@ export default class WorkoutInfo {
 
     public getId(): string {
         return this.workout_id;
+    }
+
+    public getItem(item: string): any {
+        switch (item) {
+            case "workouts": return 1;
+            case "time": return this.getDuration();
+            case "energy": return this.getEnergy();
+            case "volume": return this.getVolume();
+            default: throw new Error(`Unknown item: ${item}`);
+        }
     }
 
     public countSets(): number | null {

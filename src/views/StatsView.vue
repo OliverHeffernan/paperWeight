@@ -5,16 +5,17 @@ import WorkoutVolumeByWorkout from '../components/charts/WorkoutVolumeByWorkout.
 import DashboardStatBubble from '../components/DashboardStatBubble.vue';
 import Workout from '../classes/Workout';
 import { supabase } from '../lib/supabase';
-import getWorkouts from '../utils/getWorkouts';
+import { getWorkoutsInfo } from '../utils/getWorkouts';
 import DateUtils from '../utils/DateUtils';
 import WorkoutArrayUtils from '../utils/WorkoutArrayUtils';
 import ErrorPopup from '../components/ErrorPopup.vue';
 import ErrorDisplay from '../classes/ErrorDisplay';
+import WorkoutInfo from '../interfaces/WorkoutInfo';
 
 import { ref, onMounted } from 'vue';
-let workouts: Array<Workout> = [];
-const workoutsRef = ref<Array<Workout>>([]);
-const prevWorkoutsRef = ref<Array<Workout>>([]);
+let workouts: Array<WorkoutInfo> = [];
+const workoutsRef = ref<Array<WorkoutInfo>>([]);
+const prevWorkoutsRef = ref<Array<WorkoutInfo>>([]);
 const isLoading = ref<boolean>(true);
 const graphSize = ref<string>('week');
 const whatGraphed = ref<string>('volume');
@@ -50,7 +51,7 @@ async function updateWorkouts(timeframe: string) {
 
     const startPrevious = DateUtils.getStartOfPrevious(start, timeframe);
 
-    const workoutsFiltered: Array<Workout> = [];
+    const workoutsFiltered: Array<WorkoutInfo> = [];
     prevWorkoutsRef.value = [];
 
     for (const workout of workouts) {
@@ -70,7 +71,7 @@ async function updateWorkouts(timeframe: string) {
 
 onMounted(async () => {
     try {
-        workouts = await getWorkouts();
+        workouts = await getWorkoutsInfo();
         await updateWorkouts('week');
         isLoading.value = false;
     } catch (error) {

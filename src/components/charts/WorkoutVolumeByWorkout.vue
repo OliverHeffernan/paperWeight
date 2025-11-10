@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, nextTick, onUnmounted } from 'vue';
 import Workout from '../../classes/Workout';
+import WorkoutInfoFunctions from '../../interfaces/WorkoutInfoFunctions';
 import { Histogram, HistogramBinLabels } from '../../utils/Histogram';
 import DataUtils from '../../utils/DataUtils';
 import DateUtils from '../../utils/DateUtils';
@@ -10,7 +11,7 @@ import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 
 const props = defineProps<{
-    workouts: Array<Workout> | null;
+    workouts: Array<WorkoutInfoFunctions> | null;
     graphSize?: string;
     backTimes?: number;
     binSize?: string;
