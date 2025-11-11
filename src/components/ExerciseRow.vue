@@ -30,7 +30,8 @@ onMounted(async() => {
 </script>
 <template>
     <LoadingView v-if="loading" />
-    <tr class="exerciseRow clickable" @click="router.push(`/exercise/${exercise.getId()}`)">
+    <!--<tr class="exerciseRow clickable" @click="router.push(`/exercise/${exercise.getId()}`)">-->
+    <tr class="exerciseRow clickable" @click="router.push({ name: 'View Exercise', params: { exercise_id: exercise.getId() } })">
         <td>
             {{ exercise.name }}
         </td>

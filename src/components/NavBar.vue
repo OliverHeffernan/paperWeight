@@ -10,25 +10,25 @@ const props = defineProps<{
         <NavBarButton
             label="Home"
             icon="fas fa-home"
-            route="/"
+            route="/app"
             :active="active"
         />
         <NavBarButton
             label="Stats"
             icon="fas fa-chart-bar"
-            route="/stats"
+            route="/app/stats"
             :active="active"
         />
         <NavBarButton
             label="Exercises"
             icon="fas fa-dumbbell"
-            route="/exercises"
+            route="/app/exercises"
             :active="active"
         />
         <NavBarButton
             label="Upload"
             icon="fas fa-camera"
-            route="/upload"
+            route="/app/upload"
             :active="active"
         />
     </nav>
