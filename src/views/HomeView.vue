@@ -13,10 +13,15 @@ import WorkoutInfo from "../interfaces/WorkoutInfo";
 import { getWorkoutsInfo } from '../utils/getWorkouts';
 
 const workouts = ref<Array<WorkoutInfo>>([]);
+const router = useRouter();
 
 const loading = ref<boolean>(true);
 
 onMounted(async () => {
+    if (!await supabase.auth.getUser()) {
+        router.push({ name: "Sign In" });
+        return;
+    }
     await loadWorkouts();
 });
 

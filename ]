@@ -67,4 +67,16 @@ const router = createRouter({
     routes,
 });
 
+router.beforeEach(async (to, from, next) => {
+    const publicRoutes = ['Sign In', 'Sign Up', 'Email Confirmation'];
+    if (!publicRoutes.includes(to.name as string) && from.name !== to.name) {
+        next();
+        return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) next({ name: 'Sign In' });
+    else next();
+});
+
 export default router;

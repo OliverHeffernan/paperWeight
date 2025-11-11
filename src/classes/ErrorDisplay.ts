@@ -20,7 +20,7 @@ export default class ErrorDisplay {
         this.message = "";
         this.display = false;
     }
-    
+
     public getTitle(): string {
         return this.title;
     }

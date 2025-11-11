@@ -1,13 +1,9 @@
 <template>
+    <TopBar />
     <div class="spacer" style="height: 70px;"></div>
-    <div class="backBar">
-        <button v-if="canGoBack()" class="backButton clickable" @click="router.back()">
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <h3>{{ route.name }}</h3>
-    </div>
     <RouterView />
     <NavBar
+        v-if="!canGoBack()"
         :active="route.name || ''"
     />
 </template>
@@ -22,6 +18,9 @@ function canGoBack(): boolean {
 }
 
 import NavBar from './components/NavBar.vue';
+import BubbleButton from './components/BubbleButton.vue';
+import TopBar from './components/TopBar.vue';
+import OptionPopup from './components/OptionPopup.vue';
 import { supabase } from './lib/supabase';
 import { useRouter, useRoute, RouterView } from 'vue-router';
 import { ref } from 'vue';
@@ -39,7 +38,7 @@ async function checkUser() {
 		return;
 	}
 
-	router.push({ name: "SignIn" });
+    router.push({ name: "Sign In" });
 }
 
 checkUser();
@@ -322,5 +321,12 @@ textarea:focus {
 
 .link {
     text-decoration: none;
+}
+
+.signOutButton {
+    position: fixed;
+    top: 17px;
+    right: 20px;
+    font-size: 15px;
 }
 </style>

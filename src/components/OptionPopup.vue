@@ -5,7 +5,7 @@ defineProps<{
     message?: string;
     confirmText: string;
     confirmRed?: boolean;
-    cancelText: string;
+    cancelText?: string;
     cancelRed?: boolean;
     error?: boolean;
 }>();

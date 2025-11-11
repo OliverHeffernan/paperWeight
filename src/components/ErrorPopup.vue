@@ -3,6 +3,7 @@ import OptionPopup from './OptionPopup.vue';
 import ErrorDisplay from '../classes/ErrorDisplay';
 defineProps<{
     error: ErrorDisplay;
+    notRed?: boolean;
 }>();
 defineEmits<{
     (e: 'close'): void;
@@ -14,7 +15,7 @@ defineEmits<{
         :title="error.getTitle()"
         :message="error.getMessage()"
         confirmText="OK"
-        :error="true"
+        :error="notRed ? false : true"
         @confirm="error.clearError()"
     />
 </template>
