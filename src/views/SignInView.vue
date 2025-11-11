@@ -82,6 +82,12 @@ async function checkUser() {
 onMounted(() => {
     if (props.message === "signedout") {
         errorDisplay.value.setError("Signed Out", "You have been signed out successfully.");
+        return;
+    }
+
+    if (props.message === "emailconfirmed") {
+        errorDisplay.value.setError("Email Confirmed", "Your email has been confirmed. You can now sign in.");
+        return;
     }
 })
 
