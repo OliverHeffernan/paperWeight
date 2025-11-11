@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
         component: UploadView,
     },
     {
-        path: '/viewWorkout/:workout_id',
+        path: '/view-workout/:workout_id',
         name: 'View Workout',
         component: ViewWorkout,
         props: true,
@@ -59,7 +59,14 @@ const routes: Array<RouteRecordRaw> = [
         path: '/exercises',
         name: 'Exercises',
         component: ExercisesView
+    },
+    {
+        path: '/email-confirmed',
+        name: 'Email Confirmed',
+        component: SignInView,
+        props: { message: 'emailconfirmed' },
     }
+
 ];
 
 const router = createRouter({

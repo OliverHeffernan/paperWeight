@@ -45,6 +45,7 @@ async function signUpWithEmail() {
 			options: {
 				data: {
 					display_name: displayname.value,
+                    emailRedirectTo: "https://paperweight.olihef.com/email-confirmed"
 				},
 			},
 		});

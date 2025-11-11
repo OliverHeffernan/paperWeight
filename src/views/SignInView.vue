@@ -85,7 +85,7 @@ onMounted(() => {
         return;
     }
 
-    if (props.message === "emailconfirmed") {
+    if (props.message.startsWith("emailconfirmed")) {
         errorDisplay.value.setError("Email Confirmed", "Your email has been confirmed. You can now sign in.");
         return;
     }

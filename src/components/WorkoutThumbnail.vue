@@ -35,7 +35,8 @@ async function deleteWorkout() {
         @cancel="deleteModalVisible = false"
     />
     <div class="thumbnail">
-        <RouterLink class="link" :to="`/viewWorkout/${workout.getId()}`">
+        <!--<RouterLink class="link" :to="`/viewWorkout/${workout.getId()}`">-->
+        <RouterLink class="link" :to="{ name: 'View Workout', params: { workout_id: workout.getId() } }">
             <h3>
                 {{workout.getTitle()}}
                 <span class="greyed">{{workout.getDateString()}}</span>
