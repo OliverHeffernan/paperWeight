@@ -40,7 +40,7 @@ async function signOut() {
 }
 
 function canGoBack(): boolean {
-    if (route.name === "Home" || route.name === "Stats" || route.name === "Exercises" || route.name === "Upload" || route.name === "Sign In" || route.name === "Sign Up") {
+    if (route.name === "Home" || route.name === "Stats" || route.name === "Exercises" || route.name === "Upload") {
         return false;
     }
     return window.history.length > 1;
