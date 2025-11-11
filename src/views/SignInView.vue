@@ -37,7 +37,7 @@ function handleEnter(index: number) {
 
 const error: Ref<string | null> = ref<string | null>(null);
 
-const loading: Ref<boolean> = ref<boolean>(true);
+const loading: Ref<boolean> = ref<boolean>(false);
 const success: Ref<boolean> = ref<boolean>(false);
 
 const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
@@ -68,30 +68,18 @@ async function handleSignIn() {
 	}
 }
 
-// Check if user is already signed in
-async function checkUser() {
-	const thing = await supabase.auth.getUser();
-	if (!thing.data.user) {
-		loading.value = false;
-		return;
-	}
-
-	router.push({ name: "Home" });
-}
-
 onMounted(() => {
     if (props.message === "signedout") {
         errorDisplay.value.setError("Signed Out", "You have been signed out successfully.");
         return;
     }
 
-    if (props.message.startsWith("emailconfirmed")) {
+    if (props.message !== undefined && props.message.startsWith("emailconfirmed")) {
         errorDisplay.value.setError("Email Confirmed", "Your email has been confirmed. You can now sign in.");
         return;
     }
 })
 
-checkUser();
 </script>
 
 <template>

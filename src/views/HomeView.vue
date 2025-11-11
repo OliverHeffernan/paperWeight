@@ -18,10 +18,6 @@ const router = useRouter();
 const loading = ref<boolean>(true);
 
 onMounted(async () => {
-    if (!await supabase.auth.getUser()) {
-        router.push({ name: "Sign In" });
-        return;
-    }
     await loadWorkouts();
 });
 

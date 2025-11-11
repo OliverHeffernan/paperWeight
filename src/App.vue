@@ -1,9 +1,9 @@
 <template>
-    <TopBar />
-    <div class="spacer" style="height: 70px;"></div>
+    <TopBar v-if="route.name !== 'landing'" />
+    <div v-if="route.name !== 'landing'" class="spacer" style="height: 70px;"></div>
     <RouterView />
     <NavBar
-        v-if="!canGoBack()"
+        v-if="!canGoBack() && route.name !== 'landing'"
         :active="route.name || ''"
     />
 </template>
@@ -30,7 +30,7 @@ const router = useRouter();
 const route = useRoute();
 
 async function checkUser() {
-    if (route.name === "SignIn" || route.name === "SignUp") {
+    if (route.name === "SignIn" || route.name === "SignUp" || "landing") {
         return;
     }
 	const thing = await supabase.auth.getUser();
@@ -59,6 +59,10 @@ checkUser();
     --gold: #FFD700;
     --accent: rgb(75, 192, 192);
     --accentTransparent: rgba(75, 192, 192, 0.2);
+}
+
+p {
+    font-size: 16px;
 }
 
 .backBar {
