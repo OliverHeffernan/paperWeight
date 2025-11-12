@@ -65,34 +65,6 @@ p {
     font-size: 16px;
 }
 
-.backBar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 60px;
-    background-color: var(--sec);
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    z-index: 10;
-    border-bottom: solid 1px var(--border);
-    box-sizing: border-box;
-}
-
-.backBar h3 {
-    width: 100%;
-    text-align: center;
-}
-
-.backButton {
-    position: fixed;
-    top: 17px;
-    left: 20px;
-    border: none;
-    background: none;
-    font-size: 15px;
-}
 
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -245,20 +217,6 @@ textarea:focus {
 	z-index: 5;
 }
 
-.open {
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100vw;
-	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5);
-}
-
-.closed {
-	opacity: 0;
-	pointer-events: none;
-}
-
 .popup {
 	background-color: var(--prim);
 	border: solid 1px var(--border);
@@ -333,4 +291,5 @@ textarea:focus {
     right: 20px;
     font-size: 15px;
 }
+
 </style>

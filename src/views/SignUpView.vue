@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import ErrorBubble from '../components/ErrorBubble.vue';
 import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
+import { RouterLink } from 'vue-router';
 
 const router = useRouter();
 
@@ -72,6 +73,9 @@ async function signUpWithEmail() {
         <BubbleButton :loading="loading" label="Sign Up" @click="signUpWithEmail()" />
 
 		<ErrorBubble :errorMsg="errorMsg" />
+        <br>
+        <br>
+        <RouterLink :to="{ name: 'Sign In' }">Already have an account? Sign in here.</RouterLink>
 	</div>
 </template>
 

@@ -16,7 +16,7 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-    <button :class="['bubbleButton', { red: props.red }, {fullWidth: props.fullWidth}]" :disabled="loading" @click="emit('click')">
+    <button :class="['bubbleButton', 'clickable', { red: props.red }, {fullWidth: props.fullWidth}]" :disabled="loading" @click="emit('click')">
         <slot></slot>
         {{label || ''}}
     </button>

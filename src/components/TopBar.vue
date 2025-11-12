@@ -46,3 +46,34 @@ function canGoBack(): boolean {
     return window.history.length > 1;
 }
 </script>
+<style scoped>
+.backBar {
+    position: fixed;
+    top: 0;
+    top: env(safe-area-inset-top, 0);
+    left: 0;
+    width: 100vw;
+    height: 60px;
+    background-color: var(--sec);
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    z-index: 10;
+    border-bottom: solid 1px var(--border);
+    box-sizing: border-box;
+}
+
+.backBar h3 {
+    width: 100%;
+    text-align: center;
+}
+
+.backButton {
+    position: fixed;
+    top: 17px;
+    left: 20px;
+    border: none;
+    background: none;
+    font-size: 15px;
+}
+</style>

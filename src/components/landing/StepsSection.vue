@@ -23,14 +23,33 @@ const steps = [
 ];
 </script>
 <template>
-    <h1>How It Works</h1>
-    <p>Three simple steps from paper to progress tracking</p>
-    <Step
-        v-for="(step, index) in steps"
-        :key="index"
-        :stepNumber="index + 1"
-        :title="step.title"
-        :message="step.message"
-        :imgSrc="step.imgSrc"
-    />
+    <div class="fullWidth">
+        <div class="margins">
+            <h1>How It Works</h1>
+            <p>Three simple steps from paper to progress tracking</p>
+            <Step
+                v-for="(step, index) in steps"
+                :key="index"
+                :stepNumber="index + 1"
+                :title="step.title"
+                :message="step.message"
+                :imgSrc="step.imgSrc"
+            />
+        </div>
+    </div>
 </template>
+
+<style scoped>
+.margins {
+    position: relative;
+    z-index: 10;
+    background-color: var(--prim);
+}
+.fullWidth {
+    margin: 0;
+    width: 100%;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+}
+</style>
