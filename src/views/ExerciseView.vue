@@ -93,7 +93,7 @@ async function confirmDelete() {
     deletePopup.value = false;
     loading.value = true;
     if (await exercise.value.delete()) {
-        router.push('/exercises');
+        router.push({ name: 'Exercises' });
         loading.value = false;
         return;
     }
