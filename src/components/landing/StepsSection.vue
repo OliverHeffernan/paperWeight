@@ -43,7 +43,6 @@ const steps = [
 .margins {
     position: relative;
     z-index: 10;
-    background-color: var(--prim);
 }
 .fullWidth {
     margin: 0;
@@ -51,5 +50,6 @@ const steps = [
     border-top: 1px solid var(--border);
     position: relative;
     z-index: 10;
+    background: none;
 }
 </style>

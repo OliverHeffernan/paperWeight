@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ScrollUnderline from './landing/ScrollUnderline.vue';
 defineProps<{
     title: string;
     message: string;
@@ -15,6 +16,7 @@ defineProps<{
             ></i>
             {{ title }}
         </h2>
+        <ScrollUnderline />
         <p>
             {{ message }}
             <slot></slot>

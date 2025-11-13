@@ -25,9 +25,10 @@ const routes: Array<RouteRecordRaw> = [
         props: true,
     },
     {
-        path: '/signup',
+        path: '/signup/:email?',
         name: 'Sign Up',
         component: SignUpView,
+        props: true
     },
     {
         path: '/app/emailconf',

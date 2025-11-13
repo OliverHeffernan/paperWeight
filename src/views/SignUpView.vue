@@ -1,7 +1,11 @@
 <!-- Sign up view -->
-<script setup>
+<script setup lang="ts">
 
-import { ref } from 'vue';
+const props = defineProps<{
+    email?: string;
+}>();
+
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { supabase } from '../lib/supabase';
 import ErrorBubble from '../components/ErrorBubble.vue';
@@ -33,6 +37,12 @@ function handleEnter(index) {
     }
 }
 
+onMounted(() => {
+    if (props.email) {
+        email.value = props.email;
+    }
+});
+
 /**
  * Sign up with email and password.
  * On success, redirect to email confirmation view.
@@ -63,10 +73,10 @@ async function signUpWithEmail() {
 	<LoadingView v-if="loading" />
 	<div class="margins">
 		<h2>Sign Up</h2>
-		<h3>Display name</h3>
-        <input v-model="displayname" :ref="setInputRef" @keyup.enter="handleEnter(0)" type="text" placeholder="Enter your display name.">
 		<h3>Email</h3>
-		<input v-model="email" :ref="setInputRef" @keyup.enter="handleEnter(1)" type="email" placeholder="Enter your email.">
+		<input v-model="email" :ref="setInputRef" @keyup.enter="handleEnter(0)" type="email" placeholder="Enter your email.">
+		<h3>Display name</h3>
+        <input v-model="displayname" :ref="setInputRef" @keyup.enter="handleEnter(1)" type="text" placeholder="Enter your display name.">
 		<h3>Password</h3>
 		<input v-model="password" :ref="setInputRef" @keyup.enter="handleEnter(2)" type="password" placeholder="Enter the password you would like to use.">
 		<!--<button class="bubbleButton" :disabled="loading" @click="signUpWithEmail">Sign Up</button>-->
