@@ -4,12 +4,14 @@ import SplashScreen from '../components/landing/SplashScreen.vue';
 import FeatureSection from '../components/landing/FeatureSection.vue';
 import StepsSection from '../components/landing/StepsSection.vue';
 import Footer from '../components/landing/Footer.vue';
+import SlideshowSection from '../components/landing/SlideshowSection.vue';
 </script>
 
 <template>
     <NavBar />
     <SplashScreen />
     <FeatureSection />
+    <SlideshowSection />
     <div class="bg">
         <StepsSection />
         <Footer />

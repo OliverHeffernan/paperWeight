@@ -27,15 +27,15 @@ const steps = [
         <div class="margins">
             <h1>How It Works</h1>
             <p>Three simple steps from paper to progress tracking</p>
-            <Step
-                v-for="(step, index) in steps"
-                :key="index"
-                :stepNumber="index + 1"
-                :title="step.title"
-                :message="step.message"
-                :imgSrc="step.imgSrc"
-            />
         </div>
+        <Step
+            v-for="(step, index) in steps"
+            :key="index"
+            :stepNumber="index + 1"
+            :title="step.title"
+            :message="step.message"
+            :imgSrc="step.imgSrc"
+        />
     </div>
 </template>
 
