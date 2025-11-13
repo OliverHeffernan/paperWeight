@@ -34,6 +34,7 @@ const emit = defineEmits<{
 	margin-left: 0;
 	margin-right: 0;
     transition: all 0.2s;
+    flex-grow: 1;
 }
 
 .red {

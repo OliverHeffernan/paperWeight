@@ -17,6 +17,7 @@ const email = ref<string>('');
         <BubbleButton
             class="sign-up-button"
             @click="router.push({ name: 'Sign Up', params: { email: email } })"
+            flexgrow
         >
             Sign up for <b>Paper</b><em>Weight</em>
         </BubbleButton>
@@ -27,7 +28,8 @@ const email = ref<string>('');
 .container {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
     align-items: center;
     margin-top: 20px;
     padding: 10px;
