@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Slide1 from "../../assets/slideshow_images/slide_1.png";
 import Slide2 from "../../assets/slideshow_images/slide_2.png";
 import Slide3 from "../../assets/slideshow_images/slide_3.png";
@@ -26,6 +26,10 @@ function nextSection(index: number) {
     }
 }
 
+
+onMounted(() => {
+    nextSection(-1);
+});
 </script>
 <template>
     <div class="container">
