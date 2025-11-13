@@ -22,7 +22,7 @@ const altTexts = [
 function nextSection(index: number) {
     const nextSection = document.querySelectorAll(".phoneSlide")[index + 1];
     if (nextSection) {
-        nextSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        nextSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 }
 
@@ -68,18 +68,17 @@ function nextSection(index: number) {
 }
 
 .phone {
-    width: 420px;
+    width: 370px;
     overflow: auto;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    gap: 10px;
     border-radius: 30px;
     scroll-snap-type: x mandatory;
 }
 
 .phoneSlide {
-    width: 300px;
+    width: 250px;
     height: auto;
     border-radius: 20px;
     border: 5px solid var(--border);
@@ -88,23 +87,23 @@ function nextSection(index: number) {
 .slideContainer {
     scroll-snap-align: center;
     position: relative;
-    padding: 0 60px;
+    padding: 0 30px;
 }
 
 .leftBtn {
     position: absolute;
-    left: 10px;
+    left: 0px;
 }
 
 .rightBtn {
     position: absolute;
-    right: 10px;
+    right: 0px;
 }
 
 .slideSwitcher {
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    font-size: 24px;
+    font-size: 22px;
 }
 </style>
