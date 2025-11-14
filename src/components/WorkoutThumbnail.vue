@@ -65,7 +65,7 @@ async function deleteWorkout() {
             />
             <ThumbnailItem
                 icon="fa-solid fa-medal"
-                :label="workout.getPBCount().toString()"
+                :label="workout.getPBCountString()"
             />
         </div>
         <div id="deleteContainer">

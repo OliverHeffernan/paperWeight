@@ -109,6 +109,10 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
         return this.count_pbs || 0;
     }
 
+    public getPBCountString(): string | null {
+        return this.count_pbs === 0 ? null : this.count_pbs === null ? null : this.count_pbs.toString();
+    }
+
     public getItem(item: string): any {
         switch (item) {
             case "workouts": return 1;
