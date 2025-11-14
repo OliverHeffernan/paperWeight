@@ -19,16 +19,31 @@ const altTexts = [
     "Screenshot of the Exercise view page, displaying a graph of set volume by the date that it was completed. And a list of workouts where the exercise was done."
 ];
 
-function nextSection(index: number) {
-    const nextSection = document.querySelectorAll(".phoneSlide")[index + 1];
-    if (nextSection) {
-        nextSection.scrollIntoView({ behavior: "smooth", block: "start" });
+function nextSection() {
+    const phone = document.querySelector(".phone") as HTMLElement;
+    if (phone) {
+        const slideContainer = document.querySelector(".slideContainer") as HTMLElement;
+        const slideWidth = slideContainer ? slideContainer.clientWidth : phone.clientWidth;
+        phone.scrollBy({ left: slideWidth, behavior: "smooth" });
     }
 }
 
+function prevSection() {
+    const phone = document.querySelector(".phone");
+    if (phone) {
+        const slideContainer = document.querySelector(".slideContainer") as HTMLElement;
+        const slideWidth = slideContainer ? slideContainer.clientWidth : phone.clientWidth;
+        phone.scrollBy({ left: -slideWidth, behavior: "smooth" });
+    }
+}
 
 onMounted(() => {
-    nextSection(-1);
+    const firstSlide = document.querySelectorAll(".phoneSlide")[0];
+    if (firstSlide) {
+        firstSlide.scrollIntoView({ behavior: "instant", block: "start" });
+        window.scrollTo(0, 0);
+    }
+
 });
 </script>
 <template>
@@ -42,14 +57,14 @@ onMounted(() => {
                 <button
                     class="iconButton rightBtn slideSwitcher"
                     v-if="index < slides.length - 1"
-                    @click="nextSection(index)"
+                    @click="nextSection()"
                 >
                     <i class="fas fa-chevron-right"></i>
                 </button>
                 <button
                     class="iconButton leftBtn slideSwitcher"
                     v-if="index > 0"
-                    @click="nextSection(index - 2)"
+                    @click="prevSection()"
                 >
                     <i class="fas fa-chevron-left"></i>
                 </button>
@@ -62,23 +77,25 @@ onMounted(() => {
 <style scoped>
 .container {
     position: relative;
-    padding: 40px;
     background-color: var(--prim);
     border-top: 1px solid var(--border);
     z-index: 10;
     align-items: center;
     display: flex;
     justify-content: center;
+    padding: 40px 0;
 }
 
 .phone {
-    width: 370px;
+    width: 310px;
     overflow: auto;
     display: flex;
     flex-direction: row;
+    gap: 0;
     flex-wrap: nowrap;
     border-radius: 30px;
     scroll-snap-type: x mandatory;
+    position: relative;
 }
 
 .phoneSlide {
