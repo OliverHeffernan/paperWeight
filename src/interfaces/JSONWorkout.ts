@@ -23,5 +23,4 @@ export default interface JSONWorkout {
     exercise_ids?: Array<string>;
     set_ids?: Array<string>;
     count_pbs?: number;
-
 }

@@ -19,7 +19,7 @@ export default async function getWorkouts(): Promise<Array<Workout>> {
 export async function getWorkoutsInfo(): Promise<Array<WorkoutInfo>> {
     const { data: jsonWorkouts, error } = await supabase
         .from('workouts')
-        .select('title, workout_id, start_time, end_time, energy, heart_rate, volume, set_count');
+        .select('title, workout_id, start_time, end_time, energy, heart_rate, volume, set_count, count_pbs');
 
     if (error) {
         console.error('Error fetching workouts info:', error);

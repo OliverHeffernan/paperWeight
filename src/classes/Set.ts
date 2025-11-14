@@ -184,6 +184,9 @@ export default class Set {
     }
 
     public setWeightPB(): void {
+        console.log(this.weight + "x" + this.reps + " is a new weight PB!");
+        console.log(this.exercise?.getWorkout()?.countPBSets());
+
         this.isWeightPB = true;
     }
 

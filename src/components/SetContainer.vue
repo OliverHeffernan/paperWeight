@@ -31,14 +31,26 @@ function isWeightPB(): boolean {
     if (!props.previousSet) {
         return props.weightPbSets.includes(setId.value);
     }
+
     const prevWeight = props.previousSet.getWeight();
     const currWeight = props.set.getWeight();
+    if (prevWeight > currWeight) {
+        return false;
+    }
 
     if (prevWeight !== currWeight) {
         return props.weightPbSets.includes(setId.value);
     }
     return props.weightPbSets.includes(setId.value)
         && !props.weightPbSets.includes(previousSetId.value);
+}
+
+function setWeightPB() {
+    const result: boolean = isWeightPB();
+    if (result) {
+        props.set.setWeightPB();
+    }
+    return result;
 }
 
 const editing = ref<boolean>(false);
@@ -58,7 +70,7 @@ const editing = ref<boolean>(false);
             {{ set.getReps() }} reps
             <i class="fa-solid fa-note-sticky noteIcon" v-if="set.getNotes() !== '' && set.getNotes() !== null" ></i>
 
-            <i class="fa-solid fa-medal" v-if="isWeightPB()"></i>
+            <i class="fa-solid fa-medal" v-if="setWeightPB()"></i>
         </td>
     </tr>
 </template>

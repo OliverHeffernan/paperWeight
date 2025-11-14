@@ -9,6 +9,7 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
     heart_rate: number | null;
     volume: number | null;
     set_count: number | null;
+    count_pbs: number | null;
 
     constructor(data: {
         title: string;
@@ -19,6 +20,7 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
         heart_rate: number | null;
         volume: number | null;
         set_count: number | null;
+        count_pbs: number | null;
     }) {
         this.title = data.title;
         this.workout_id = data.workout_id;
@@ -28,6 +30,7 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
         this.heart_rate = data.heart_rate;
         this.volume = data.volume;
         this.set_count = data.set_count;
+        this.count_pbs = data.count_pbs;
     }
 
     public getDuration(): number {
@@ -100,6 +103,10 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
 
     public getId(): string {
         return this.workout_id;
+    }
+
+    public getPBCount(): number {
+        return this.count_pbs || 0;
     }
 
     public getItem(item: string): any {

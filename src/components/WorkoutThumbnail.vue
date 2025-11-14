@@ -63,6 +63,10 @@ async function deleteWorkout() {
                 icon="fa-solid fa-heart"
                 :label="workout.getHeartRateString()"
             />
+            <ThumbnailItem
+                icon="fa-solid fa-medal"
+                :label="workout.getPBCount().toString()"
+            />
         </div>
         <div id="deleteContainer">
             <IconButton

@@ -3,11 +3,14 @@
 <script setup lang="ts">
 import Workout from "../classes/Workout";
 import OverviewItem from '../components/OverviewItem.vue';
-import { ref, watch } from "vue";
-const pbs = ref<number>(0);
+import { ref, watch, computed } from "vue";
 const props = defineProps<{
     workout: Workout;
 }>();
+
+const pbs = computed<number>(() => {
+    return props.workout.getPBCount();
+})
 
 </script>
 <template>
@@ -36,6 +39,11 @@ const props = defineProps<{
             icon="fa-solid fa-heart"
             label="avg. heart rate"
             :value="workout.getHeartRateString()"
+        />
+        <OverviewItem
+            icon="fa-solid fa-medal"
+            label="personal bests"
+            :value="pbs"
         />
     </div>
 </template>

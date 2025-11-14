@@ -33,6 +33,8 @@ export default class Workout implements WorkoutInfoFunctions {
     private heart_rate: number | null;
     private unsavedChanges: number = 0;
     private saving: boolean = false;
+    private pbCount: number = 0;
+    private pbsCounting: boolean = true;
 
     /**
      * Creates an instance of Workout.
@@ -50,6 +52,7 @@ export default class Workout implements WorkoutInfoFunctions {
         this.heart_rate = object.heart_rate;
 
         this.exercises = exercises;
+        this.pbCount = object.count_pbs || 0;
     }
 
     public static async createEmpty(): Promise<{ data: object | null, error: object | null }> {
@@ -502,6 +505,11 @@ export default class Workout implements WorkoutInfoFunctions {
         for (const exercise of this.exercises) {
             count += exercise.countPBSets();
         }
+        this.pbCount = count;
         return count;
+    }
+
+    public getPBCount(): number {
+        return this.pbCount;
     }
 }
