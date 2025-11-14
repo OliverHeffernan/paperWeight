@@ -8,8 +8,9 @@ const props = defineProps<{
     workout: Workout;
 }>();
 
-const pbs = computed<number>(() => {
-    return props.workout.getPBCount();
+const pbs = computed<string | null>(() => {
+    const count = props.workout.getPBCount();
+    return count === 0 ? null : count.toString();
 })
 
 </script>
