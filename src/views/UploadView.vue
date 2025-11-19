@@ -207,17 +207,6 @@ async function generateAndUploadWorkoutData(): void {
 
 async function uploadWorkoutData(workoutData: object): object | null {
     loading.value++;
-    /*
-    const { data, error } = await supabase
-        .from('workouts')
-        .insert([await createWorkoutObject(workoutData)]);
-    if (error) {
-        console.error("Error uploading workout data: ", error);
-        errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
-        loading.value--;
-        return { data: data, error: error };
-    }
-    */
     const workout = await Workout.create(workoutData);
     loading.value--;
     if (!workout) {

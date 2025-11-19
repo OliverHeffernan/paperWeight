@@ -48,6 +48,13 @@ export default class Workout implements WorkoutInfoFunctions {
         this.created_at = object.created_at ? new Date(object.created_at) : new Date();
         this.notes = object.notes;
 
+        if (typeof object.energy !== 'number' && object.energy !== null) {
+            if (object.energy.amount !== null && object.energy.amount !== undefined) {
+                object.energy = object.energy.amount;
+            } else {
+                object.energy = null;
+            }
+        }
         this.energy = object.energy;
         this.heart_rate = object.heart_rate;
 
@@ -142,6 +149,12 @@ export default class Workout implements WorkoutInfoFunctions {
         this.saveChanges();
     }
 
+    public passWorkoutIdToExercises(): void {
+        for (const exercise of this.exercises) {
+            exercise.setWorkout(this);
+        }
+    }
+
     public async saveChanges(): Promise<void> {
         this.saving = true;
         const currentUnsavedChanges = this.unsavedChanges;
@@ -222,6 +235,7 @@ export default class Workout implements WorkoutInfoFunctions {
         const uniqueExerciseIds: Set<string> = new Set<string>();
         const uniqueSetIds: Set<string> = new Set<string>();
 
+        this.passWorkoutIdToExercises();
         // deserializing each exercise in the workout.
         for (const exercise of this.exercises) {
             const deserializedExercise: JSONExercise = exercise.deserialize();

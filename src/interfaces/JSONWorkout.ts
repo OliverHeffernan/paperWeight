@@ -16,7 +16,7 @@ export default interface JSONWorkout {
     exercises: Array<string>;
     exercises_full: Array<JSONExercise>;
     notes: string;
-    energy: number | null;
+    energy: number | null | { amount: number | null; unit: string | null; };
     heart_rate: number | null;
     volume: number | null;
     set_count: number | null;
