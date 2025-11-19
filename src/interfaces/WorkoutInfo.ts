@@ -110,6 +110,7 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
     }
 
     public getPBCountString(): string | null {
+        if (this.count_pbs === undefined) return null;
         return this.count_pbs === 0 ? null : this.count_pbs === null ? null : this.count_pbs.toString();
     }
 
