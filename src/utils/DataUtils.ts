@@ -30,7 +30,7 @@ export default class DataUtils {
         }
     }
 
-    static commaNumber(value: number): string {
+    static intCommaNumber(value: number): string {
         let output: string = "";
         for (let i = 0; i < value.toString().length; i++) {
             output += value.toString()[i];
@@ -40,5 +40,11 @@ export default class DataUtils {
             }
         }
         return output;
+    }
+
+    static commaNumber(value: number): string {
+        const parts = value.toString().split(".");
+        parts[0] = DataUtils.intCommaNumber(parseInt(parts[0], 10));
+        return parts.join(".");
     }
 }
