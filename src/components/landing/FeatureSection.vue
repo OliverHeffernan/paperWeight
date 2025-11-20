@@ -3,7 +3,7 @@ import FeatureBubble from '../FeatureBubble.vue';
 </script>
 <template>
     <div class="container">
-        <div class="marginsWidth featureSection">
+        <div class="marginsWidth featureSection" id="featuresSection">
             <h2>Everything You Need to Track your Progress</h2>
             <p>From paper to insights in seconds. PaperWeight transforms your analog logs into powerful digital analytics.</p>
             <div class="flexbox">
