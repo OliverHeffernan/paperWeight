@@ -61,6 +61,16 @@ export default class Exercise {
         return new Exercise(object, workout, sets);
     }
 
+    public static createFromFullExercise(object: JSONExercise): Exercise {
+        const sets: Array<Set> = object.sets.map((setData: JSONSet) => new Set(setData, null));
+        const exercise = new Exercise(object, null, sets);
+        for (const set of sets) {
+            set.setExercise(exercise);
+        }
+        console.log(exercise);
+        return exercise;
+    }
+
     public async getId(): Promise<string | null> {
         if (this.id) { return this.id; }
 

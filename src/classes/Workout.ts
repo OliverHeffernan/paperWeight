@@ -62,6 +62,31 @@ export default class Workout implements WorkoutInfoFunctions {
         this.pbCount = object.count_pbs || 0;
     }
 
+    public static async fetchById(workoutId: string): Promise<{ workout: Workout | null, error: object | null }> {
+        const { data, error } = await supabase.rpc('get_full_workout', { p_workout_id: workoutId });
+        if (error) {
+            return { workout: null, error };
+        }
+        if (!data || data.length === 0) {
+            return { workout: null, error: { message:"No workout with that id for that user" } };
+        }
+
+        console.log(data);
+        const workoutObject: JSONWorkout = data;
+        const exercises: Array<Exercise> = [];
+        for (const exerciseObject of workoutObject.exercises_full) {
+            const exercise = Exercise.createFromFullExercise(exerciseObject); // Temporary null, will set workout later
+            exercises.push(exercise);
+        }
+        const workout = new Workout(workoutObject, exercises);
+        console.log(workout);
+
+        for (const exercise of exercises) {
+            exercise.setWorkout(workout);
+        }
+        return { workout: workout, error: null };
+    }
+
     public static async createEmpty(): Promise<{ data: object | null, error: object | null }> {
         const now = new Date();
         const { data, error } = await supabase
@@ -426,6 +451,7 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public countExercises(): number {
+        console.log(this.exercises.length);
         return this.exercises.length;
     }
 

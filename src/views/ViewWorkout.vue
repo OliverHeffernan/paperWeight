@@ -24,6 +24,7 @@ const editingDetails = ref<boolean>(false);
 const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 
 onMounted(async () => {
+    /*
     const { data, error } = await supabase
         .from('workouts')
         .select()
@@ -41,8 +42,11 @@ onMounted(async () => {
         loading.value = false;
         return;
     }
+    */
 
-    workout.value = await Workout.create(data);
+    const fetch = await Workout.fetchById(props.workout_id);
+    workout.value = fetch.workout;
+    console.log(workout.value);
     loading.value = false;
 
     const weightPbsRequest = await supabase
