@@ -150,12 +150,12 @@ export default class Exercise {
     /**
      * add a copy of the last set to the sets array
      */
-    public addNewSet(): void {
+    public async addNewSet(): Promise<void> {
         if (this.sets.length === 0) {
             const id: string | null = null;
             const newSet = new Set({ reps: 0, weight: 0, unit: "kg", notes: "", id }, this);
             this.sets.push(newSet);
-            newSet.createNewId(); // Create ID after set is added
+            await newSet.createNewId(); // Create ID after set is added
             if (this.workout) this.workout.changeMade();
             return;
         }
@@ -168,7 +168,7 @@ export default class Exercise {
             id: null
         }, this);
         this.sets.push(newSet);
-        newSet.createNewId(); // Create ID after set is added
+        await newSet.createNewId(); // Create ID after set is added
 
         if (this.workout) this.workout.changeMade();
     }

@@ -41,9 +41,11 @@ export default class Set {
         this.id = object.id || null;
         this.workout_id = object.workout_id || null;
         //this.createNewId();
+        /*
         if (this.id == null || this.id === undefined) {
             this.createNewId();
         }
+        */
     }
 
     public async initialDBCheck(): Promise<void> {
@@ -125,14 +127,18 @@ export default class Set {
             throw new Error(`Failed to create new set ID: ${error.message}`);
         }
         this.id = data.id;
+        console.log(this.id);
         return this.id;
     }
 
     public async updateDB(): Promise<void> {
+        console.log("yo");
         if (this.id === null) {
+            console.log("yo");
             await this.createNewId();
             return;
         }
+        console.log("yo");
         const { error } = await supabase
             .from('sets')
             .update({
@@ -143,9 +149,12 @@ export default class Set {
             })
             .eq('id', this.id);
 
+        console.log("yo");
         if (error) {
+            console.log("yo");
             throw new Error(`Failed to update set in DB: ${error.message}`);
         }
+        console.log("yo");
         const exercise = await this.getExercise();
         const workout = exercise.getWorkout()
         if (workout) workout.changeMade();
@@ -197,7 +206,7 @@ export default class Set {
     public setExercise(exercise: Exercise): void {
         this.exercise = exercise;
         this.workout_id = exercise.getWorkout()?.getId() || null;
-        this.updateDB();
+        // this.updateDB();
     }
 
     public getId(): string | null {
