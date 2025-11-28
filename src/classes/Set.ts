@@ -204,9 +204,18 @@ export default class Set {
     }
 
     public setExercise(exercise: Exercise): void {
+        const newWorkoutId = exercise.getWorkout()?.getId() || null;
+        const exerciseChanged = this.exercise !== exercise || this.workout_id !== newWorkoutId;
+
         this.exercise = exercise;
-        this.workout_id = exercise.getWorkout()?.getId() || null;
-        // this.updateDB();
+        this.workout_id = newWorkoutId;
+        if (!exerciseChanged) this.updateDB();
+    }
+
+    public setExerciseWithoutUpdate(exercise: Exercise): void {
+        const newWorkoutId = exercise.getWorkout()?.getId() || null;
+        this.exercise = exercise;
+        this.workout_id = newWorkoutId;
     }
 
     public getId(): string | null {

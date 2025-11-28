@@ -65,7 +65,7 @@ export default class Exercise {
         const sets: Array<Set> = object.sets.map((setData: JSONSet) => new Set(setData, null));
         const exercise = new Exercise(object, null, sets);
         for (const set of sets) {
-            set.setExercise(exercise);
+            set.setExerciseWithoutUpdate(exercise);
         }
         console.log(exercise);
         return exercise;
@@ -236,7 +236,15 @@ export default class Exercise {
     public setWorkout(workout: Workout): void {
         this.workout = workout;
         for (const set of this.sets) {
-            set.setExercise(this);
+            set.setExerciseWithoutUpdate(this);
+            set.updateDB();
+        }
+    }
+
+    public setWorkoutWithoutUpdate(workout: Workout): void {
+        this.workout = workout;
+        for (const set of this.sets) {
+            set.setExerciseWithoutUpdate(this);
         }
     }
 

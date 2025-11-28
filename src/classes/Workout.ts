@@ -82,7 +82,7 @@ export default class Workout implements WorkoutInfoFunctions {
         console.log(workout);
 
         for (const exercise of exercises) {
-            exercise.setWorkout(workout);
+            exercise.setWorkoutWithoutUpdate(workout);
         }
         return { workout: workout, error: null };
     }
@@ -170,7 +170,6 @@ export default class Workout implements WorkoutInfoFunctions {
 
     public changeMade(): void {
         this.unsavedChanges++;
-        if (this.saving) return;
         this.saveChanges();
     }
 
@@ -181,6 +180,7 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public async saveChanges(): Promise<void> {
+        if (this.saving) return;
         this.saving = true;
         const currentUnsavedChanges = this.unsavedChanges;
         const { error } = await supabase.from('workouts').update(this.deserialize()).eq('workout_id', this.workout_id);
@@ -189,7 +189,7 @@ export default class Workout implements WorkoutInfoFunctions {
         }
         this.unsavedChanges -= currentUnsavedChanges;
 
-        // if more changes have been nmade since we started saving, save again.
+        // if more changes have been made since we started saving, save again.
         if (this.unsavedChanges == 0) {
             this.saving = false;
             return;
