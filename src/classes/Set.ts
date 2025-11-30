@@ -11,6 +11,7 @@ export default class Set {
     private exercise: Exercise | null;
     private workout_id: string | null = null;
     private isWeightPB: boolean = false;
+    private isVolumePB: boolean = false;
 
     public static async create(object: JSONSet, exercise: Exercise | null): Promise<Set> {
         if (object.id) {
@@ -199,8 +200,23 @@ export default class Set {
         this.isWeightPB = true;
     }
 
+    public setVolumePB(): void {
+        this.isVolumePB = true;
+    }
+
     public isItWeightPB(): boolean {
         return this.isWeightPB;
+    }
+
+    public isItVolumePB(): boolean {
+        return this.isVolumePB;
+    }
+
+    public getPBString(): string {
+        if (this.isItWeightPB() && this.isItVolumePB()) return "weight & volume";
+        if (this.isItWeightPB()) return "weight";
+        if (this.isItVolumePB()) return "volume";
+        return "";
     }
 
     public setExercise(exercise: Exercise): void {

@@ -11,6 +11,7 @@ const props = defineProps<{
     showSets: boolean;
     index: number;
     weightPbSets: Array<string>;
+    volumePbSets: Array<string>;
 }>();
 </script>
 <template>
@@ -46,6 +47,7 @@ const props = defineProps<{
                     :previousSet="index > 0 ? exercise.getSets()[index - 1] : null"
                     :exercise="exercise"
                     :weightPbSets="weightPbSets"
+                    :volumePbSets="volumePbSets"
                 />
                 <tr>
                     <td colspan="2"><button @click="exercise.addNewSet()" class="borderlessButton"><i class="fa-solid fa-plus"></i>Add set</button></td>

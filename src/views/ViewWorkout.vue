@@ -18,6 +18,7 @@ const workout = ref<Workout | null>(null);
 const showSets = ref<boolean>(true);
 const loading = ref<boolean>(true);
 const weightPbSets = ref<Array<string>>([]);
+const volumePbSets = ref<Array<string>>([]);
 
 const editingDetails = ref<boolean>(false);
 
@@ -59,6 +60,18 @@ onMounted(async () => {
     if (weightPbsRequest.data && Array.isArray(weightPbsRequest.data)) {
         weightPbSets.value = weightPbsRequest.data.map((item: any) => item.id);
     }
+
+    const volumePbsRequest = await supabase
+        .rpc('get_volume_pbs', { pb_exercise_ids: await workout.value.getExerciseIds() });
+    if (volumePbsRequest.error) {
+        console.error('Error fetching volume PBs:', volumePbsRequest.error);
+        return;
+    }
+    console.log(volumePbsRequest.data);
+    if (volumePbsRequest.data && Array.isArray(volumePbsRequest.data)) {
+        volumePbSets.value = volumePbsRequest.data.map((item: any) => item.id);
+        console.log('Volume PB Sets:', volumePbSets.value);
+    }
 });
 
 </script>
@@ -93,6 +106,7 @@ onMounted(async () => {
                 :showSets="showSets"
                 :index="index"
                 :weightPbSets="weightPbSets"
+                :volumePbSets="volumePbSets"
             />
             <SavingDisplay :workout="workout" />
             <BubbleButton

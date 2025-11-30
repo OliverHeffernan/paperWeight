@@ -10,6 +10,7 @@ const props = defineProps<{
     index: number;
     exercise: Exercise;
     weightPbSets: Array<string>;
+    volumePbSets: Array<string>;
 }>();
 
 const previousSetId = ref<string>("");
@@ -45,10 +46,36 @@ function isWeightPB(): boolean {
         && !props.weightPbSets.includes(previousSetId.value);
 }
 
+function isVolumePB(): boolean {
+    if (!props.previousSet) {
+        return props.volumePbSets.includes(setId.value);
+    }
+
+    const prevVolume = (props.previousSet.getWeight() ?? 0) * props.previousSet.getReps();
+    const currVolume = (props.set.getWeight() ?? 0) * props.set.getReps();
+    if (prevVolume > currVolume) {
+        return false;
+    }
+
+    if (prevVolume !== currVolume) {
+        return props.volumePbSets.includes(setId.value);
+    }
+    return props.volumePbSets.includes(setId.value)
+        && !props.volumePbSets.includes(previousSetId.value);
+}
+
 function setWeightPB() {
     const result: boolean = isWeightPB();
     if (result) {
         props.set.setWeightPB();
+    }
+    return result;
+}
+
+function setVolumePB() {
+    const result: boolean = isVolumePB();
+    if (result) {
+        props.set.setVolumePB();
     }
     return result;
 }
@@ -70,7 +97,13 @@ const editing = ref<boolean>(false);
             {{ set.getReps() }} reps
             <i class="fa-solid fa-note-sticky noteIcon" v-if="set.getNotes() !== '' && set.getNotes() !== null" ></i>
 
-            <i class="fa-solid fa-medal" v-if="setWeightPB()"></i>
+            <div class="pbMedal" v-if="setVolumePB() || setWeightPB()">
+                <i class="fa-solid fa-medal"></i>
+
+                <span class="pbLabel">
+                    {{ set.getPBString() }}
+                </span>
+            </div>
         </td>
     </tr>
 </template>
@@ -79,7 +112,8 @@ const editing = ref<boolean>(false);
     margin-right: 5px;
 }
 
-.setDetails i {
+
+.setdetails i {
     font-size: 13px;
 }
 
@@ -97,5 +131,23 @@ td {
 
 .fa-medal {
     color: var(--gold);
+}
+
+.setdetails {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.pbMedal {
+    position: absolute;
+    right: 20px;
+}
+
+@media screen and (max-width: 355px) {
+    .pbLabel {
+        display: none;
+        color: pink;
+    }
 }
 </style>
