@@ -67,7 +67,6 @@ export default class Exercise {
         for (const set of sets) {
             set.setExerciseWithoutUpdate(exercise);
         }
-        console.log(exercise);
         return exercise;
     }
 
@@ -151,7 +150,10 @@ export default class Exercise {
      * add a copy of the last set to the sets array
      */
     public async addNewSet(): Promise<void> {
+        console.log("sets length: " + this.sets.length);
+        console.log("153")
         if (this.sets.length === 0) {
+            console.log("155");
             const id: string | null = null;
             const newSet = new Set({ reps: 0, weight: 0, unit: "kg", notes: "", id }, this);
             this.sets.push(newSet);
@@ -159,6 +161,7 @@ export default class Exercise {
             if (this.workout) this.workout.changeMade();
             return;
         }
+        console.log("163");
         const lastSet: Set = this.sets[this.sets.length - 1];
         const newSet: Set = new Set({
             reps: lastSet.getReps(),
@@ -169,8 +172,13 @@ export default class Exercise {
         }, this);
         this.sets.push(newSet);
         await newSet.createNewId(); // Create ID after set is added
+        console.log("174");
+        console.log("sets length after add: " + this.sets.length);
 
-        if (this.workout) this.workout.changeMade();
+        if (this.workout) {
+            console.log("177");
+            this.workout.changeMade();
+        }
     }
 
     public removeSet(index: number): void {

@@ -47,7 +47,6 @@ onMounted(async () => {
 
     const fetch = await Workout.fetchById(props.workout_id);
     workout.value = fetch.workout;
-    console.log(workout.value);
     loading.value = false;
 
     const weightPbsRequest = await supabase
@@ -56,7 +55,6 @@ onMounted(async () => {
         console.error('Error fetching weight PBs:', weightPbsRequest.error);
         return;
     }
-    console.log(weightPbsRequest.data);
     if (weightPbsRequest.data && Array.isArray(weightPbsRequest.data)) {
         weightPbSets.value = weightPbsRequest.data.map((item: any) => item.id);
     }
@@ -67,10 +65,8 @@ onMounted(async () => {
         console.error('Error fetching volume PBs:', volumePbsRequest.error);
         return;
     }
-    console.log(volumePbsRequest.data);
     if (volumePbsRequest.data && Array.isArray(volumePbsRequest.data)) {
         volumePbSets.value = volumePbsRequest.data.map((item: any) => item.id);
-        console.log('Volume PB Sets:', volumePbSets.value);
     }
 });
 

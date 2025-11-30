@@ -36,6 +36,9 @@ export default class Workout implements WorkoutInfoFunctions {
     private pbCount: number = 0;
     private pbsCounting: boolean = true;
 
+    private saveTimeout: NodeJS.Timeout | null = null;
+    private readonly SAVE_DELAY: number = 500;
+
     /**
      * Creates an instance of Workout.
      * @param object - A JSONWorkout object containing the workout data. This will typically be loaded from the database.
@@ -71,7 +74,6 @@ export default class Workout implements WorkoutInfoFunctions {
             return { workout: null, error: { message:"No workout with that id for that user" } };
         }
 
-        console.log(data);
         const workoutObject: JSONWorkout = data;
         const exercises: Array<Exercise> = [];
         for (const exerciseObject of workoutObject.exercises_full) {
@@ -79,7 +81,6 @@ export default class Workout implements WorkoutInfoFunctions {
             exercises.push(exercise);
         }
         const workout = new Workout(workoutObject, exercises);
-        console.log(workout);
 
         for (const exercise of exercises) {
             exercise.setWorkoutWithoutUpdate(workout);
@@ -169,8 +170,18 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public changeMade(): void {
+        /*
         this.unsavedChanges++;
         this.saveChanges();
+        */
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+        }
+
+        this.saveTimeout = setTimeout(() => {
+            this.saveChanges();
+            this.saveTimeout = null;
+        }, this.SAVE_DELAY);
     }
 
     public passWorkoutIdToExercises(): void {
@@ -180,10 +191,13 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public async saveChanges(): Promise<void> {
+        console.log("Saving workout changes...");
         if (this.saving) return;
+        console.log("Proceeding to save workout changes...");
         this.saving = true;
         const currentUnsavedChanges = this.unsavedChanges;
         const { error } = await supabase.from('workouts').update(this.deserialize()).eq('workout_id', this.workout_id);
+        console.log("Workout changes saved to database.");
         if (error) {
             console.error("Failed to save workout changes:", error);
         }
@@ -194,6 +208,7 @@ export default class Workout implements WorkoutInfoFunctions {
             this.saving = false;
             return;
         }
+        console.log("Additional changes detected, saving again...");
         this.saveChanges();
     }
 
@@ -253,14 +268,16 @@ export default class Workout implements WorkoutInfoFunctions {
      * @returns A JSONWorkout object representing the workout data.
      */
     public deserialize(): JSONWorkout {
+        console.log("Deserializing workout:", this.workout_id);
         const exercisesArray: Array<JSONExercise> = [];
 
         const exerciseNames: Array<string> = [];
 
-        const uniqueExerciseIds: Set<string> = new Set<string>();
-        const uniqueSetIds: Set<string> = new Set<string>();
+        const uniqueExerciseIds: Array<string> = new Array<string>();
+        const uniqueSetIds: Array<string> = new Array<string>();
 
         this.passWorkoutIdToExercises();
+        console.log("Workout passed workout ID to exercises.");
         // deserializing each exercise in the workout.
         for (const exercise of this.exercises) {
             const deserializedExercise: JSONExercise = exercise.deserialize();
@@ -270,12 +287,12 @@ export default class Workout implements WorkoutInfoFunctions {
             for (const set of deserializedExercise.sets) {
                 const setId: string | null | undefined = set.id;
                 if (!setId) continue;
-                uniqueSetIds.add(setId);
+                uniqueSetIds.push(setId);
             }
 
             const id: string | null = deserializedExercise.id;
             if (id === null) continue;
-            uniqueExerciseIds.add(id);
+            uniqueExerciseIds.push(id);
         }
 
         return {
@@ -451,7 +468,6 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public countExercises(): number {
-        console.log(this.exercises.length);
         return this.exercises.length;
     }
 

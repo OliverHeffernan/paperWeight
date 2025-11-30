@@ -200,7 +200,6 @@ async function generateAndUploadWorkoutData(): void {
         console.error("Error uploading workout data: ", error);
         return;
     }
-    console.log(data);
 
     // if successful, navigate to home page.
     router.push({ name: "Home" });

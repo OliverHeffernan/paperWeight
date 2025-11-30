@@ -21,11 +21,6 @@ onMounted(async() => {
     if (props.previousSet) {
         previousSetId.value = await props.previousSet.getId();
     }
-    console.log(`Set ID: ${setId.value}`);
-    console.log(props.weightPbSets);
-    if (props.weightPbSets.includes(setId.value)) {
-        console.log(`Set ${setId.value} is a weight PB`);
-    }
 });
 
 function isWeightPB(): boolean {

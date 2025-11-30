@@ -128,18 +128,14 @@ export default class Set {
             throw new Error(`Failed to create new set ID: ${error.message}`);
         }
         this.id = data.id;
-        console.log(this.id);
         return this.id;
     }
 
     public async updateDB(): Promise<void> {
-        console.log("yo");
         if (this.id === null) {
-            console.log("yo");
             await this.createNewId();
             return;
         }
-        console.log("yo");
         const { error } = await supabase
             .from('sets')
             .update({
@@ -150,15 +146,13 @@ export default class Set {
             })
             .eq('id', this.id);
 
-        console.log("yo");
         if (error) {
             console.log("yo");
             throw new Error(`Failed to update set in DB: ${error.message}`);
         }
-        console.log("yo");
         const exercise = await this.getExercise();
-        const workout = exercise.getWorkout()
-        if (workout) workout.changeMade();
+        //const workout = exercise.getWorkout()
+        //if (workout) workout.changeMade();
     }
 
     // actions
@@ -194,9 +188,6 @@ export default class Set {
     }
 
     public setWeightPB(): void {
-        console.log(this.weight + "x" + this.reps + " is a new weight PB!");
-        console.log(this.exercise?.getWorkout()?.countPBSets());
-
         this.isWeightPB = true;
     }
 
@@ -225,7 +216,7 @@ export default class Set {
 
         this.exercise = exercise;
         this.workout_id = newWorkoutId;
-        if (!exerciseChanged) this.updateDB();
+        if (exerciseChanged) this.updateDB();
     }
 
     public setExerciseWithoutUpdate(exercise: Exercise): void {
