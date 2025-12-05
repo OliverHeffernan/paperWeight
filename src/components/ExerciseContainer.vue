@@ -3,6 +3,7 @@
 import Exercise from "../classes/Exercise";
 import SetContainer from "./SetContainer.vue";
 import ExerciseEditModal from "./ExerciseEditModal.vue";
+import ExerciseTopBar from "./ExerciseTopBar.vue";
 import Set from "../classes/Set";
 import { ref } from "vue";
 const editing = ref<boolean>(false);
@@ -21,16 +22,10 @@ const props = defineProps<{
         @cancel="editing = false"
     />
     <div class="exerciseContainer softBubble">
-        <h2 class="exerciseTitle">
-            <span @click="editing = true" class="clickable">
-                {{ exercise.getName() }}
-                <i class="fa-solid fa-pen-to-square"></i>
-            </span>
-            <div class="reorderHandles clickable" v-if="index !== 0">
-                <i @click="exercise.reorderUp()" class="fa-solid fa-chevron-up reorder"></i>
-            </div>
-
-        </h2>
+        <ExerciseTopBar
+            :exercise="exercise"
+            :index="index"
+        />
         <table class="setsContainer">
             <thead v-if="showSets">
                 <tr>
@@ -50,14 +45,16 @@ const props = defineProps<{
                     :volumePbSets="volumePbSets"
                 />
                 <tr>
-                    <td colspan="2"><button @click="exercise.addNewSet()" class="borderlessButton"><i class="fa-solid fa-plus"></i>Add set</button></td>
+                    <td colspan="3" class="center"><button @click="exercise.addNewSet()" class="borderlessButton center"><i class="fa-solid fa-plus"></i>Add set</button></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td class="setLabel"><b>sets:</b> {{ exercise.countSets() }}</td>
+                    <td></td>
                     <td class="setDetails">
                         <b>volume:</b> {{ exercise.getVolume() }} kg
+                    </td>
+                    <td>
                         <i v-if="index !== exercise.getWorkout().countExercises() - 1"@click="exercise.reorderDown()" class="fa-solid fa-chevron-down reorder"></i>
                     </td>
                 </tr>
@@ -69,12 +66,6 @@ const props = defineProps<{
 <style>
 .exerciseContainer {
     padding: 0;
-}
-
-.exerciseTitle {
-    padding: 10px;
-    border-bottom: 1px solid var(--border);
-    margin: 0;
 }
 
 .setsContainer {
@@ -103,7 +94,6 @@ const props = defineProps<{
 }
 
 .reorderHandles {
-    float: right;
 }
 
 .reorder {
@@ -113,5 +103,10 @@ const props = defineProps<{
 
 h2 span i {
     font-size: 16px;
+}
+
+.center {
+    text-align: center;
+    width: 100%;
 }
 </style>

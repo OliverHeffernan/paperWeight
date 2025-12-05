@@ -204,7 +204,7 @@ export default class Set {
     }
 
     public getPBString(): string {
-        if (this.isItWeightPB() && this.isItVolumePB()) return "weight & volume";
+        if (this.isItWeightPB() && this.isItVolumePB()) return "w&v";
         if (this.isItWeightPB()) return "weight";
         if (this.isItVolumePB()) return "volume";
         return "";

@@ -91,22 +91,22 @@ const editing = ref<boolean>(false);
             <span v-if="set.getWeight() !== null"> {{ set.getWeight() }} kg <i class="fa-solid fa-xmark"></i></span>
             {{ set.getReps() }} reps
             <i class="fa-solid fa-note-sticky noteIcon" v-if="set.getNotes() !== '' && set.getNotes() !== null" ></i>
-
-            <div class="pbMedal" v-if="setVolumePB() || setWeightPB()">
-                <i class="fa-solid fa-medal"></i>
-
-                <span class="pbLabel">
-                    {{ set.getPBString() }}
-                </span>
-            </div>
         </td>
+
+        <td class="pbs" v-if="setWeightPB() || setVolumePB()">
+            <i class="fa-solid fa-medal"></i>
+
+            <span class="pbLabel">
+                {{ set.getPBString() }}
+            </span>
+        </td>
+        <td v-else></td>
     </tr>
 </template>
 <style scoped>
-.setLabel {
+.setlabel {
     margin-right: 5px;
 }
-
 
 .setdetails i {
     font-size: 13px;
