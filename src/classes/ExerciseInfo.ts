@@ -29,12 +29,20 @@ export default class ExerciseInfo {
         return this.name;
     }
 
+    public setName(name: string): void {
+        this.name = name;
+    }
+
     public getId(): string {
         return this.id;
     }
 
     public getDescription(): string {
         return this.description;
+    }
+
+    public setDescription(description: string): void {
+        this.description = description;
     }
 
     public async getWeightPB(): Promise<number | null> {

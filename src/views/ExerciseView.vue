@@ -12,7 +12,9 @@ import BubbleButton from '../components/BubbleButton.vue';
 import ErrorPopup from '../components/ErrorPopup.vue';
 import ErrorDisplay from '../classes/ErrorDisplay';
 import OptionPopup from '../components/OptionPopup.vue';
+import NameEditModal from '../components/NameEditModal.vue';
 import Set from '../classes/Set';
+
 const router = useRouter();
 
 const props = defineProps(['exercise_id']);
@@ -28,8 +30,16 @@ const sets = ref<Array<{
 const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 const deletePopup = ref<boolean>(false);
 
+const editingName = ref<boolean>(false);
+
 function exerciseName(): string {
-    return exercise.value ? exercise.value.getName() : "...";
+    return exercise.value ? exercise.value.getName() : "";
+}
+
+function exerciseNotes(): string {
+    const result = exercise.value ? exercise.value.getDescription() : "";
+    console.log(result);
+    return result;
 }
 
 async function getSets() {
@@ -116,7 +126,8 @@ async function confirmDelete() {
         @cancel="deletePopup = false"
     />
     <div class="viewArea margins">
-        <h1>{{ exerciseName() }}</h1>
+        <h1>{{ exerciseName() }} <button class="iconButton" @click="editingName = true"><i class="fa-solid fa-pen-to-square"></i></button></h1>
+        {{ exercise ? exercise.getDescription() : ''}}
         <WeightByDate
             v-if="!loading && sets.length > 0"
             :sets="sets"
@@ -132,12 +143,36 @@ async function confirmDelete() {
             red
         >Delete Exercise</BubbleButton>
     </div>
+    <NameEditModal
+        v-if="editingName && exercise"
+        :currentName="exercise ? exercise.getName() : ''"
+        :currentDescription="exercise ? exercise.getDescription() : ''"
+        :exerciseInfo="exercise"
+        :id="exercise ? exercise.getId() : ''"
+        label="Exercise"
+        @confirm="async (newName: string) => {
+            if (exercise.value) {
+                loading.value = true;
+                const success = await exercise.value.updateName(newName);
+                if (!success) {
+                    errorDisplay.value.setError('Failed to update name', 'An error occurred while updating the exercise name. Please try again later.');
+                }
+                loading.value = false;
+            }
+            editingName = false;
+        }"
+        @cancel="editingName = false"
+    />
 </template>
 
 <style scoped>
 h1, h2 {
     padding: 0;
     margin: 0;
+}
+
+h1 i {
+    font-size: 18px;
 }
 .viewArea {
     padding-top: 15px;

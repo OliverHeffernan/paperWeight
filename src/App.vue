@@ -95,7 +95,8 @@ body, textarea, .side, button, input {
 input {
 	padding: 5px;
 	margin: 0;
-	font-size: 16px;
+	/*font-size: 16px;*/
+    font-size: inherit;
 	border: var(--border) 1px solid;
 	border-radius: 5px 5px 0 0;
 }
