@@ -25,6 +25,7 @@ const props = defineProps<{
         <ExerciseTopBar
             :exercise="exercise"
             :index="index"
+            @edit="editing = true"
         />
         <table class="setsContainer">
             <thead v-if="showSets">

@@ -4,10 +4,14 @@ defineProps<{
     exercise: Exercise;
     index: number;
 }>();
+
+const emit = defineEmits<{
+    (e: "edit"): void;
+}>();
 </script>
 <template>
     <h2 class="exerciseTitle">
-        <span @click="editing = true" class="clickable">
+        <span @click="emit('edit')" class="clickable">
             {{ exercise.getName() }}
             <i class="fa-solid fa-pen-to-square"></i>
         </span>
