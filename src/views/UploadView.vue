@@ -36,8 +36,10 @@ onMounted(async () => {
         // portrait orientation
         // use back facing camera
         video: {
+			/*
             width: { ideal: 480 },
             height: { ideal: 640 },
+			*/
             facingMode: "environment"
         }
     };
