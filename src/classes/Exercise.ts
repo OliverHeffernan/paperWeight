@@ -236,7 +236,7 @@ export default class Exercise {
         await this.createNewIdIfNeeded();
         for (const set of this.sets) {
             set.setExercise(this);
-            await set.updateDB();
+            //await set.updateDB();
         }
         if (this.workout) this.workout.changeMade();
     }
