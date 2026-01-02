@@ -10,6 +10,7 @@ import { ref, onMounted } from 'vue';
 const exercises = ref<Array<Exercise>>([]);
 const whichPR = ref<string>('weight');
 const sortBy = ref<string>('name');
+const ascending = ref<string>('true');
 const loading = ref<boolean>(true);
 
 onMounted(async () => {
@@ -50,9 +51,16 @@ onMounted(async () => {
 			]"
 			@select="sortBy = $event"
 		/>
+		<Selector
+			:options="[
+				{ label: 'Ascending', value: true },
+				{ label: 'Descending', value: false },]
+			"
+			@select="ascending = $event"
+		/>
         <table id="exerciseTable">
             <ExerciseRow
-                v-for="exercise in ExerciseUtils.sortExercisesBy(exercises, sortBy)"
+                v-for="exercise in ExerciseUtils.sortExercisesBy(exercises, sortBy, ascending)"
                 :key="exercise.id"
                 :exercise="exercise"
                 :whichPR="whichPR"

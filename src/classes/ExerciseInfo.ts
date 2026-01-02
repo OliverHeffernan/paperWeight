@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { getWorkoutsInfoByExercise } from '../utils/getWorkouts';
 export default class ExerciseInfo {
     public name: string;
     public id: string;
@@ -27,6 +28,7 @@ export default class ExerciseInfo {
 		this.weightPB = await this.getWeightPB();
 		this.volumePB = await this.getVolumePB();
 		this.setCount = await this.getSetCount();
+		this.workoutCount = await getWorkoutsInfoByExercise(this.id).then(info => info.length);
 	}
 
     public constructor(data: { name: string; id: string; description: string }) {
