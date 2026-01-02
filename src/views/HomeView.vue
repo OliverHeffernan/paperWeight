@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from '../views/LoadingView.vue';
+import SplashView from '../views/SplashView.vue';
 import WorkoutThumbnail from '../components/WorkoutThumbnail.vue';
 import NoWorkouts from '../components/NoWorkouts.vue';
 import { supabase } from '../lib/supabase';
@@ -28,7 +29,7 @@ async function loadWorkouts() {
 
 </script>
 <template>
-    <LoadingView v-if="loading" />
+    <SplashView v-if="loading" />
     <div class="viewArea">
         <div class="thumbnailContainer margins">
             <BubbleButton

@@ -21,10 +21,18 @@ const workoutCount = ref<number | null>(null);
 const setCount = ref<number | null>(null);
 
 onMounted(async() => {
+	/*
     weightPB.value = await props.exercise.getWeightPB();
     volumePB.value = await props.exercise.getVolumePB();
     workoutCount.value = await getWorkoutsInfoByExercise(props.exercise.getId()).then(wos => wos.length);
     setCount.value = await props.exercise.getSetCount();
+	*/
+	await props.exercise.getMoreInfo();
+	weightPB.value = props.exercise.weightPB;
+	volumePB.value = props.exercise.volumePB;
+	workoutCount.value = props.exercise.workoutCount;
+	setCount.value = props.exercise.setCount;
+
     loading.value = false;
 });
 </script>

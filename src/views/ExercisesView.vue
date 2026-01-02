@@ -4,10 +4,12 @@ import ExerciseRow from '../components/ExerciseRow.vue';
 import ExerciseInfo from '../classes/ExerciseInfo';
 import Selector from '../components/Selector.vue';
 import LoadingView from './LoadingView.vue';
+import ExerciseUtils from '../utils/ExercisesUtils';
 
 import { ref, onMounted } from 'vue';
 const exercises = ref<Array<Exercise>>([]);
 const whichPR = ref<string>('weight');
+const sortBy = ref<string>('name');
 const loading = ref<boolean>(true);
 
 onMounted(async () => {
@@ -40,9 +42,17 @@ onMounted(async () => {
             ]"
             @select="whichPR = $event"
         />
+		<Selector
+			:options="[
+				{ label: 'Sort by name', value: 'name' },
+				{ label: 'set count', value: 'sets' },
+				{ label: 'workout count', value: 'workouts' },
+			]"
+			@select="sortBy = $event"
+		/>
         <table id="exerciseTable">
             <ExerciseRow
-                v-for="exercise in exercises"
+                v-for="exercise in ExerciseUtils.sortExercisesBy(exercises, sortBy)"
                 :key="exercise.id"
                 :exercise="exercise"
                 :whichPR="whichPR"

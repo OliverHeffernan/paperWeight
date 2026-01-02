@@ -3,6 +3,10 @@ export default class ExerciseInfo {
     public name: string;
     public id: string;
     public description: string;
+	public weightPB: number | null = null;
+	public volumePB: number | null = null;
+	public setCount: number | null = null;
+	public workoutCount: number | null = null;
 
     public static async create(id: string): Promise<ExerciseInfo | null> {
         const { data, error } = await supabase
@@ -18,6 +22,12 @@ export default class ExerciseInfo {
 
         return new ExerciseInfo(data);
     }
+
+	public async getMoreInfo(): Promise<void> {
+		this.weightPB = await this.getWeightPB();
+		this.volumePB = await this.getVolumePB();
+		this.setCount = await this.getSetCount();
+	}
 
     public constructor(data: { name: string; id: string; description: string }) {
         this.name = data.name;
