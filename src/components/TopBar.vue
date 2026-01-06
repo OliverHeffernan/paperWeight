@@ -9,18 +9,9 @@
             class="iconButton clickable signOutButton"
             @click="signingOut = true"
         >
-            <i class="fa-solid fa-right-from-bracket"></i>
+            <!--<i class="fa-solid fa-right-from-bracket"></i>-->
+			<i class="fa-solid fa-gear"></i>
         </button>
-        <OptionPopup
-            v-if="signingOut"
-            title="Sign Out"
-            message="Are you sure you want to sign out?"
-            confirmText="Sign Out"
-            confirmRed
-            cancelText="Cancel"
-            @confirm="signOut()"
-            @cancel="signingOut = false"
-        />
     </div>
 </template>
 <script setup lang="ts">
