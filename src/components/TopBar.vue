@@ -7,7 +7,7 @@
         <button
             v-if="!canGoBack() && route.name !== 'Sign In' && route.name !== 'Sign Up'"
             class="iconButton clickable signOutButton"
-            @click="signingOut = true"
+            @click="goToSettings()"
         >
             <!--<i class="fa-solid fa-right-from-bracket"></i>-->
 			<i class="fa-solid fa-gear"></i>
@@ -35,6 +35,10 @@ function canGoBack(): boolean {
         return false;
     }
     return window.history.length > 1;
+}
+
+function goToSettings(): void {
+    router.push({ name: 'Settings' });
 }
 </script>
 <style scoped>

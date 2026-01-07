@@ -6,6 +6,7 @@ import JSONDate from '../interfaces/JSONDate';
 import { supabase } from '../lib/supabase';
 import DataUtils from '../utils/DataUtils';
 import WorkoutInfoFunctions from '../interfaces/WorkoutInfoFunctions';
+import HeartrateStream from '../interfaces/HeartrateStream';
 
 /**
  * Class representing a workout session.
@@ -29,6 +30,7 @@ export default class Workout implements WorkoutInfoFunctions {
     private notes: string;
     // energy expended during the workout in kilojoules.
     private energy: number | null;
+	private heartrate_stream: HeartrateStream | null = null;
     // average heart rate during the workout in beats per minute.
     private heart_rate: number | null;
     private unsavedChanges: number = 0;
@@ -60,6 +62,7 @@ export default class Workout implements WorkoutInfoFunctions {
         }
         this.energy = object.energy;
         this.heart_rate = object.heart_rate;
+		this.heartrate_stream = object.heartrate_stream || null;
 
         this.exercises = exercises;
         this.pbCount = object.count_pbs || 0;
@@ -306,6 +309,7 @@ export default class Workout implements WorkoutInfoFunctions {
             notes: this.notes,
             energy: this.energy,
             heart_rate: this.heart_rate,
+			heartrate_stream: this.heartrate_stream,
             volume: this.getVolume(),
             set_count: this.countSets(),
             exercise_ids: Array.from(uniqueExerciseIds),
@@ -323,6 +327,8 @@ export default class Workout implements WorkoutInfoFunctions {
      * Retrieves the notes for the workout.
      */
     public getNotes(): string { return this.notes; }
+
+	public getHeartrateStream(): HeartrateStream | null { return this.heartrate_stream; }
 
     /**
      * Retrieves the energy expended during the workout in kilojoules.
@@ -568,4 +574,5 @@ export default class Workout implements WorkoutInfoFunctions {
     public getPBCount(): number {
         return this.pbCount;
     }
+
 }

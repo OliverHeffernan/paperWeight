@@ -1,5 +1,6 @@
 import JSONExercise from "./JSONExercise";
 import JSONDate from "./JSONDate";
+import HeartrateStream from "./HeartrateStream";
 
 /**
  * Interface representing a workout in JSON format.
@@ -18,6 +19,7 @@ export default interface JSONWorkout {
     notes: string;
     energy: number | null | { amount: number | null; unit: string | null; };
     heart_rate: number | null;
+	heartrate_stream: HeartrateStream | null;
     volume: number | null;
     set_count: number | null;
     exercise_ids?: Array<string>;

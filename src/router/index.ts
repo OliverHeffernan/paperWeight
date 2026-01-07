@@ -12,6 +12,7 @@ import ExercisesView from '../views/ExercisesView.vue';
 import ExerciseView from '../views/ExerciseView.vue';
 import LandingPage from '../views/LandingPage.vue';
 import SplashView from '../views/SplashView.vue';
+import Settings from '../views/Settings.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -67,6 +68,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/app/exercises',
         name: 'Exercises',
         component: ExercisesView
+    },
+    {
+        path: '/app/settings',
+        name: 'Settings',
+        component: Settings
     },
     {
         path: '/email-confirmed',
