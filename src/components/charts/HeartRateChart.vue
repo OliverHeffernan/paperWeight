@@ -77,6 +77,7 @@ async function createChart() {
             y: hr
         };
     });
+	console.log(xy_values);
     
     // Get the computed styles of the root element
     const cssVar = getComputedStyle(document.documentElement);
@@ -153,6 +154,8 @@ async function createChart() {
             scales: {
                 x: {
                     type: 'linear',
+                    min: 0,
+                    max: Math.max(...xy_values.map(point => point.x)),
                     title: {
                         display: true,
                         text: 'Time (minutes)',

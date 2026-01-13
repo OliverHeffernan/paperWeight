@@ -1,6 +1,6 @@
 <template>
     <div class="backBar">
-        <button v-if="canGoBack()" class="backButton clickable" @click="router.back()">
+        <button v-if="canGoBack()" class="backButton clickable" @click="goBack()">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
         <h3>{{ route.name }}</h3>
@@ -35,6 +35,30 @@ function canGoBack(): boolean {
         return false;
     }
     return window.history.length > 1;
+}
+
+function previousRouteURL(): string | null {
+	const backUrl = router.options.history.state.back;
+	if (backUrl) {
+		// Resolve the full route object from the path
+		const resolvedRoute = router.resolve({ path: `${backUrl}` });
+		return resolvedRoute.name; // This is the name of the previous route
+	}
+	return null;
+}
+
+function goBack(): void {
+	if (!canGoBack()) return;
+	const prev: string | null = previousRouteURL();
+	if (prev === null) {
+		router.push({ name: "Home" });
+		return;
+	}
+	if (prev.includes("www.strava.com")) {
+		router.push({ name: "Home" });
+		return;
+	}
+	router.back();
 }
 
 function goToSettings(): void {

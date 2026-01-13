@@ -187,7 +187,8 @@ async function disconnectStrava() {
 				strava_refresh_token: null,
 				strava_token_expires_at: null,
 				strava_athlete_id: null,
-				strava_athlete_name: null
+				strava_athlete_name: null,
+				strava_connected: false
 			})
 			.eq('id', user.id);
 
@@ -335,6 +336,7 @@ async function saveStravaConnection(connectionData: any) {
 					strava_token_expires_at: connectionData.strava_token_expires_at,
 					strava_athlete_id: connectionData.strava_athlete_id,
 					strava_athlete_name: connectionData.strava_athlete_name,
+					strava_connected: true,
 				});
 			updateError = error;
 		} else {
