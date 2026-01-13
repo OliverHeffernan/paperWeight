@@ -84,7 +84,7 @@ const routes: Array<RouteRecordRaw> = [
 		path: '/splash',
 		name: 'Splash',
 		component: SplashView,
-	}
+	},
 ];
 
 const router = createRouter({

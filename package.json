@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vitepress dev support",
     "serve": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "build": "vitepress build support",
+    "preview": "vitepress preview support",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "type-check": "vue-tsc --noEmit"
   },
@@ -39,6 +39,7 @@
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
     "vite": "^6.4.1",
+    "vitepress": "^2.0.0-alpha.15",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.1.1",
     "webpack": "^5.102.1",
