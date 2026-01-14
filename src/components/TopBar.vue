@@ -1,26 +1,17 @@
 <template>
     <div class="backBar">
-        <button v-if="canGoBack()" class="backButton clickable" @click="router.back()">
+        <button v-if="canGoBack()" class="backButton clickable" @click="goBack()">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
         <h3>{{ route.name }}</h3>
         <button
             v-if="!canGoBack() && route.name !== 'Sign In' && route.name !== 'Sign Up'"
             class="iconButton clickable signOutButton"
-            @click="signingOut = true"
+            @click="goToSettings()"
         >
-            <i class="fa-solid fa-right-from-bracket"></i>
+            <!--<i class="fa-solid fa-right-from-bracket"></i>-->
+			<i class="fa-solid fa-gear"></i>
         </button>
-        <OptionPopup
-            v-if="signingOut"
-            title="Sign Out"
-            message="Are you sure you want to sign out?"
-            confirmText="Sign Out"
-            confirmRed
-            cancelText="Cancel"
-            @confirm="signOut()"
-            @cancel="signingOut = false"
-        />
     </div>
 </template>
 <script setup lang="ts">
@@ -44,6 +35,34 @@ function canGoBack(): boolean {
         return false;
     }
     return window.history.length > 1;
+}
+
+function previousRouteURL(): string | null {
+	const backUrl = router.options.history.state.back;
+	if (backUrl) {
+		// Resolve the full route object from the path
+		const resolvedRoute = router.resolve({ path: `${backUrl}` });
+		return resolvedRoute.name; // This is the name of the previous route
+	}
+	return null;
+}
+
+function goBack(): void {
+	if (!canGoBack()) return;
+	const prev: string | null = previousRouteURL();
+	if (prev === null) {
+		router.push({ name: "Home" });
+		return;
+	}
+	if (prev.includes("www.strava.com")) {
+		router.push({ name: "Home" });
+		return;
+	}
+	router.back();
+}
+
+function goToSettings(): void {
+    router.push({ name: 'Settings' });
 }
 </script>
 <style scoped>

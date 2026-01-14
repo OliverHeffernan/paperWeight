@@ -22,3 +22,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+support/.vitepress/dist
+support/.vitepress/cache
