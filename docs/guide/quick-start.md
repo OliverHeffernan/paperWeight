@@ -118,7 +118,6 @@ A: No, but consistent formatting helps the AI perform better.
 - 📖 Learn about all [Features](/guide/features)
 - 🔗 Set up [Strava Integration](/strava/)
 - 💪 Explore [Exercise Management](/guide/exercise-management)
-- 📊 Understand [Analytics & Progress Tracking](/guide/analytics)
 
 ---
 

@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 supabase
-dist
 
 # local env files
 .env.local
@@ -23,5 +22,4 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-support/.vitepress/dist
 support/.vitepress/cache
