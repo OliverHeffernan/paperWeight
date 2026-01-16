@@ -6,6 +6,7 @@ import BubbleButton from '../BubbleButton.vue';
     <nav class="navBar margins">
         <RouterLink class="navItem" :to="{ name: 'landing' }"><b>Paper</b><em>Weight</em></RouterLink>
 
+		<a class="navItem" href="https://paperweight-support.olihef.com" target="_blank" rel="noopener">Support</a>
         <RouterLink class="navItem right" :to="{ name: 'Home' }"><BubbleButton>Sign In</BubbleButton></RouterLink>
     </nav>
 </template>

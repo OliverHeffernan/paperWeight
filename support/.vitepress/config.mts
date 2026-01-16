@@ -11,7 +11,8 @@ export default defineConfig({
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Guide', link: '/guide/' },
-			{ text: 'Strava', link: '/strava/' }
+			{ text: 'Strava', link: '/strava/' },
+			{ text: 'App', link: 'https://paperweight.olihef.com' }
 
 		],
 
