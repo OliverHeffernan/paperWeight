@@ -1,0 +1,9 @@
+:root {
+	--vp-c-brand-1: rgb(75, 192, 192);
+}
+.dark {
+	--vp-c-bg: #0B1119;
+	--vp-c-bg-alt: #13202E; 
+	--vp-c-bg-soft: #13202E; 
+	--vp-c-divider: #656668;
+}
