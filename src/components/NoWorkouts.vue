@@ -13,6 +13,7 @@
     justify-content: center;
     margin-top: 50px;
     opacity: 0.1;
+	text-align: center;
 }
 
 .container h2 {

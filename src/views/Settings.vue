@@ -1,8 +1,8 @@
 <template>
-	<div class="settings-container">
+	<div class="margins flexColumn">
 		<h2>Settings</h2>
 		
-		<section class="strava-section">
+		<section class="softBubble">
 			<h3>Strava Integration</h3>
 			<p v-if="!isStravaConnected" class="description">
 				Connect your Strava account to automatically match your paperWeight workouts with Strava activities.
@@ -11,24 +11,22 @@
 				Connected as: {{ stravaAthleteName }}
 			</p>
 			
-			<button 
+			<BubbleButton 
 				v-if="!isStravaConnected" 
 				@click="handleConnectStrava"
 				class="strava-connect-btn"
-			>
-				<i class="fab fa-strava"></i>
-				Connect to Strava
-			</button>
+				strava
+			></BubbleButton>
 			
-			<div v-else class="strava-actions">
-				<button @click="syncWorkouts" class="sync-btn" :disabled="isSyncing">
+			<div v-else class="flexRow">
+				<BubbleButton @click="syncWorkouts" class="sync-btn" :disabled="isSyncing">
 					<i class="fa-solid fa-sync" :class="{ 'spinning': isSyncing }"></i>
 					{{ isSyncing ? 'Syncing...' : 'Sync Workouts' }}
-				</button>
-				<button @click="disconnectStrava" class="disconnect-btn">
+				</BubbleButton>
+				<BubbleButton @click="disconnectStrava" class="disconnect-btn">
 					<i class="fa-solid fa-unlink"></i>
 					Disconnect
-				</button>
+				</BubbleButton>
 			</div>
 			
 			<div v-if="stravaMessage" class="strava-message" :class="stravaMessageType">
@@ -36,12 +34,12 @@
 			</div>
 		</section>
 		
-		<section class="account-section">
+		<section class="softBubble">
 			<h3>Account</h3>
-			<button class="signOutButton" @click="signingOut = true">
+			<BubbleButton @click="signingOut = true">
 				<i class="fa-solid fa-right-from-bracket"></i>
 				Sign Out
-			</button>
+			</BubbleButton>
 		</section>
 	</div>
 	
@@ -58,6 +56,7 @@
 </template>
 <script setup lang="ts">
 import OptionPopup from '../components/OptionPopup.vue';
+import BubbleButton from '../components/BubbleButton.vue';
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { supabase } from '../lib/supabase';
@@ -379,162 +378,4 @@ async function saveStravaConnection(connectionData: any) {
 </script>
 
 <style scoped>
-.settings-container {
-	max-width: 600px;
-	margin: 80px auto 20px;
-	padding: 20px;
-	color: var(--text);
-}
-
-.settings-container h2 {
-	margin-bottom: 30px;
-	color: var(--text);
-}
-
-section {
-	margin-bottom: 40px;
-	padding: 20px;
-	background: var(--sec);
-	border-radius: 10px;
-	border: 1px solid var(--border);
-}
-
-section h3 {
-	margin: 0 0 15px 0;
-	color: var(--text);
-	font-size: 1.1em;
-}
-
-.description {
-	margin-bottom: 20px;
-	color: var(--text-secondary);
-	line-height: 1.5;
-}
-
-.description.connected {
-	color: var(--success, #4CAF50);
-	font-weight: 500;
-}
-
-.strava-connect-btn {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 12px 24px;
-	background: #fc4c02;
-	color: white;
-	border: none;
-	border-radius: 8px;
-	font-size: 16px;
-	font-weight: 600;
-	cursor: pointer;
-	transition: background-color 0.2s;
-}
-
-.strava-connect-btn:hover {
-	background: #e63900;
-}
-
-.strava-actions {
-	display: flex;
-	gap: 15px;
-	flex-wrap: wrap;
-}
-
-.sync-btn {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 20px;
-	background: var(--primary);
-	color: white;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	transition: opacity 0.2s;
-}
-
-.sync-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
-.disconnect-btn {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 20px;
-	background: var(--danger, #dc3545);
-	color: white;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-}
-
-.disconnect-btn:hover {
-	background: var(--danger-hover, #c82333);
-}
-
-.strava-message {
-	margin-top: 15px;
-	padding: 10px 15px;
-	border-radius: 6px;
-	font-weight: 500;
-}
-
-.strava-message.success {
-	background: rgba(76, 175, 80, 0.1);
-	color: var(--success, #4CAF50);
-	border: 1px solid var(--success, #4CAF50);
-}
-
-.strava-message.error {
-	background: rgba(220, 53, 69, 0.1);
-	color: var(--danger, #dc3545);
-	border: 1px solid var(--danger, #dc3545);
-}
-
-.signOutButton {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 12px 20px;
-	background: var(--danger, #dc3545);
-	color: white;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	font-size: 16px;
-}
-
-.signOutButton:hover {
-	background: var(--danger-hover, #c82333);
-}
-
-.spinning {
-	animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
-}
-
-@media (max-width: 600px) {
-	.settings-container {
-		margin: 80px 10px 20px;
-	}
-	
-	.strava-actions {
-		flex-direction: column;
-	}
-	
-	.strava-connect-btn,
-	.sync-btn,
-	.disconnect-btn,
-	.signOutButton {
-		width: 100%;
-		justify-content: center;
-	}
-}
 </style>

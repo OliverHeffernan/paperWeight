@@ -61,6 +61,7 @@ checkUser();
     --gold: #FFD700;
     --accent: rgb(75, 192, 192);
     --accentTransparent: rgba(75, 192, 192, 0.2);
+	--stravaOrange: #FC5200;
 }
 
 p {
@@ -293,6 +294,18 @@ textarea:focus {
     top: 17px;
     right: 20px;
     font-size: 15px;
+}
+
+.flexColumn {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.flexRow {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
 }
 
 </style>
