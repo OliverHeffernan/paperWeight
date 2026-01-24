@@ -40,5 +40,6 @@ defineEmits<{
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 16px;
+	width: fit-content;
 }
 </style>
