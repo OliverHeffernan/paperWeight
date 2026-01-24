@@ -244,53 +244,292 @@ async function getWorkoutData(imgURLs): object {
 <template>
     <LoadingView v-if="loading > 0" />
     <ErrorPopup :error="errorDisplay" />
-    <div class="viewArea">
-        <video
-            ref="video"
-            class="cameraFeed"
-            muted
-            playsinline
-            webkit-playsinline="true"
-            x-website-airplay="deny"
-            preload="auto"
-            aria-label=""
-            autoplay
-        />
-        <button class="captureButton" @click="captureAndUpload()"></button>
-        <UploadComponent
-            :pageCount="pages"
-            @uploadWorkoutData="generateAndUploadWorkoutData()"
-            @retakePhoto="urls.pop(); pages--"
-        />
+    <div class="upload-container">
+        <div class="camera-section">
+            <video
+                ref="video"
+                class="cameraFeed"
+                muted
+                playsinline
+                webkit-playsinline="true"
+                x-website-airplay="deny"
+                preload="auto"
+                aria-label=""
+                autoplay
+            />
+            <div class="camera-overlay">
+                <div class="camera-frame">
+                    <div class="corner-frame top-left"></div>
+                    <div class="corner-frame top-right"></div>
+                    <div class="corner-frame bottom-left"></div>
+                    <div class="corner-frame bottom-right"></div>
+                </div>
+                <div class="camera-instructions">
+                    <p class="instruction-text">Position your workout notes within the frame</p>
+                    <p class="instruction-subtext">Make sure the text is clear and well-lit</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-section">
+            <UploadComponent
+                :pageCount="pages"
+                @uploadWorkoutData="generateAndUploadWorkoutData()"
+                @retakePhoto="urls.pop(); pages--"
+                class="upload-component"
+            />
+            
+            <button class="captureButton" @click="captureAndUpload()">
+                <div class="capture-inner"></div>
+            </button>
+        </div>
+        
         <canvas ref="canvas" class="hidden"></canvas>
     </div>
 </template>
 
 <style scoped>
-.cameraFeed {
+.upload-container {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--prim);
+}
+
+.camera-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cameraFeed {
+    position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     height: 100%;
+    width: 100%;
     object-fit: cover;
+    z-index: 1;
+}
+
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding-bottom: 200px; /* Account for controls section */
+    box-sizing: border-box;
+}
+
+.camera-frame {
+    position: relative;
+    width: 80%;
+    max-width: 400px;
+    aspect-ratio: 3/4;
+    border: 2px solid var(--accent);
+    border-radius: 15px;
+    background: rgba(75, 192, 192, 0.1);
+}
+
+.corner-frame {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--accent);
+}
+
+.corner-frame.top-left {
+    top: -2px;
+    left: -2px;
+    border-right: none;
+    border-bottom: none;
+    border-top-left-radius: 15px;
+}
+
+.corner-frame.top-right {
+    top: -2px;
+    right: -2px;
+    border-left: none;
+    border-bottom: none;
+    border-top-right-radius: 15px;
+}
+
+.corner-frame.bottom-left {
+    bottom: -2px;
+    left: -2px;
+    border-right: none;
+    border-top: none;
+    border-bottom-left-radius: 15px;
+}
+
+.corner-frame.bottom-right {
+    bottom: -2px;
+    right: -2px;
+    border-left: none;
+    border-top: none;
+    border-bottom-right-radius: 15px;
+}
+
+.camera-instructions {
+    margin-top: 30px;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.instruction-text {
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.instruction-subtext {
+    color: var(--text);
+    font-size: 1rem;
+    opacity: 0.8;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.controls-section {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px; /* Fixed height to prevent overlap */
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    padding-bottom: calc(85px + 20px); /* Navbar height + padding */
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    box-sizing: border-box;
+}
+
+.upload-component {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
 }
 
 .captureButton {
-    position: fixed;
-    bottom: 120px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70px;
-    height: 70px;
-    background-color: var(--prim);
-    border: solid 4px var(--border);
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background-color: var(--text);
+    border: 4px solid var(--accent);
     border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(75, 192, 192, 0.3);
+    flex-shrink: 0;
+}
+
+.captureButton:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 30px rgba(75, 192, 192, 0.6);
+}
+
+.capture-inner {
+    width: 60px;
+    height: 60px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    margin: 6px;
+    transition: all 0.2s ease;
+}
+
+.captureButton:active .capture-inner {
+    background-color: var(--text);
 }
 
 .hidden {
     display: none;
 }
 
+/* Animation for focusing effect */
+@keyframes focusFrame {
+    0% {
+        box-shadow: 0 0 0 0 rgba(75, 192, 192, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(75, 192, 192, 0);
+    }
+}
+
+.camera-frame {
+    animation: focusFrame 2s infinite;
+}
+
+@media (max-width: 768px) {
+    .camera-overlay {
+        padding-bottom: 180px;
+    }
+    
+    .controls-section {
+        height: 180px;
+        padding-bottom: calc(85px + 15px);
+    }
+    
+    .camera-frame {
+        width: 90%;
+    }
+    
+    .instruction-text {
+        font-size: 1.1rem;
+    }
+    
+    .instruction-subtext {
+        font-size: 0.9rem;
+    }
+    
+    .captureButton {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .capture-inner {
+        width: 50px;
+        height: 50px;
+        margin: 6px;
+    }
+}
+
+@media (max-height: 600px) {
+    .camera-overlay {
+        padding-bottom: 160px;
+    }
+    
+    .controls-section {
+        height: 160px;
+        padding-bottom: calc(85px + 10px);
+    }
+    
+    .camera-frame {
+        width: 70%;
+    }
+    
+    .instruction-text {
+        font-size: 1rem;
+    }
+    
+    .instruction-subtext {
+        font-size: 0.85rem;
+    }
+}
 </style>

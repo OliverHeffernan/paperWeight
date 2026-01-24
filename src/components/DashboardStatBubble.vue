@@ -47,6 +47,8 @@ function getChangePercentage(): string {
 .right {
     float: right;
     font-size: 22px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
 .fa-arrow-down {
@@ -60,13 +62,57 @@ function getChangePercentage(): string {
 .statBubble {
     min-width: 200px;
     flex-grow: 1;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.statBubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(75, 192, 192, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.statBubble:hover::before {
+    left: 100%;
+}
+
+.statBubble:hover .right {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .selected {
-    border: solid 1px var(--btnBorder);
+    border: solid 2px var(--btnBorder);
+    background: linear-gradient(135deg, var(--sec) 0%, color-mix(in srgb, var(--accent) 10%, var(--sec)) 100%);
+    box-shadow: 0 4px 15px rgba(75, 192, 192, 0.2);
 }
 
 .statBubble p {
     margin: 0;
+    transition: color 0.3s ease;
+}
+
+.statBubble h2 {
+    margin: 10px 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.selected h2 {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--text) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 </style>

@@ -158,32 +158,54 @@ const syncWorkoutWithStrava = async () => {
 		@cancel="editingDetails = false"
 	/>
 
-	<div class="viewArea" v-if="workout">
-		<div class="margins">
-			<h2>
-				{{ workout.getTitle() }}
-				<i class="fa-solid fa-ellipsis clickable" @click="editingDetails = true"></i>
-			</h2>
-			<p class="greyed">{{ workout.getDateString() }}</p>
-			<p class="softBubble" v-if="workout.getNotes() !== ''">{{ workout.getNotes() }}</p>
-			<WorkoutOverview :workout="workout" />
-			<!-- Heart Rate Chart Section -->
+	<div class="workout-view-container" v-if="workout">
+		<div class="workout-content margins">
+			<!-- Workout Header -->
+			<div class="workout-header">
+				<div class="header-content">
+					<h1 class="workout-title">
+						{{ workout.getTitle() }}
+						<i
+							class="fas fa-edit clickable"
+							@click="editingDetails = true"
+						></i>
+					</h1>
+					<p class="workout-date">{{ workout.getDateString() }}</p>
+					<div v-if="workout.getNotes() !== ''" class="workout-notes">
+						<p>{{ workout.getNotes() }}</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Workout Overview Section -->
+			<div class="overview-section">
+				<div class="section-header">
+					<h2 class="section-title">
+						<i class="fa-solid fa-chart-simple section-icon"></i>
+						Workout Overview
+					</h2>
+				</div>
+				<WorkoutOverview :workout="workout" />
+			</div>
+			<!-- Heart Rate Section -->
 			<div v-if="workout.getHeartrateStream()" class="heart-rate-section">
+				<div class="section-header">
+					<h2 class="section-title">
+						<i class="fa-solid fa-heart section-icon heart-icon"></i>
+						Heart Rate Data
+					</h2>
+				</div>
+
 				<BubbleButton
 					@click="showHeartRateChart = !showHeartRateChart"
 					fullWidth
+					class="toggle-button"
 				>
-					<i class="fa-solid fa-heart" style="color: #fc4c02;"></i>
+					<i class="fa-solid" :class="showHeartRateChart ? 'fa-eye-slash' : 'fa-heart'"></i>
 					{{ showHeartRateChart ? 'Hide Heart Rate Chart' : 'Show Heart Rate Chart' }}
 				</BubbleButton>
 
 				<div v-if="showHeartRateChart" class="heart-rate-chart-container">
-					<HeartRateChart 
-						:heartrate-stream="workout.getHeartrateStream()!"
-						:workout-duration="workout.getDuration()"
-					/>
-
-					<!-- Heart Rate Stats -->
 					<div class="hr-stats">
 						<div class="hr-stat">
 							<div class="label">Average</div>
@@ -198,64 +220,358 @@ const syncWorkoutWithStrava = async () => {
 							<div class="value">{{ Math.min(...workout.getHeartrateStream()!.data) }} BPM</div>
 						</div>
 					</div>
+					<HeartRateChart 
+						:heartrate-stream="workout.getHeartrateStream()!"
+						:workout-duration="workout.getDuration()"
+					/>
 				</div>
 			</div>
 
-			<BubbleButton
-				@click="showSets = !showSets"
-				fullWidth
-			>
-				<i class="fa-solid" :class="showSets ? 'fa-eye-slash' : 'fa-eye'"></i>
-				{{ showSets ? 'Hide Sets' : 'Show Sets' }}
-			</BubbleButton>
+			<!-- Strava Section -->
+			<div v-if="isStravaConnected" class="strava-section">
 
-			<!-- Strava Sync Button -->
-			<BubbleButton
-				v-if="isStravaConnected && !workout.linked_strava_id"
-				@click="syncWorkoutWithStrava"
-				:disabled="isSyncingStrava"
-				fullWidth
-				orange
-				class="strava-sync-btn"
-			>
-				<i class="fab fa-strava" v-if="!isSyncingStrava"></i>
-				<i class="fa-solid fa-spinner fa-spin" v-else></i>
-				{{ isSyncingStrava ? 'Syncing...' : 'Sync with Strava' }}
-			</BubbleButton>
+				<BubbleButton
+					v-if="!workout.linked_strava_id"
+					@click="syncWorkoutWithStrava"
+					:disabled="isSyncingStrava"
+					fullWidth
+					orange
+					class="strava-sync-btn"
+				>
+					<i class="fab fa-strava" v-if="!isSyncingStrava"></i>
+					<i class="fa-solid fa-spinner fa-spin" v-else></i>
+					{{ isSyncingStrava ? 'Syncing...' : 'Sync with Strava' }}
+				</BubbleButton>
 
-			<!-- Strava Status -->
-			<div v-if="workout.linked_strava_id" class="strava-status">
-				<i class="fab fa-strava"></i>
-				<span>Linked to Strava Activity</span>
-				<span class="activity-id">#{{ workout.linked_strava_id }}</span>
+				<div v-if="workout.linked_strava_id" class="strava-status">
+					<i class="fab fa-strava"></i>
+					<span>Linked to Strava Activity</span>
+					<span class="activity-id">#{{ workout.linked_strava_id }}</span>
+				</div>
+
+				<div v-if="stravaMessage" class="sync-message" :class="stravaMessageType">
+					<i :class="stravaMessageType === 'success' ? 'fa-solid fa-check-circle' : 'fa-solid fa-exclamation-triangle'"></i>
+					{{ stravaMessage }}
+				</div>
 			</div>
 
-			<!-- Sync Message -->
-			<div v-if="stravaMessage" class="sync-message" :class="stravaMessageType">
-				{{ stravaMessage }}
+			<!-- Exercises Section -->
+			<div class="exercises-section">
+				<div class="section-header exercises-header">
+					<h2 class="section-title">
+						<i class="fa-solid fa-dumbbell section-icon"></i>
+						Exercises
+						<span class="exercise-count">({{ workout.getExercises().length }})</span>
+					</h2>
+					<BubbleButton
+						@click="showSets = !showSets"
+						class="toggle-sets-button"
+						fullWidth
+					>
+						<i class="fa-solid" :class="showSets ? 'fa-eye-slash' : 'fa-eye'"></i>
+						{{ showSets ? 'Hide Sets' : 'Show Sets' }}
+					</BubbleButton>
+				</div>
+
+				<div class="exercises-grid">
+					<ExerciseContainer
+						v-for="(exercise, index) in workout.getExercises()"
+						:key="exercise.getName()"
+						:exercise="exercise"
+						:showSets="showSets"
+						:index="index"
+						:weightPbSets="weightPbSets"
+						:volumePbSets="volumePbSets"
+						class="exercise-item"
+					/>
+				</div>
+
+				<BubbleButton
+					@click="workout.addEmptyExercise()"
+					fullWidth
+					class="add-exercise-button"
+				>
+					<i class="fa-solid fa-plus"></i> Add Exercise
+				</BubbleButton>
 			</div>
-			<ExerciseContainer
-				v-for="(exercise, index) in workout.getExercises()"
-				:key="exercise.getName()"
-				:exercise="exercise"
-				:showSets="showSets"
-				:index="index"
-				:weightPbSets="weightPbSets"
-				:volumePbSets="volumePbSets"
-			/>
+
 			<SavingDisplay :workout="workout" />
-			<BubbleButton
-				@click="workout.addEmptyExercise()"
-				fullWidth
-			>
-				<i class="fa-solid fa-plus"></i> Add Exercise
-			</BubbleButton>
 		</div>
 	</div>
 	<LoadingView v-if="loading" />
 </template>
 
 <style scoped>
+.workout-view-container {
+	min-height: 100vh;
+	background: linear-gradient(135deg, var(--prim) 0%, var(--sec) 20%);
+	padding: 20px 0;
+}
+
+.workout-content {
+	max-width: 1000px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+/* Workout Header */
+.workout-header {
+	background: var(--sec);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	padding: 30px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	animation: slideUp 0.6s ease-out;
+	box-sizing: border-box;
+}
+
+.workout-header i {
+	font-size: 1.4rem;
+}
+
+.header-content {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.workout-title {
+	font-size: 2.5rem;
+	display: inline;
+	flex-direction: row;
+	font-weight: 700;
+	margin: 0;
+	align-items: center;
+	gap: 15px;
+	background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.edit-details-button {
+	background: none;
+	border: none;
+	color: var(--accent);
+	font-size: 1.2rem;
+	padding: 10px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	opacity: 0.7;
+}
+
+.edit-details-button:hover {
+	opacity: 1;
+	background: color-mix(in srgb, var(--accent) 10%, transparent);
+	transform: scale(1.1);
+}
+
+.workout-date {
+	font-size: 1.1rem;
+	color: var(--border);
+	margin: 0;
+	opacity: 0.8;
+	font-weight: 500;
+}
+
+.workout-notes {
+	background: var(--btnBG);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 15px;
+	margin-top: 10px;
+}
+
+.workout-notes p {
+	margin: 0;
+	line-height: 1.6;
+	opacity: 0.9;
+}
+
+/* Section Styles */
+.overview-section,
+.heart-rate-section,
+.strava-section,
+.exercises-section {
+	background: var(--sec);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	padding: 30px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	animation: slideUp 0.6s ease-out;
+}
+
+.section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 25px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	color: var(--text);
+}
+
+.section-icon {
+	font-size: 1.3rem;
+	color: var(--accent);
+}
+
+.heart-icon {
+	color: #fc4c02;
+}
+
+.strava-icon {
+	color: #fc4c02;
+}
+
+.exercise-count {
+	font-size: 1rem;
+	opacity: 0.7;
+	font-weight: 400;
+}
+
+/* Button Styles */
+.toggle-button,
+.toggle-sets-button,
+.add-exercise-button {
+	margin-top: 15px;
+	border-radius: 12px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+}
+
+.toggle-sets-button {
+	margin-top: 0;
+	padding: 8px 16px;
+	font-size: 0.9rem;
+}
+
+.add-exercise-button {
+	margin-top: 20px;
+}
+
+/* Heart Rate Styles */
+.heart-rate-chart-container {
+	margin-top: 20px;
+	padding: 20px;
+	background: var(--btnBG);
+	border: 1px solid var(--border);
+	border-radius: 15px;
+}
+
+.hr-stats {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	gap: 15px;
+	padding: 20px;
+	background: color-mix(in srgb, var(--accent) 5%, transparent);
+	border-radius: 12px;
+	margin-bottom: 20px;
+}
+
+.hr-stat {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 80px;
+}
+
+.hr-stat .label {
+	font-size: 0.9rem;
+	color: var(--text);
+	opacity: 0.7;
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+.hr-stat .value {
+	font-size: 1.2rem;
+	font-weight: 700;
+	color: #fc4c02;
+}
+
+/* Strava Styles */
+.strava-sync-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.strava-status {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 15px 20px;
+	background: rgba(252, 76, 2, 0.1);
+	border: 1px solid #fc4c02;
+	border-radius: 12px;
+	color: #fc4c02;
+	font-weight: 600;
+	margin-top: 15px;
+}
+
+.activity-id {
+	margin-left: auto;
+	font-family: monospace;
+	font-size: 0.9em;
+	opacity: 0.8;
+}
+
+.sync-message {
+	padding: 15px 20px;
+	border-radius: 12px;
+	font-weight: 600;
+	text-align: center;
+	margin-top: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+}
+
+.sync-message.success {
+	background: color-mix(in srgb, var(--goodBorder) 10%, transparent);
+	color: var(--goodBorder);
+	border: 1px solid var(--goodBorder);
+}
+
+.sync-message.error {
+	background: color-mix(in srgb, var(--errorBorder) 10%, transparent);
+	color: var(--errorBorder);
+	border: 1px solid var(--errorBorder);
+}
+
+/* Exercises Styles */
+.exercises-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.exercise-item {
+	animation: fadeInUp 0.4s ease-out;
+	animation-fill-mode: both;
+}
+
+.exercise-item:nth-child(1) { animation-delay: 0.1s; }
+.exercise-item:nth-child(2) { animation-delay: 0.2s; }
+.exercise-item:nth-child(3) { animation-delay: 0.3s; }
+.exercise-item:nth-child(4) { animation-delay: 0.4s; }
+.exercise-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Legacy table styles - keeping for compatibility */
 table {
 	text-align: center;
 }
@@ -271,112 +587,90 @@ table h1 {
 	padding: 0;
 }
 
-.margins {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+/* Animations */
+@keyframes slideUp {
+from {
+	opacity: 0;
+	transform: translateY(30px);
+}
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
 }
 
-.strava-sync-btn:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
+@keyframes fadeInUp {
+from {
+	opacity: 0;
+	transform: translateY(20px);
+}
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
 }
 
-.strava-status {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 15px;
-	background: rgba(252, 76, 2, 0.1);
-	border: 1px solid #fc4c02;
-	border-radius: 8px;
-	color: #fc4c02;
-	font-weight: 500;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+	.workout-title {
+		font-size: 2rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
 
-.activity-id {
-	margin-left: auto;
-	font-family: monospace;
-	font-size: 0.9em;
-}
+	.section-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 15px;
+	}
 
-.sync-message {
-	padding: 10px 15px;
-	border-radius: 6px;
-	font-weight: 500;
-	text-align: center;
-}
+	.overview-section,
+	.heart-rate-section,
+	.strava-section,
+	.exercises-section,
+	.workout-header {
+		padding: 20px;
+	}
 
-.sync-message.success {
-	background: rgba(76, 175, 80, 0.1);
-	color: var(--success, #4CAF50);
-	border: 1px solid var(--success, #4CAF50);
-}
+	.workout-content {
+		gap: 20px;
+	}
 
-.sync-message.error {
-	background: rgba(220, 53, 69, 0.1);
-	color: var(--danger, #dc3545);
-	border: 1px solid var(--danger, #dc3545);
-}
-
-.heart-rate-section {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.heart-rate-chart-container {
-	padding: 15px;
-	background: var(--sec);
-	border: 1px solid var(--border);
-	border-radius: 8px;
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
-}
-
-.hr-stats {
-	display: flex;
-	/*justify-content: space-around;*/
-	justify-content: space-between;
-	flex-wrap: wrap;
-	gap: 10px;
-	padding: 15px;
-	background: var(--primary-light, rgba(252, 76, 2, 0.05));
-	border-radius: 6px;
-}
-
-.hr-stat {
-	display: block;
-	min-width: 70px;
-}
-
-.hr-stat .label {
-	text-align: center;
-	width: 100%;
-	font-size: 0.85em;
-	color: var(--text-secondary);
-	font-weight: 500;
-}
-
-.hr-stat .value {
-	text-align: center;
-	width: 100%;
-	font-size: 1em;
-	font-weight: bold;
-	color: #fc4c02;
-}
-
-@media (max-width: 600px) {
 	.hr-stats {
 		flex-direction: column;
-		gap: 8px;
+		gap: 10px;
 	}
 
 	.hr-stat {
 		flex-direction: row;
 		justify-content: space-between;
 		min-width: auto;
+	}
+}
+
+.exercises-header {
+	display: block;
+}
+
+.exercises-header h2 {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: no-wrap;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+@media (max-width: 480px) {
+	.workout-title {
+		font-size: 1.8rem;
+	}
+
+	.section-title {
+		font-size: 1.3rem;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
 	}
 }
 </style>

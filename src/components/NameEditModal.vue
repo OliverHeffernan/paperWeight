@@ -18,37 +18,43 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'cancel'): void;
+    (e: 'confirm', newName: string, newDescription: string): void;
 }>();
 
 const nameInput = ref<string>(props.currentName);
-console.log(nameInput.value);
 const descriptionInput = ref<string>(props.currentDescription);
-console.log(descriptionInput.value);
 
 const errorDisplay = ref<ErrorDisplay>(new ErrorDisplay());
 
 async function saveChanges() {
-    console.log("yoyoyoyoyoyoyoyoyoyoyoyoyo");
-    console.log(descriptionInput.value);
-    const { data, error } = await supabase
-        .from("exercises")
-        .update({
-            name: nameInput.value,
-            description: descriptionInput.value,
-        })
-        .eq("id", props.id);
+    try {
+        const { data, error } = await supabase
+            .from("exercises")
+            .update({
+                name: nameInput.value,
+                description: descriptionInput.value,
+            })
+            .eq("id", props.id);
 
-    if (error) {
-        errorDisplay.value.setError("Failed to update exercise name.", "Please check your internet connection and try again.");
-        return;
+        if (error) {
+            errorDisplay.value.setError("Failed to update exercise name.", "Please check your internet connection and try again.");
+            return;
+        }
+        
+        // Update the exercise info locally
+        props.exerciseInfo.setName(nameInput.value);
+        props.exerciseInfo.setDescription(descriptionInput.value);
+        
+        // Emit the changes back to the parent
+        emit('confirm', nameInput.value, descriptionInput.value);
+    } catch (error) {
+        errorDisplay.value.setError("Failed to update exercise", "Please check your internet connection and try again.");
     }
-    props.exerciseInfo.setName(nameInput.value);
-    props.exerciseInfo.setDescription(descriptionInput.value);
-    console.log(data);
 }
 
 </script>
 <template>
+    <ErrorPopup :error="errorDisplay" />
     <OptionPopup
         :title="`Edit ${label} Name`"
         confirmText="Save"
@@ -58,31 +64,74 @@ async function saveChanges() {
         v-bind="$attrs"
     >
         <div class="inputs">
-            <h2>
+            <div class="input-group">
+                <label for="nameInput" class="input-label">{{ label }} Name</label>
                 <input
                     id="nameInput"
                     type="text"
                     :placeholder="`Enter new ${label} name`"
                     v-model="nameInput"
+                    class="name-input"
                 />
-            </h2>
-            <textarea
-                placeholder="Notes..."
-                v-model="descriptionInput"
-            />
+            </div>
+            <div class="input-group">
+                <label for="descriptionInput" class="input-label">Description (Optional)</label>
+                <textarea
+                    id="descriptionInput"
+                    placeholder="Enter notes or description..."
+                    v-model="descriptionInput"
+                    class="description-input"
+                />
+            </div>
         </div>
     </OptionPopup>
 </template>
 
 <style scoped>
-.inputs input, .inputs textarea {
-    width: 100%;
-    margin: 0;
-}
-
 .inputs {
     display: flex;
     flex-direction: column;
-    gap: 0px;
+    gap: 20px;
+    width: 100%;
+    min-width: 300px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.9;
+    color: var(--text);
+}
+
+.name-input,
+.description-input {
+    width: 100%;
+    margin: 0;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--btnBG);
+    color: var(--text);
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.name-input:focus,
+.description-input:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.description-input {
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
 }
 </style>

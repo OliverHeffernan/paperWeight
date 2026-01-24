@@ -259,3 +259,8 @@ onUnmounted(() => {
         <canvas ref="canvasRef" id="workoutVolumeChart"></canvas>
     </div>
 </template>
+<style scoped>
+.softBubble {
+	box-sizing: border-box;
+}
+</style>

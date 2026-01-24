@@ -1,6 +1,6 @@
 <template>
     <TopBar v-if="route.name !== 'landing'" />
-    <div v-if="route.name !== 'landing'" class="spacer" style="height: 70px;"></div>
+    <div v-if="route.name !== 'landing'" class="spacer" style="height: 60px;"></div>
     <RouterView />
     <NavBar
         v-if="!canGoBack() && route.name !== 'landing'"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Exercise from "../classes/Exercise";
+import ReorderButton from "./ReorderButton.vue";
 defineProps<{
     exercise: Exercise;
     index: number;
@@ -15,9 +16,16 @@ const emit = defineEmits<{
             {{ exercise.getName() }}
             <i class="fa-solid fa-pen-to-square"></i>
         </span>
+		<!--
         <div class="reorderHandles clickable" v-if="index !== 0">
             <i @click="exercise.reorderUp()" class="fa-solid fa-chevron-up reorder"></i>
         </div>
+		-->
+		<ReorderButton
+			v-if="index !== exercise.getWorkout().countExercises() - 1"
+			@click="exercise.reorderDown()"
+			up
+		/>
     </h2>
 </template>
 <style scoped>
