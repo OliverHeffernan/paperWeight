@@ -1,77 +1,77 @@
 <template>
 	<div class="settings-container">
-        <div class="settings-content margins">
-            <div class="settings-header">
-                <h1 class="page-title">Settings</h1>
-                <p class="page-subtitle">Manage your account and integrations</p>
-            </div>
-            
-            <div class="settings-sections">
-                <section class="settings-card">
-                    <div class="card-header">
-                        <div class="header-content">
-                            <i class="fa-brands fa-strava header-icon"></i>
-                            <div>
-                                <h3 class="card-title">Strava Integration</h3>
-                                <p v-if="!isStravaConnected" class="card-description">
-                                    Connect your Strava account to automatically match your paperWeight workouts with Strava activities.
-                                </p>
-                                <p v-else class="card-description connected">
-                                    <i class="fa-solid fa-check-circle"></i>
-                                    Connected as: <strong>{{ stravaAthleteName }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-actions">
-                        <BubbleButton 
-                            v-if="!isStravaConnected" 
-                            @click="handleConnectStrava"
-                            class="connect-button"
-                            strava
-                        ></BubbleButton>
-                        
-                        <div v-else class="connected-actions">
-                            <BubbleButton @click="syncWorkouts" class="action-button" :disabled="isSyncing">
-                                <i class="fa-solid fa-sync" :class="{ 'spinning': isSyncing }"></i>
-                                {{ isSyncing ? 'Syncing...' : 'Sync Workouts' }}
-                            </BubbleButton>
-                            <BubbleButton @click="disconnectStrava" class="action-button danger">
-                                <i class="fa-solid fa-unlink"></i>
-                                Disconnect
-                            </BubbleButton>
-                        </div>
-                    </div>
-                    
-                    <div v-if="stravaMessage" class="status-message" :class="stravaMessageType">
-                        <i :class="stravaMessageType === 'success' ? 'fa-solid fa-check-circle' : 'fa-solid fa-exclamation-triangle'"></i>
-                        {{ stravaMessage }}
-                    </div>
-                </section>
-                
-                <section class="settings-card">
-                    <div class="card-header">
-                        <div class="header-content">
-                            <i class="fa-solid fa-user header-icon"></i>
-                            <div>
-                                <h3 class="card-title">Account</h3>
-                                <p class="card-description">Manage your account settings and sign out</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-actions">
-                        <BubbleButton @click="signingOut = true" class="action-button danger">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            Sign Out
-                        </BubbleButton>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
-	
+		<div class="settings-content margins">
+			<div class="settings-header">
+				<h1 class="page-title">Settings</h1>
+				<p class="page-subtitle">Manage your account and integrations</p>
+			</div>
+
+			<div class="settings-sections">
+				<section class="settings-card">
+					<div class="card-header">
+						<div class="header-content">
+							<i class="fa-brands fa-strava header-icon"></i>
+							<div>
+								<h3 class="card-title">Strava Integration</h3>
+								<p v-if="!isStravaConnected" class="card-description">
+									Connect your Strava account to automatically match your paperWeight workouts with Strava activities.
+								</p>
+								<p v-else class="card-description connected">
+									<i class="fa-solid fa-check-circle"></i>
+									Connected as: <strong>{{ stravaAthleteName }}</strong>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="card-actions">
+						<BubbleButton 
+							v-if="!isStravaConnected" 
+							@click="handleConnectStrava"
+							class="connect-button"
+							strava
+						></BubbleButton>
+
+						<div v-else class="connected-actions">
+							<BubbleButton @click="syncWorkouts" class="action-button" :disabled="isSyncing">
+								<i class="fa-solid fa-sync" :class="{ 'spinning': isSyncing }"></i>
+								{{ isSyncing ? 'Syncing...' : 'Sync Workouts' }}
+							</BubbleButton>
+							<BubbleButton @click="disconnectStrava" class="action-button danger">
+								<i class="fa-solid fa-unlink"></i>
+								Disconnect
+							</BubbleButton>
+						</div>
+					</div>
+
+					<div v-if="stravaMessage" class="status-message" :class="stravaMessageType">
+						<i :class="stravaMessageType === 'success' ? 'fa-solid fa-check-circle' : 'fa-solid fa-exclamation-triangle'"></i>
+						{{ stravaMessage }}
+					</div>
+				</section>
+
+				<section class="settings-card">
+					<div class="card-header">
+						<div class="header-content">
+							<i class="fa-solid fa-user header-icon"></i>
+							<div>
+								<h3 class="card-title">Account</h3>
+								<p class="card-description">Manage your account settings and sign out</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="card-actions">
+						<BubbleButton @click="signingOut = true" class="action-button danger">
+							<i class="fa-solid fa-right-from-bracket"></i>
+							Sign Out
+						</BubbleButton>
+					</div>
+				</section>
+			</div>
+		</div>
+	</div>
+
 	<OptionPopup
 		v-if="signingOut"
 		title="Sign Out"
@@ -86,200 +86,200 @@
 
 <style scoped>
 .settings-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, var(--prim) 0%, var(--sec) 20%);
-    padding: 20px 0;
+	min-height: 100vh;
+	background: linear-gradient(135deg, var(--prim) 0%, var(--sec) 20%);
+	padding: 20px 0;
 }
 
 .settings-content {
-    max-width: 800px;
-    margin: 0 auto;
+	max-width: 800px;
+	margin: 0 auto;
 }
 
 .settings-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 30px 0;
+	text-align: center;
+	margin-bottom: 40px;
+	padding: 30px 0;
 }
 
 .page-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin: 0 0 10px 0;
+	background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
 }
 
 .page-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.7;
-    margin: 0;
-    font-weight: 400;
+	font-size: 1.1rem;
+	opacity: 0.7;
+	margin: 0;
+	font-weight: 400;
 }
 
 .settings-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
 }
 
 .settings-card {
-    background: var(--sec);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    animation: slideUp 0.6s ease-out;
+	background: var(--sec);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	padding: 30px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	transition: all 0.3s ease;
+	animation: slideUp 0.6s ease-out;
 }
 
 .settings-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+	transform: translateY(-2px);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+from {
+	opacity: 0;
+	transform: translateY(20px);
+}
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
 }
 
 .card-header {
-    margin-bottom: 25px;
+	margin-bottom: 25px;
 }
 
 .header-content {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
 }
 
 .header-icon {
-    font-size: 2rem;
-    color: var(--accent);
-    margin-top: 5px;
+	font-size: 2rem;
+	color: var(--accent);
+	margin-top: 5px;
 }
 
 .card-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    color: var(--text);
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0 0 10px 0;
+	color: var(--text);
 }
 
 .card-description {
-    margin: 0;
-    opacity: 0.8;
-    line-height: 1.6;
-    font-size: 1rem;
+	margin: 0;
+	opacity: 0.8;
+	line-height: 1.6;
+	font-size: 1rem;
 }
 
 .card-description.connected {
-    color: var(--goodBorder);
-    font-weight: 600;
+	color: var(--goodBorder);
+	font-weight: 600;
 }
 
 .card-description.connected i {
-    margin-right: 8px;
+	margin-right: 8px;
 }
 
 .card-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
 }
 
 .connected-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 15px;
+	width: 100%;
 }
 
 .action-button {
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    flex: 1;
-    min-width: 140px;
+	padding: 12px 20px;
+	border-radius: 12px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	flex: 1;
+	min-width: 140px;
 }
 
 .action-button.danger {
-    border-color: var(--errorBorder);
-    background-color: var(--errorBG);
+	border-color: var(--errorBorder);
+	background-color: var(--errorBG);
 }
 
 .action-button.danger:hover {
-    background-color: color-mix(in srgb, var(--errorBG) 80%, var(--errorBorder) 20%);
+	background-color: color-mix(in srgb, var(--errorBG) 80%, var(--errorBorder) 20%);
 }
 
 .connect-button {
-    padding: 15px 25px;
-    border-radius: 15px;
-    font-weight: 600;
+	padding: 15px 25px;
+	border-radius: 15px;
+	font-weight: 600;
 }
 
 .status-message {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 600;
+	margin-top: 20px;
+	padding: 15px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 600;
 }
 
 .status-message.success {
-    background-color: color-mix(in srgb, var(--goodBorder) 10%, transparent);
-    border: 1px solid var(--goodBorder);
-    color: var(--goodBorder);
+	background-color: color-mix(in srgb, var(--goodBorder) 10%, transparent);
+	border: 1px solid var(--goodBorder);
+	color: var(--goodBorder);
 }
 
 .status-message.error {
-    background-color: color-mix(in srgb, var(--errorBorder) 10%, transparent);
-    border: 1px solid var(--errorBorder);
-    color: var(--errorBorder);
+	background-color: color-mix(in srgb, var(--errorBorder) 10%, transparent);
+	border: 1px solid var(--errorBorder);
+	color: var(--errorBorder);
 }
 
 .spinning {
-    animation: spin 1s linear infinite;
+	animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .settings-card {
-        padding: 25px 20px;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .connected-actions {
-        flex-direction: column;
-    }
-    
-    .action-button {
-        min-width: auto;
-    }
+	.page-title {
+		font-size: 2rem;
+	}
+
+	.settings-card {
+		padding: 25px 20px;
+	}
+
+	.header-content {
+		flex-direction: column;
+		gap: 15px;
+		text-align: center;
+	}
+
+	.connected-actions {
+		flex-direction: column;
+	}
+
+	.action-button {
+		min-width: auto;
+	}
 }
 </style>
 <script setup lang="ts">
@@ -300,9 +300,9 @@ const router = useRouter();
 const route = useRoute();
 
 async function signOut() {
-    await supabase.auth.signOut();
-    router.push({ name: "Sign In", params: { message: "signedout"} });
-    signingOut.value = false;
+	await supabase.auth.signOut();
+	router.push({ name: "Sign In", params: { message: "signedout"} });
+	signingOut.value = false;
 }
 
 async function checkStravaConnection() {
@@ -331,27 +331,20 @@ async function checkStravaConnection() {
 }
 
 const handleConnectStrava = () => {
-  const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID; // Public, safe to expose
-  const redirectUri = 'https://gkyqqlkxpfskmtryfmyp.supabase.co/functions/v1/strava-callback'; 
-  const scope = 'activity:read_all,profile:read_all'; 
+	const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID; // Public, safe to expose
+	const redirectUri = 'https://gkyqqlkxpfskmtryfmyp.supabase.co/functions/v1/strava-callback'; 
+	const scope = 'activity:read_all,profile:read_all'; 
 
-  console.log('Connecting to Strava with:', {
-    clientId,
-    redirectUri,
-    scope
-  });
+	const authUrl = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&approval_prompt=force&state=${crypto.randomUUID()}`;
 
-  const authUrl = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&approval_prompt=force&state=${crypto.randomUUID()}`;
-  
-  console.log('Auth URL:', authUrl);
-  window.location.href = authUrl;
+	window.location.href = authUrl;
 };
 
 async function syncWorkouts() {
 	try {
 		isSyncing.value = true;
 		stravaMessage.value = '';
-		
+
 		const { data: { session } } = await supabase.auth.getSession();
 		if (!session) {
 			throw new Error('Not authenticated');
@@ -385,7 +378,7 @@ async function syncWorkouts() {
 		console.error('Sync error:', error);
 		stravaMessage.value = 'Failed to sync workouts. Please try again.';
 		stravaMessageType.value = 'error';
-		
+
 		setTimeout(() => {
 			stravaMessage.value = '';
 		}, 3000);
@@ -452,7 +445,7 @@ async function disconnectStrava() {
 		console.error('Disconnect error:', error);
 		stravaMessage.value = 'Failed to disconnect Strava account. Please try again.';
 		stravaMessageType.value = 'error';
-		
+
 		setTimeout(() => {
 			stravaMessage.value = '';
 		}, 3000);
@@ -461,16 +454,16 @@ async function disconnectStrava() {
 
 onMounted(() => {
 	checkStravaConnection();
-	
+
 	// Check for Strava callback messages
 	const urlParams = new URLSearchParams(window.location.search);
 	console.log('URL params on mount:', Object.fromEntries(urlParams.entries()));
-	
+
 	if (urlParams.get('strava_success')) {
 		// Check if we have connection data in URL parameters
 		const encodedData = urlParams.get('data');
 		console.log('Encoded data from URL:', encodedData);
-		
+
 		if (encodedData) {
 			try {
 				const decodedData = atob(decodeURIComponent(encodedData));
@@ -488,7 +481,7 @@ onMounted(() => {
 			// Fallback: check localStorage (for any existing data)
 			const connectionDataStr = localStorage.getItem('strava_connection_data');
 			console.log('Fallback localStorage data:', connectionDataStr);
-			
+
 			if (connectionDataStr) {
 				try {
 					const connectionData = JSON.parse(connectionDataStr);
@@ -532,12 +525,12 @@ onMounted(() => {
 async function saveStravaConnection(connectionData: any) {
 	try {
 		console.log('Saving Strava connection:', connectionData);
-		
+
 		const { data: { user } } = await supabase.auth.getUser();
 		if (!user) {
 			throw new Error('Not authenticated');
 		}
-		
+
 		console.log('User ID:', user.id);
 
 		// First, check if the user has a profile row
@@ -550,7 +543,7 @@ async function saveStravaConnection(connectionData: any) {
 		console.log('Existing profile:', existingProfile, 'Fetch error:', fetchError);
 
 		let updateError;
-		
+
 		if (!existingProfile) {
 			// Create profile if it doesn't exist
 			console.log('Creating new profile with Strava data...');
