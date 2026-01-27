@@ -189,19 +189,23 @@ async function createWorkoutObject(workoutData: object): JSONWorkout {
  * Generate workout data from uploaded images and upload it to the database.
  */
 async function generateAndUploadWorkoutData(): void {
-	const workoutData = await getWorkoutData(urls.value);
-	if (!workoutData) {
+	const workoutId = await getWorkoutData(urls.value);
+	console.log(workoutId);
+
+	if (!workoutId) {
 		errorDisplay.value.setError("Error generating workout data", "No workout data generated. Please try again by clicking the upload button again.");
 		console.error("No workout data generated");
 		return;
 	}
 
+	/*
 	const { data, error } = await uploadWorkoutData(workoutData);
 	if (error) {
 		errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
 		console.error("Error uploading workout data: ", error);
 		return;
 	}
+	*/
 
 	// if successful, navigate to home page.
 	router.push({ name: "Home" });
@@ -222,10 +226,18 @@ async function uploadWorkoutData(workoutData: object): object | null {
 
 async function getWorkoutData(imgURLs): object {
 	loading.value++;
+	const { data: { session }} = await supabase.auth.getSession();
+	if (!session) {
+		throw new Error("User not authenticated");
+	}
+	const accessToken = session.access_token;
 	const { data, error } = await supabase.functions.invoke('generate-workout-data', {
 		body: {
 			name: "Functions",
 			imgURLs: imgURLs
+		},
+		headers: {
+			'Authorization': `Bearer ${accessToken}`,
 		}
 	});
 	if (error) {

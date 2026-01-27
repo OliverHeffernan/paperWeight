@@ -1,6 +1,10 @@
 //import OpenAI from "npm:openai@4.24.1";
 import OpenAIImgURLFormat from "./openAIImgURLFormat.ts";
 import executePrompt from "./executePrompt.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
+import WorkoutResponse from "./workoutResponse.ts";
+import uploadWorkoutData from "./uploadWorkoutData.ts";
+
 // Environment variables should be set using Supabase secrets
 Deno.serve(async (req)=>{
 	// Handle CORS
@@ -26,6 +30,30 @@ Deno.serve(async (req)=>{
 			}
 		);
 	}
+
+	const authHeader = req.headers.get('Authorization');
+
+	if (!authHeader?.startsWith('Bearer ')) {
+		return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Allow-Origin': '*'
+			}
+		});
+	}
+
+	const jwt = authHeader.slice(7); // Remove "Bearer "
+
+	const supabase = createClient(
+		Deno.env.get('SUPABASE_URL')!,
+		Deno.env.get('SUPABASE_ANON_KEY')!,
+		{
+			global: {
+				headers: { Authorization: authHeader }
+			}
+		}
+	);
 	try {
 		// Parse the request body
 		const request = await req.json();
@@ -45,10 +73,6 @@ Deno.serve(async (req)=>{
 			);
 		}
 		// put the imgURL into the correct JSON format for OpenAI
-		// Initialize OpenAI client
-		const openai = new OpenAI({
-			apiKey: Deno.env.get('OPENAI_API_KEY')
-		});
 		if (!Array.isArray(imgURLs)) {
 			return new Response(
 				JSON.stringify({
@@ -67,9 +91,16 @@ Deno.serve(async (req)=>{
 		//openAIImgURLFormat(imgURLs)
 		const response = await executePrompt(openAIImgURLFormat(imgURLs));
 		// Extract the response
-		const generatedContent = response.choices[0].message.content;
+		const generatedContent: WorkoutResponse = JSON.parse(response.choices[0].message.content);
+
+		// Upload the workout data to Supabase
+		const { id, error } = await uploadWorkoutData(supabase, generatedContent);
+		if (error) {
+			throw new Error(`Failed to upload workout data: ${error}`);
+		}
+
 		// Return the response
-		return new Response(generatedContent, {
+		return new Response(id, {
 			headers: {
 				'Content-Type': 'application/json',
 				'Access-Control-Allow-Origin': '*'
@@ -86,7 +117,8 @@ Deno.serve(async (req)=>{
 					'Content-Type': 'application/json',
 					'Access-Control-Allow-Origin': '*'
 				}
-			});
+			}
+		);
 	}
 });
 

@@ -1,5 +1,6 @@
 import OpenAI from "npm:openai@4.24.1";
 import OpenAIImgURLFormat from "./openAIImgURLFormat.ts";
+const openai = new OpenAI();
 export default async function executePrompt(imgs: OpenAIImgURLFormat[]): Promise<any> {
 	const response = await openai.chat.completions.create({
 		//model: "gpt-4.1-mini",

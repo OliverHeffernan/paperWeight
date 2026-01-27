@@ -8,8 +8,8 @@ import getLinkedActivity from "./getLinkedActivity.ts"
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+//const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+//const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
 
 console.log("Hello from Functions!")

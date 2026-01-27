@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window", "deno.ns"],
+    "strict": true,
+    "checkJs": false,
+    "types": []
+  },
+  "imports": {
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@2",
+    "@supabase/functions-js/edge-runtime.d.ts": "jsr:@supabase/functions-js/edge-runtime.d.ts"
+  },
+  "tasks": {
+    "dev": "deno serve --watch functions/",
+    "deploy": "supabase functions deploy"
+  },
+  "exclude": [
+    "../node_modules/",
+    "../src/"
+  ]
+}

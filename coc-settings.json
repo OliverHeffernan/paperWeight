@@ -1,0 +1,55 @@
+{
+  "deno.enable": false,
+  "deno.enablePaths": ["./supabase"],
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "languageserver": {
+    "deno": {
+      "command": "deno",
+      "args": ["lsp"],
+      "filetypes": ["typescript", "typescriptreact"],
+      "rootPatterns": ["deno.json", "deno.jsonc"],
+      "initializationOptions": {
+        "enable": true,
+        "lint": true,
+        "unstable": true,
+        "suggest": {
+          "autoImports": true,
+          "completeFunctionCalls": true,
+          "names": true,
+          "paths": true,
+          "imports": {
+            "hosts": {
+              "https://deno.land": true,
+              "https://cdn.skypack.dev": true,
+              "https://crux.land": true
+            }
+          }
+        }
+      },
+      "settings": {
+        "deno": {
+          "enable": true,
+          "enablePaths": ["./supabase"],
+          "lint": true,
+          "unstable": true,
+          "suggest": {
+            "autoImports": true,
+            "completeFunctionCalls": true,
+            "names": true,
+            "paths": true,
+            "imports": {
+              "hosts": {
+                "https://deno.land": true,
+                "https://cdn.skypack.dev": true,
+                "https://crux.land": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "workspace.ignoredFiletypes": ["markdown", "log"],
+  "typescript.preferences.importModuleSpecifier": "relative"
+}

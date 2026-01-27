@@ -8,7 +8,7 @@ interface Props {
     red?: boolean;
 	orange?: boolean;
     fullWidth?: boolean;
-	strava: boolean;
+	strava?: boolean;
 }
 
 const props = defineProps<Props>();

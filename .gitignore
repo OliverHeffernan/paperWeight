@@ -22,5 +22,8 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+# Deno cache
+.deno
+
 support/.vitepress/cache
 support/.vitepress/dist
