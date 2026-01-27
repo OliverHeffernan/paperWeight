@@ -4,8 +4,6 @@
 import BubbleButton from '../components/BubbleButton.vue';
 import LoadingView from './LoadingView.vue';
 import UploadComponent from '../components/UploadComponent.vue';
-import JSONWorkout from '../interfaces/JSONWorkout';
-import Workout from '../classes/Workout';
 import ErrorPopup from '../components/ErrorPopup.vue';
 import ErrorDisplay from '../classes/ErrorDisplay';
 
@@ -21,8 +19,8 @@ const router = useRouter();
 const video = ref<HTMLVideoElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 
-// array to store uploaded image URLs and a counter for the number of pages (images).
-const urls = ref<string[]>([]);
+// array to store captured image base64 data and a counter for the number of pages (images).
+const imageData = ref<string[]>([]);
 const pages = ref<integer>(0);
 
 // keep hold of the media stream to stop it when component is unmounted.
@@ -71,8 +69,8 @@ onBeforeUnmount(() => {
 });
 
 /**
- * Capture an image from the video feed and upload it to Supabase storage.
- * On success, store the image URL for later processing.
+ * Capture an image from the video feed and convert to base64.
+ * On success, store the base64 data for later processing.
  */
 const captureAndUpload = async () => {
 	const startTime = performance.now();
@@ -98,103 +96,25 @@ const captureAndUpload = async () => {
 	}
 	context.drawImage(video.value, 0, 0);
 
-	canvas.value.toBlob(async (blob) => {
-		if (!blob) {
-			errorDisplay.value.setError("Error capturing image", "Failed to capture image blob");
-			console.error("Failed to capture image");
-			return;
-		}
-		const file = new File([blob], `photo-${Date.now()}-${user.id}.jpg`, { type: 'image/jpeg' });
-		const {data, error} = await supabase.storage
-			.from('workoutImage')
-			.upload(`photos/${user.id}/${file.name}`, file, {
-				contentType: 'image/jpeg',
-				upsert: false
-			});
-		if (error) {
-			errorDisplay.value.setError("Error uploading image", error.message);
-			console.error("Error uploading image: ", error);
-			return;
-		}
-		urls.value.push(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`);
+	try {
+		// Convert canvas to base64
+		const base64Data = canvas.value.toDataURL('image/jpeg', 0.65);
+		imageData.value.push(base64Data);
 		pages.value++;
 		const endTime = performance.now();
-		console.log(`Image captured and uploaded in ${endTime - startTime} ms`);
-
-	}, 'image/jpeg', 0.8);
-}
-
-/**
- * Extracts a Date object from the workout data for either start or end time.
- * Fills in missing components with current date/time values.
- */
-function extractTime(workoutData: object, start: boolean): Date | null {
-	let timeObj: object = start ? workoutData.startTime : workoutData.endTime;
-	if (!timeObj) return null;
-
-	const now: Date = new Date();
-	if (!timeObj.year) timeObj.year = now.getFullYear();
-	if (!timeObj.month) timeObj.month = now.getMonth() + 1;
-	if (!timeObj.day) timeObj.day = now.getDate();
-	if (!timeObj.hour) timeObj.hour = now.getHours();
-	if (!timeObj.minute) timeObj.minute = now.getMinutes();
-
-	return new Date(timeObj.year, timeObj.month - 1, timeObj.day, timeObj.hour, timeObj.minute, 0);
-}
-
-/**
- * Creates a workout object formatted for database insertion from the generated workout data.
- * @param workoutData The generated workout data object.
- * @returns An object formatted for database insertion.
- */
-async function createWorkoutObject(workoutData: object): JSONWorkout {
-	loading.value++;
-	// get the start and end time
-	const startTime: Date | null = extractTime(workoutData, true);
-	const endTime: Date | null = extractTime(workoutData, false);
-
-	// extract exercise names. Store a list of exercise names in the workout object.
-	let exercises: Array<string> = [];
-	for (const exercise of workoutData.exercises || []) {
-		exercises.push(exercise.exercise);
+		console.log(`Image captured and converted to base64 in ${endTime - startTime} ms`);
+	} catch (error) {
+		errorDisplay.value.setError("Error capturing image", "Failed to convert image to base64");
+		console.error("Failed to convert image to base64: ", error);
 	}
-
-	// convert energy to kcal if in kJ
-	let energy: number | null = workoutData.energy ? (workoutData.energy.amount || null) : null;
-	if (energy != null && workoutData.energy.unit === "kJ") {
-		energy = energy / 4.184;
-	}
-	if (energy != null) energy = Math.round(energy);
-
-	// get the hearrate data if available
-	const heart_rate: number | null = workoutData.heart_rate || null;
-
-	// get the user id
-	const user_id = (await supabase.auth.getUser()).data.user?.id;
-	// end the load process.
-	loading.value--;
-
-	// return the object.
-	return {
-		user_id: user_id,
-		//energy: Math.round(workoutData.calories) || 0,
-		start_time: startTime ? startTime.toISOString() : null,
-		end_time: endTime ? endTime.toISOString() : null,
-		title: workoutData.title || "unnamed workout",
-		exercises_full: workoutData.exercises || [],
-		exercises: exercises,
-		notes: workoutData.notes || "",
-		energy: energy,
-		heart_rate: heart_rate
-	};
 }
 
 /**
- * Generate workout data from uploaded images and upload it to the database.
+ * Generate workout data from captured images and upload it to the database.
  */
 async function generateAndUploadWorkoutData(): void {
 	const startTime = performance.now();
-	const workoutId = await getWorkoutData(urls.value);
+	const workoutId = await getWorkoutData(imageData.value);
 	const endTime = performance.now();
 	console.log(`Workout data generated in ${endTime - startTime} ms`);
 	console.log(workoutId);
@@ -207,23 +127,11 @@ async function generateAndUploadWorkoutData(): void {
 	console.log(workoutId);
 
 	// if successful, navigate to home page.
-	router.push({ name: "Home" });
+	//router.push({ name: "Home" });
+	router.push({ name: "View Workout", params: { workout_id: workoutId.workout_id } });
 }
 
-async function uploadWorkoutData(workoutData: object): object | null {
-	loading.value++;
-	const workout = await Workout.create(workoutData);
-	loading.value--;
-	if (!workout) {
-		errorDisplay.value.setError("Error creating workout object", "Please try again by clicking the upload button again.");
-		return { data: null, error: "Error creating workout object" };
-	}
-	const data = workout;
-	const error = null;
-	return { data: data, error: error };
-}
-
-async function getWorkoutData(imgURLs): object {
+async function getWorkoutData(imageData): object {
 	loading.value++;
 	const { data: { session }} = await supabase.auth.getSession();
 	if (!session) {
@@ -233,7 +141,7 @@ async function getWorkoutData(imgURLs): object {
 	const { data, error } = await supabase.functions.invoke('generate-workout-data', {
 		body: {
 			name: "Functions",
-			imgURLs: imgURLs
+			imageData: imageData
 		},
 		headers: {
 			'Authorization': `Bearer ${accessToken}`,
@@ -275,7 +183,7 @@ async function getWorkoutData(imgURLs): object {
 			<UploadComponent
 				:pageCount="pages"
 				@uploadWorkoutData="generateAndUploadWorkoutData()"
-				@retakePhoto="urls.pop(); pages--"
+				@retakePhoto="imageData.pop(); pages--"
 				class="upload-component"
 			/>
 

@@ -1,5 +1,5 @@
 //import OpenAI from "npm:openai@4.24.1";
-import OpenAIImgURLFormat from "./openAIImgURLFormat.ts";
+import OpenAIImgFormat from "./openAIImgURLFormat.ts";
 import executePrompt from "./executePrompt.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import WorkoutResponse from "./workoutResponse.ts";
@@ -57,12 +57,12 @@ Deno.serve(async (req)=>{
 	try {
 		// Parse the request body
 		const request = await req.json();
-		const imgURLs = request.imgURLs;
+		const imageData = request.imageData;
 		// Validate input
-		if (!imgURLs) {
+		if (!imageData) {
 			return new Response(
 				JSON.stringify({
-					error: 'imgURLs is required'
+					error: 'imageData is required'
 				}),
 				{
 					status: 400,
@@ -72,11 +72,11 @@ Deno.serve(async (req)=>{
 				}
 			);
 		}
-		// put the imgURL into the correct JSON format for OpenAI
-		if (!Array.isArray(imgURLs)) {
+		// put the imageData into the correct JSON format for OpenAI
+		if (!Array.isArray(imageData)) {
 			return new Response(
 				JSON.stringify({
-					error: 'imgURL must be an array of URLs'
+					error: 'imageData must be an array of base64 strings'
 				}),
 				{
 					status: 400,
@@ -88,8 +88,8 @@ Deno.serve(async (req)=>{
 			);
 		}
 		// Create the OpenAI completion request
-		//openAIImgURLFormat(imgURLs)
-		const response = await executePrompt(openAIImgURLFormat(imgURLs));
+		//openAIImgFormat(imageData)
+		const response = await executePrompt(openAIImgFormat(imageData));
 		// Extract the response
 		const generatedContent: WorkoutResponse = JSON.parse(response.choices[0].message.content);
 
@@ -129,12 +129,12 @@ Deno.serve(async (req)=>{
 });
 
 
-function openAIImgURLFormat(imgURL: string[]): OpenAIImgURLFormat[] {
-	let result: OpenAIImgURLFormat[] = imgURL.map((url)=>({
+function openAIImgFormat(imageData: string[]): OpenAIImgFormat[] {
+	let result: OpenAIImgFormat[] = imageData.map((base64Data)=>({
 		"type": "image_url",
 		"image_url": {
-			"url": url
-		} as OpenAIImgURLFormat["image_url"]
+			"url": base64Data
+		} as OpenAIImgFormat["image_url"]
 	}));
 	result.unshift({
 		"type": "text",

@@ -1,4 +1,4 @@
-export default interface OpenAIImgURLFormat {
+export default interface OpenAIImgFormat {
 	type: "image_url" | "text";
 	image_url?: {
 		url: string;
