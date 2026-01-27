@@ -75,6 +75,8 @@ onBeforeUnmount(() => {
  * On success, store the image URL for later processing.
  */
 const captureAndUpload = async () => {
+	const startTime = performance.now();
+	
 	if (!video.value || !canvas.value) {
 		console.error("Video or canvas element not found");
 		errorDisplay.value.setError("Error capturing image", "Video or canvas element not found");
@@ -116,6 +118,8 @@ const captureAndUpload = async () => {
 		}
 		urls.value.push(`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/workoutImage/${data.path}`);
 		pages.value++;
+		const endTime = performance.now();
+		console.log(`Image captured and uploaded in ${endTime - startTime} ms`);
 
 	}, 'image/jpeg', 0.8);
 }
@@ -189,7 +193,10 @@ async function createWorkoutObject(workoutData: object): JSONWorkout {
  * Generate workout data from uploaded images and upload it to the database.
  */
 async function generateAndUploadWorkoutData(): void {
+	const startTime = performance.now();
 	const workoutId = await getWorkoutData(urls.value);
+	const endTime = performance.now();
+	console.log(`Workout data generated in ${endTime - startTime} ms`);
 	console.log(workoutId);
 
 	if (!workoutId) {
@@ -197,15 +204,7 @@ async function generateAndUploadWorkoutData(): void {
 		console.error("No workout data generated");
 		return;
 	}
-
-	/*
-	const { data, error } = await uploadWorkoutData(workoutData);
-	if (error) {
-		errorDisplay.value.setError("Error uploading workout data", "Please try again by clicking the upload button again.");
-		console.error("Error uploading workout data: ", error);
-		return;
-	}
-	*/
+	console.log(workoutId);
 
 	// if successful, navigate to home page.
 	router.push({ name: "Home" });
@@ -249,6 +248,7 @@ async function getWorkoutData(imgURLs): object {
 		return "";
 	}
 	loading.value--;
+	console.log(data);
 	return data;
 }
 

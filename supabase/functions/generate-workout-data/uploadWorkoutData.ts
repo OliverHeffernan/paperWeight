@@ -31,24 +31,21 @@ export default async function uploadWorkoutData(
 	console.log(workoutData.user_id);
 	const exercises: Exercise[] = workoutData.exercises_full;
 
+	const promises: Promise<{ error: string | null }>[] = [];
 	for (const exercise of exercises) {
-		const { data, error } = await supabase.from('exercises').select('id').eq('name', exercise.exercise.toLowerCase()).single();
-		if (error || !data) {
-			// Insert new exercise
-			const insertResult = await supabase.from('exercises').insert({ name: exercise.exercise.toLowerCase() }).select('id').single();
-			if (insertResult.error) {
-				console.error('Error inserting exercise:', insertResult.error);
-				return { id: null, error: insertResult.error.message };
-			}
-			exercise.id = insertResult.data.id;
-		} else {
-			exercise.id = data.id;
-		}
-		const { error: uploadError } = await uploadSetData(supabase, exercise, workoutData);
-		if (uploadError) {
-			return { id: null, error: uploadError };
+		// start the uploadExerciseData function for each exercise, such that they occur in parallel. Not using await, as that would make them sequential.
+		// Collect the promises in an array
+		promises.push(uploadExerciseData(supabase, exercise, workoutData));
+	}
+	// Wait for all the promises to resolve
+	const results = await Promise.all(promises);
+	// Check for errors
+	for (const result of results) {
+		if (result.error) {
+			return { id: null, error: result.error };
 		}
 	}
+	// Now upload the workout data
 	const { error } = await uploadWorkoutToSupabase(workoutData, supabase);
 	if (error) {
 		return { id: null, error };
@@ -56,25 +53,55 @@ export default async function uploadWorkoutData(
 	return { id: workoutData.workout_id, error: null };
 }
 
+async function uploadExerciseData(
+	supabase: any,
+	exercise: Exercise,
+	workoutData: WorkoutResponse
+): Promise<{ error: string | null }> {
+	const { data, error } = await supabase.from('exercises').select('id').eq('name', exercise.exercise.toLowerCase()).single();
+	if (error || !data) {
+		// Insert new exercise
+		const insertResult = await supabase.from('exercises').insert({ name: exercise.exercise.toLowerCase() }).select('id').single();
+		if (insertResult.error) {
+			console.error('Error inserting exercise:', insertResult.error);
+			return { error: insertResult.error.message };
+		}
+		exercise.id = insertResult.data.id;
+	} else {
+		exercise.id = data.id;
+	}
+	const { error: uploadError } = await uploadSetData(supabase, exercise, workoutData);
+	if (uploadError) {
+		return { error: uploadError };
+	}
+	return { error: null };
+}
+
 async function uploadSetData(
 	supabase: any,
 	exercise: Exercise,
 	workout: WorkoutResponse,
 ): Promise<{ error: string | null }> {
+	const promises: Promise<{ data: { id: string}, error: string | null }>[] = [];
+	// do the sets in parallel, and wait for them all to be finished.
 	for (const set of exercise.sets) {
 		// workout_id is null for now, will be updated later, this is due to foreign key constraints
-		const { data, error } = await supabase.from('sets').insert({
+		promises.push(supabase.from('sets').insert({
 			workout_id: null,
 			exercise_id: exercise.id,
 			weight: set.unit == "kg" ? set.weight : set.weight * 0.453592,
 			reps: set.reps,
 			user_id: workout.user_id,
-		}).select('id').single();
-		if (error) {
-			console.error('Error inserting set:', error);
-			return { error: error.message };
+		}).select('id').single());
+	}
+	const results = await Promise.all(promises);
+	for (let i = 0; i < results.length; i++) {
+		const result = results[i];
+		if (result.error) {
+			console.error('Error inserting set:', result.error);
+			return { error: result.error };
 		}
-		set.id = data.id;
+		exercise.sets[i].id = result.data.id;
 	}
 	return { error: null };
 }
@@ -83,17 +110,17 @@ async function addWorkoutIdToSets(
 	supabase: any,
 	workout: WorkoutResponse
 ): Promise<{ error: string | null }> {
-	for (const exercise of workout.exercises_full) {
-		for (const set of exercise.sets) {
-			const { error } = await supabase.from('sets').update({
-				workout_id: workout.workout_id,
-			}).eq('id', set.id);
-			if (error) {
-				console.error('Error updating set with workout_id:', error);
-				return { error: error.message };
-			}
-		}
+
+	// Instead of doing it one by one, do it in bulk
+	const setIds = workout.exercises_full.flatMap(exercise => exercise.sets.map(set => set.id ? set.id : null)).filter(id => id !== null);
+	const { error } = await supabase.from('sets').update({
+		workout_id: workout.workout_id,
+	}).in('id', setIds);
+	if (error) {
+		console.error('Error updating sets with workout_id:', error);
+		return { error: error.message };
 	}
+
 	return { error: null };
 }
 

@@ -100,12 +100,18 @@ Deno.serve(async (req)=>{
 		}
 
 		// Return the response
-		return new Response(id, {
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
+		return new Response(
+			JSON.stringify({
+				workout_id: id,
+			}),
+			{
+				status: 200,
+				headers: {
+					'Content-Type': 'application/json',
+					'Access-Control-Allow-Origin': '*'
+				}
 			}
-		});
+		);
 	} catch (error) {
 		console.error('Error generating workout:', error);
 		return new Response(JSON.stringify({
