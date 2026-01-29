@@ -4,7 +4,7 @@
     <RouterView />
     <NavBar
         v-if="!canGoBack() && route.name !== 'landing'"
-        :active="route.name || ''"
+        :active="String(route.name || '')"
     />
 	<HelpLink />
 </template>
@@ -19,14 +19,10 @@ function canGoBack(): boolean {
 }
 
 import NavBar from './components/NavBar.vue';
-import BubbleButton from './components/BubbleButton.vue';
 import TopBar from './components/TopBar.vue';
-import OptionPopup from './components/OptionPopup.vue';
 import HelpLink from './components/HelpLink.vue';
 import { supabase } from './lib/supabase';
 import { useRouter, useRoute, RouterView } from 'vue-router';
-import { ref } from 'vue';
-const active = ref<string>("/home");
 
 const router = useRouter();
 const route = useRoute();

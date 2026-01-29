@@ -3,33 +3,37 @@
 <script setup lang="ts">
 
 interface Props {
-    label?: string;
-    loading?: boolean;
-    red?: boolean;
+	label?: string;
+	loading?: boolean;
+	red?: boolean;
 	orange?: boolean;
-    fullWidth?: boolean;
+	fullWidth?: boolean;
 	strava?: boolean;
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-    (e: 'click'): void;
+	(e: 'click'): void;
 }>();
 </script>
 <template>
-	<button :class="[
-		'bubbleButton',
-		'clickable',
-		{ red: props.red },
-		{fullWidth: props.fullWidth},
-		{strava: props.strava},
-		{ orange: props.orange }
-	]" :disabled="loading" @click="emit('click')">
-        <slot></slot>
+	<button
+		:class="[
+			'bubbleButton',
+			'clickable',
+			{ red: props.red },
+			{fullWidth: props.fullWidth},
+			{strava: props.strava},
+			{ orange: props.orange }
+		]"
+		:disabled="loading"
+		@click="emit('click')"
+	>
+		<slot></slot>
 		<img v-if="strava" src="../assets/btn_strava_connect_with_orange.svg" alt="Strava Logo" class="strava" />
-        {{label || ''}}
-    </button>
+		{{label || ''}}
+	</button>
 </template>
 
 <style scoped>
@@ -43,8 +47,8 @@ const emit = defineEmits<{
 	white-space: nowrap;
 	margin-left: 0;
 	margin-right: 0;
-    transition: all 0.2s;
-    flex-grow: 1;
+	transition: all 0.2s;
+	flex-grow: 1;
 }
 
 .bubbleButton:hover {
@@ -52,8 +56,8 @@ const emit = defineEmits<{
 }
 
 .red {
-    border-color: var(--errorBorder);
-    background-color: var(--errorBG);
+	border-color: var(--errorBorder);
+	background-color: var(--errorBG);
 }
 
 .orange {
@@ -69,12 +73,12 @@ const emit = defineEmits<{
 }
 
 .red i {
-    color: inherit;
+	color: inherit;
 }
 .fullWidth {
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 10px;
+	width: 100%;
+	box-sizing: border-box;
+	margin-top: 10px;
 }
 
 .bubbleButton i {

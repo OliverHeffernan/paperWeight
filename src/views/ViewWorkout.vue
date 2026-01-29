@@ -35,6 +35,12 @@ onMounted(async () => {
 	loading.value = false;
 	console.log(workout.value);
 
+	checkStravaConnection();
+
+	if (workout.value === null) {
+		errorDisplay.value.setError('Workout not found.', 'The requested workout could not be found.');
+		return;
+	}
 	const weightPbsRequest = await supabase
 		.rpc('get_weight_pbs', { pb_exercise_ids: await workout.value.getExerciseIds() });
 	if (weightPbsRequest.error) {
@@ -55,8 +61,6 @@ onMounted(async () => {
 		volumePbSets.value = volumePbsRequest.data.map((item: any) => item.id);
 	}
 
-	// Check Strava connection
-	await checkStravaConnection();
 });
 
 // Check if user has Strava connected
@@ -106,7 +110,7 @@ const syncWorkoutWithStrava = async () => {
 					'Authorization': `Bearer ${session.access_token}`,
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ workout_id: workout.value.workout_id }),
+				body: JSON.stringify({ workout_id: workout.value.getId() }),
 			}
 		);
 
