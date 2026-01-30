@@ -1,6 +1,7 @@
 <!-- A component for a button -->
 
 <script setup lang="ts">
+import stravaConnectImage from '../assets/btn_strava_connect_with_orange.svg';
 
 interface Props {
 	label?: string;
@@ -31,7 +32,7 @@ const emit = defineEmits<{
 		@click="emit('click')"
 	>
 		<slot></slot>
-		<img v-if="strava" src="../assets/btn_strava_connect_with_orange.svg" alt="Strava Logo" class="strava" />
+		<img v-if="strava" :src="stravaConnectImage" alt="Strava Logo" class="strava" />
 		{{label || ''}}
 	</button>
 </template>
