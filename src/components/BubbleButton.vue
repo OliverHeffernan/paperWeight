@@ -21,11 +21,11 @@ const emit = defineEmits<{
 <template>
 	<button
 		:class="[
-			'bubbleButton',
 			'clickable',
+			{ bubbleButton: !props.strava },
 			{ red: props.red },
-			{fullWidth: props.fullWidth},
-			{strava: props.strava},
+			{ fullWidth: props.fullWidth },
+			{ strava: props.strava },
 			{ orange: props.orange }
 		]"
 		:disabled="loading"
@@ -68,7 +68,9 @@ const emit = defineEmits<{
 
 .strava {
 	height: 48px;
+	width: 100%;
 	border: none;
+	background: none;
 	padding: 0;
 	margin: 0;
 }
