@@ -1,7 +1,7 @@
 <!-- A component for a button -->
 
 <script setup lang="ts">
-import stravaConnectImage from '../assets/btn_strava_connect_with_orange.svg';
+import stravaConnectImage from '../assets/btn_strava_connect_with_orange.svg?url';
 
 interface Props {
 	label?: string;
