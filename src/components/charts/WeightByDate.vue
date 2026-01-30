@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, watch } from 'vue';
 import Set from '../classes/Set';
-import Chart from 'chart.js/auto';
-import chartTrendline from 'chartjs-plugin-trendline';
 import { styling } from '../../utils/ChartUtils';
 import Selector from '../Selector.vue';
 import Option from '../../interfaces/Option';
@@ -10,14 +8,13 @@ import GraphToolTip from '../GraphToolTip.vue';
 
 const whatGraphed = ref<string>('weight');
 
-Chart.register(chartTrendline);
-
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const chartInstance = ref<Chart | null>(null);
+const chartInstance = ref<any>(null);
 const isCreatingChart = ref<boolean>(false);
 const chartId = ref<number>(0);
 const toolTipText = ref<Array<string> | null>(null);
 const toolTipSet = ref<Set | null>(null);
+const isLoading = ref<boolean>(true);
 
 const props = defineProps<{
     sets: Array<{
@@ -201,8 +198,18 @@ async function createChart() {
         // Final check before creating chart
         if (currentChartId !== chartId.value || !canvasRef.value) {
             isCreatingChart.value = false;
+            isLoading.value = false;
             return;
         }
+
+        // Dynamically import Chart.js and trendline plugin
+        const [{ default: Chart }, { default: chartTrendline }] = await Promise.all([
+            import('chart.js/auto'),
+            import('chartjs-plugin-trendline')
+        ]);
+
+        // Register the trendline plugin
+        Chart.register(chartTrendline);
 
         // Render the chart
         const myChart = new Chart(
@@ -213,12 +220,14 @@ async function createChart() {
         // Only set the instance if we're still the current chart creation
         if (currentChartId === chartId.value) {
             chartInstance.value = myChart;
+            isLoading.value = false;
         } else {
             // We were superseded, destroy this chart
             myChart.destroy();
         }
     } catch (error) {
         console.error('Error creating chart:', error);
+        isLoading.value = false;
     } finally {
         isCreatingChart.value = false;
     }

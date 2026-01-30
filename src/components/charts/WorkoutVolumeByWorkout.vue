@@ -7,9 +7,6 @@ import DataUtils from '../../utils/DataUtils';
 import DateUtils from '../../utils/DateUtils';
 import { styling } from '../../utils/ChartUtils';
 
-import Chart from 'chart.js/auto';
-import 'chartjs-adapter-date-fns';
-
 const props = defineProps<{
     workouts: Array<WorkoutInfoFunctions> | null;
     graphSize?: string;
@@ -19,9 +16,10 @@ const props = defineProps<{
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const chartInstance = ref<Chart | null>(null);
+const chartInstance = ref<any>(null);
 const isCreatingChart = ref<boolean>(false);
 const chartId = ref<number>(0);
+const isLoading = ref<boolean>(true);
 
 function destroyChart() {
     if (chartInstance.value) {
@@ -166,8 +164,15 @@ async function createChart() {
         // Final check before creating chart
         if (currentChartId !== chartId.value || !canvasRef.value) {
             isCreatingChart.value = false;
+            isLoading.value = false;
             return;
         }
+
+        // Dynamically import Chart.js
+        const [{ default: Chart }, dateAdapter] = await Promise.all([
+            import('chart.js/auto'),
+            import('chartjs-adapter-date-fns')
+        ]);
 
         // Render the chart
         const myChart = new Chart(
@@ -178,12 +183,14 @@ async function createChart() {
         // Only set the instance if we're still the current chart creation
         if (currentChartId === chartId.value) {
             chartInstance.value = myChart;
+            isLoading.value = false;
         } else {
             // We were superseded, destroy this chart
             myChart.destroy();
         }
     } catch (error) {
         console.error('Error creating chart:', error);
+        isLoading.value = false;
     } finally {
         isCreatingChart.value = false;
     }

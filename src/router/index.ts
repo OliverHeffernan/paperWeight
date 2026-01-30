@@ -1,18 +1,21 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { supabase } from '../lib/supabase';
 
+// Import lightweight components directly
 import SignInView from '../views/SignInView.vue';
 import SignUpView from '../views/SignUpView.vue';
 import EmailConfirmationView from '../views/EmailConfirmationView.vue';
 import HomeView from '../views/HomeView.vue';
 import UploadView from '../views/UploadView.vue';
-import ViewWorkout from '../views/ViewWorkout.vue';
-import StatsView from '../views/StatsView.vue';
 import ExercisesView from '../views/ExercisesView.vue';
-import ExerciseView from '../views/ExerciseView.vue';
 import LandingPage from '../views/LandingPage.vue';
 import SplashView from '../views/SplashView.vue';
 import Settings from '../views/Settings.vue';
+
+// Lazy load views that contain heavy chart components
+const ViewWorkout = () => import('../views/ViewWorkout.vue');
+const StatsView = () => import('../views/StatsView.vue');
+const ExerciseView = () => import('../views/ExerciseView.vue');
 
 const routes: Array<RouteRecordRaw> = [
     {

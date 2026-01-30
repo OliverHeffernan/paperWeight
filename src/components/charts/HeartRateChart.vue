@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, watch } from 'vue';
-import Chart from 'chart.js/auto';
 import HeartrateStream from '../../interfaces/HeartrateStream';
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const chartInstance = ref<Chart | null>(null);
+const chartInstance = ref<any>(null);
 const isCreatingChart = ref<boolean>(false);
 const chartId = ref<number>(0);
+const isLoading = ref<boolean>(true);
 
 const props = defineProps<{
     heartrateStream: HeartrateStream;
@@ -35,6 +35,7 @@ async function createChart() {
         return;
     }
     if (!props.heartrateStream || !props.heartrateStream.data || props.heartrateStream.data.length === 0) {
+        isLoading.value = false;
         return;
     }
     if (isCreatingChart.value) {
@@ -203,8 +204,12 @@ async function createChart() {
         // Final check before creating chart
         if (currentChartId !== chartId.value || !canvasRef.value) {
             isCreatingChart.value = false;
+            isLoading.value = false;
             return;
         }
+
+        // Dynamically import Chart.js
+        const { default: Chart } = await import('chart.js/auto');
 
         // Render the chart
         const myChart = new Chart(
@@ -215,12 +220,14 @@ async function createChart() {
         // Only set the instance if we're still the current chart creation
         if (currentChartId === chartId.value) {
             chartInstance.value = myChart;
+            isLoading.value = false;
         } else {
             // We were superseded, destroy this chart
             myChart.destroy();
         }
     } catch (error) {
         console.error('Error creating heart rate chart:', error);
+        isLoading.value = false;
     } finally {
         isCreatingChart.value = false;
     }
@@ -239,7 +246,8 @@ watch(() => props.workoutDuration, async () => {
 
 <template>
     <div class="heart-rate-chart">
-        <canvas ref="canvasRef" class="chart-canvas"></canvas>
+        <div v-if="isLoading" class="loading-state">Loading chart...</div>
+        <canvas v-show="!isLoading" ref="canvasRef" class="chart-canvas"></canvas>
     </div>
 </template>
 
@@ -248,6 +256,15 @@ watch(() => props.workoutDuration, async () => {
     width: 100%;
     height: 300px;
     position: relative;
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text);
+    font-size: 16px;
 }
 
 .chart-canvas {
