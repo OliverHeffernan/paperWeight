@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import WorkoutInfoFunctions from '../interfaces/WorkoutInfoFunctions';
+import { PadNumber } from '../utils/NumUtils';
 export default class WorkoutInfo implements WorkoutInfoFunctions {
     title: string;
     workout_id: string;
@@ -57,12 +58,8 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
     }
 
     public getDateString(): string {
-        const date = new Date(this.start_time);
-        return date.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
+		const date = new Date(this.start_time);
+		return `${PadNumber(date.getUTCDate(), 2)}/${PadNumber(date.getUTCMonth()+1, 2)}/${date.getUTCFullYear()}`;
     }
 
     public getWorkoutId(): string {

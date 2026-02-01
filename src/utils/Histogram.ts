@@ -105,9 +105,9 @@ function findBucketIndex(date: Date, buckets: Date[]): number {
 function formatBucketLabel(start: Date, end: Date, binSize: 'day' | 'week' | 'month' | 'year'): string {
     const fmt = (d: Date) => {
         switch (binSize) {
-            case 'day': return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-            case 'week': return `${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
-            case 'month': return d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+            case 'day': return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+            case 'week': return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+            case 'month': return d.toLocaleDateString(undefined, { month: 'short', year: '2-digit', timeZone: 'UTC' });
             case 'year': return d.getFullYear().toString();
         }
     };

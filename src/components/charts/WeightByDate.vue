@@ -148,7 +148,7 @@ async function createChart() {
                                 toolTipText.value = [
                                     `${volume} kgs`,
                                     `${set.getReps()} x ${set.getWeight()} kgs`,
-                                    `${date.toLocaleDateString()}`,
+                                    `${date.toUTCString()}`,
                                     "click to view the workout"
                                 ];
                                 return;
@@ -156,7 +156,7 @@ async function createChart() {
                             const date = new Date(context.parsed.x);
                             const weight = context.parsed.y;
                             toolTipText.value = [
-                                `${date.toLocaleDateString()}: ${weight} kgs`,
+                                `${date.toUTCString()}: ${weight} kgs`,
                                 "click to view the workout"
                             ];
                         }

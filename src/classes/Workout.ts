@@ -455,7 +455,8 @@ export default class Workout implements WorkoutInfoFunctions {
      * Retrieves the start date and time of the workout as a formatted string.
      */
     public getDateString(): string {
-        return this.start_time.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + this.start_time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+        //return this.start_time.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ', ' + this.start_time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+		return `${this.start_time.getUTCDate()}/${this.start_time.getUTCMonth()+1}/${this.start_time.getUTCFullYear()}`;
     }
 
     /**
@@ -466,7 +467,7 @@ export default class Workout implements WorkoutInfoFunctions {
     }
 
     public getStartTimeShortDateString(): string {
-        return this.start_time.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        return this.start_time.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
     }
 
     public getEndTime(): Date {
