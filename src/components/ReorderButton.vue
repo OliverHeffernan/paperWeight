@@ -9,9 +9,7 @@
 	</button>
 </template>
 <script setup lang="ts">
-import { defineEmits } from "vue";
-
-const props = defineProps<{
+defineProps<{
 	up?: boolean;
 }>();
 

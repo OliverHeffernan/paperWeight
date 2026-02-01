@@ -168,11 +168,11 @@ async function createChart() {
             return;
         }
 
-        // Dynamically import Chart.js
-        const [{ default: Chart }, dateAdapter] = await Promise.all([
-            import('chart.js/auto'),
-            import('chartjs-adapter-date-fns')
-        ]);
+        // Dynamically import Chart.js and date adapter
+        const { default: Chart } = await import('chart.js/auto');
+        
+        // Import date adapter - this will self-register with Chart.js
+        await import('chartjs-adapter-date-fns');
 
         // Render the chart
         const myChart = new Chart(

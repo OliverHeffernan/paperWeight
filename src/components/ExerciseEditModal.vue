@@ -8,6 +8,7 @@ import { ref, onMounted, onUpdated } from 'vue';
 const exerciseName = ref<string>("");
 const exerciseNotes = ref<string>("");
 const deleting = ref<boolean>(false);
+
 const props = defineProps<{
     exercise: Exercise;
 }>();
@@ -53,7 +54,6 @@ onUpdated(() => {
                 type="text"
                 v-model="exerciseName"
             />
-
             <textarea
                 id="exerciseNotesInput"
                 v-model="exerciseNotes"

@@ -58,13 +58,18 @@ async function uploadExerciseData(
 	exercise: Exercise,
 	workoutData: WorkoutResponse
 ): Promise<{ error: string | null }> {
-	const { data, error } = await supabase.from('exercises').select('id').eq('name', exercise.exercise.toLowerCase()).single();
+	const { data, error } = await supabase.from('exercise_aliases').select('exercise_id').eq('name', exercise.exercise.toLowerCase()).single();
 	if (error || !data) {
 		// Insert new exercise
 		const insertResult = await supabase.from('exercises').insert({ name: exercise.exercise.toLowerCase() }).select('id').single();
 		if (insertResult.error) {
 			console.error('Error inserting exercise:', insertResult.error);
 			return { error: insertResult.error.message };
+		}
+		const insertAliasResult = await supabase.from('exercise_aliases').insert({ alias: exercise.exercise.toLowerCase(), exercise_id: insertResult.data.id });
+		if (insertAliasResult.error) {
+			console.error('Error inserting exercise alias:', insertAliasResult.error);
+			return { error: insertAliasResult.error.message };
 		}
 		exercise.id = insertResult.data.id;
 	} else {

@@ -5,6 +5,7 @@ import { getWorkoutsInfoByExercise } from '../utils/getWorkouts';
 import { useRouter } from 'vue-router';
 import WorkoutInfo from '../interfaces/WorkoutInfo';
 import ExerciseInfo from '../classes/ExerciseInfo';
+import Exercise from '../classes/Exercise';
 import WorkoutThumbnail from '../components/WorkoutThumbnail.vue';
 import LoadingView from './LoadingView.vue';
 import WeightByDate from '../components/charts/WeightByDate.vue';
@@ -34,12 +35,6 @@ const editingName = ref<boolean>(false);
 
 function exerciseName(): string {
 	return exercise.value ? exercise.value.getName() : "";
-}
-
-function exerciseNotes(): string {
-	const result = exercise.value ? exercise.value.getDescription() : "";
-	console.log(result);
-	return result;
 }
 
 async function getSets() {
@@ -139,6 +134,9 @@ async function confirmDelete() {
 							@click="editingName = true"
 						></i>
 					</h1>
+					<p class="exercise-aliases">
+						<strong>Also known as:</strong> {{ exercise?.getAliases().join(', ') }}
+					</p>
 					<p v-if="exercise?.getDescription()" class="exercise-description">
 						{{ exercise.getDescription() }}
 					</p>
@@ -215,35 +213,6 @@ async function confirmDelete() {
 						// Force reactivity update by re-creating the exercise object
 						const updatedExercise = await ExerciseInfo.create(props.exercise_id);
 						exercise.value = updatedExercise;
-					}
-				} catch (error) {
-					errorDisplay.value.setError('Failed to update exercise', 'An error occurred while updating the exercise. Please try again later.');
-				} finally {
-					loading.value = false;
-				}
-			}
-			editingName = false;
-		}"
-		@cancel="editingName = false"
-	/>
-
-	<NameEditModal
-		v-if="editingName && exercise"
-		:currentName="exercise ? exercise.getName() : ''"
-		:currentDescription="exercise ? exercise.getDescription() : ''"
-		:exerciseInfo="exercise"
-		:id="exercise ? exercise.getId() : ''"
-		label="Exercise"
-		@confirm="async (newName: string, newDescription: string) => {
-			if (exercise.value) {
-				loading.value = true;
-				try {
-					const success = await exercise.value.updateName(newName, newDescription);
-					if (!success) {
-						errorDisplay.value.setError('Failed to update exercise', 'An error occurred while updating the exercise. Please try again later.');
-					} else {
-						// Force reactivity update
-						exercise.value = { ...exercise.value };
 					}
 				} catch (error) {
 					errorDisplay.value.setError('Failed to update exercise', 'An error occurred while updating the exercise. Please try again later.');

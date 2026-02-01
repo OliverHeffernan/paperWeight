@@ -2,7 +2,7 @@
 import OpenAIImgFormat from "./openAIImgURLFormat.ts";
 import executePrompt from "./executePrompt.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import WorkoutResponse from "./workoutResponse.ts";
+import { WorkoutResponse } from "./workoutResponse.ts";
 import uploadWorkoutData from "./uploadWorkoutData.ts";
 
 // Environment variables should be set using Supabase secrets

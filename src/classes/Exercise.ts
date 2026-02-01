@@ -355,7 +355,11 @@ export default class Exercise {
         for (const set of this.sets) {
             if (set.isItWeightPB()) {
                 count++;
+				continue;
             }
+			if (set.isItVolumePB()) {
+				count++;
+			}
         }
         return count;
     }

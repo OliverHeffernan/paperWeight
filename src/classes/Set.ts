@@ -1,6 +1,5 @@
 import { supabase } from "../lib/supabase";
 import JSONSet from "../interfaces/JSONSet";
-import Workout from "./Workout";
 import Exercise from "./Exercise";
 
 export default class Set {
@@ -41,12 +40,6 @@ export default class Set {
         this.notes = object.notes || "";
         this.id = object.id || null;
         this.workout_id = object.workout_id || null;
-        //this.createNewId();
-        /*
-        if (this.id == null || this.id === undefined) {
-            this.createNewId();
-        }
-        */
     }
 
     public async initialDBCheck(): Promise<void> {

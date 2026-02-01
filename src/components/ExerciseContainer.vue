@@ -1,12 +1,12 @@
 <!-- A component to display an exercise, given the exercise object. -->
 <script setup lang="ts">
+import Workout from "../classes/Workout";
 import Exercise from "../classes/Exercise";
 import SetContainer from "./SetContainer.vue";
 import ExerciseEditModal from "./ExerciseEditModal.vue";
 import ExerciseTopBar from "./ExerciseTopBar.vue";
 import ReorderButton from "./ReorderButton.vue";
-import Set from "../classes/Set";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 const editing = ref<boolean>(false);
 const props = defineProps<{
 	exercise: Exercise;
@@ -15,6 +15,13 @@ const props = defineProps<{
 	weightPbSets: Array<string>;
 	volumePbSets: Array<string>;
 }>();
+
+const displayDownButton = computed(() => {
+	const workout: Workout | null = props.exercise.getWorkout();
+	if (workout === null) return false;
+
+	return props.index !== workout.countExercises() - 1
+});
 </script>
 <template>
 	<ExerciseEditModal
@@ -30,7 +37,7 @@ const props = defineProps<{
 			class="exercise-header"
 		/>
 		<div class="exercise-content">
-			<table class="sets-table" v-if="showSets">
+			<table class="sets-table" v-if="showSets"><tbody>
 				<SetContainer
 					v-for="(set, index) in exercise.getSets()"
 					:key="index"
@@ -50,14 +57,14 @@ const props = defineProps<{
 						</button>
 					</td>
 				</tr>
-			</table>
+			</tbody></table>
 			<div class="exercise-summary">
 				<div>
 					Total Volume:
 					<strong class="summary-value">{{ exercise.getVolume() }} kg</strong>
 				</div>
 				<ReorderButton
-					v-if="index !== exercise.getWorkout().countExercises() - 1"
+					v-if="displayDownButton"
 					@click="exercise.reorderDown()"
 				/>
 			</div>

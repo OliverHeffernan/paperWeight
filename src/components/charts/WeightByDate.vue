@@ -202,11 +202,12 @@ async function createChart() {
             return;
         }
 
-        // Dynamically import Chart.js and trendline plugin
-        const [{ default: Chart }, { default: chartTrendline }] = await Promise.all([
-            import('chart.js/auto'),
-            import('chartjs-plugin-trendline')
-        ]);
+        // Dynamically import Chart.js, trendline plugin, and date adapter
+        const { default: Chart } = await import('chart.js/auto');
+        const { default: chartTrendline } = await import('chartjs-plugin-trendline');
+        
+        // Import date adapter - this will self-register with Chart.js
+        await import('chartjs-adapter-date-fns');
 
         // Register the trendline plugin
         Chart.register(chartTrendline);
