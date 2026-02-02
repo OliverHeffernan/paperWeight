@@ -25,6 +25,16 @@ function update() {
     props.workout.setEndDate(endDateRef.value);
     emit('cancel');
 }
+
+function getDateUTC(value: string): Date {
+	const date = new Date();
+	date.setUTCFullYear(Number(value.slice(0, 4)));
+	date.setUTCMonth(Number(value.slice(5, 7)) - 1);
+	date.setUTCDate(Number(value.slice(8, 10)));
+	date.setUTCHours(Number(value.slice(11, 13)));
+	date.setUTCMinutes(Number(value.slice(14, 16)));
+	return date;
+}
 const startDate = computed({
     get() {
         // Convert Date to YYYY-MM-DD format for the input
@@ -37,7 +47,8 @@ const startDate = computed({
     },
     set(value) {
         // Convert the input string (YYYY-MM-DD) back to a Date object
-        startDateRef.value = new Date(value);
+		startDateRef.value = getDateUTC(value);
+        //startDateRef.value = new Date(value);
     }
 });
 
@@ -53,7 +64,8 @@ const endDate = computed({
     },
     set(value) {
         // Convert the input string (YYYY-MM-DD) back to a Date object
-        endDateRef.value = new Date(value);
+        //endDateRef.value = new Date(value);
+		endDateRef.value = getDateUTC(value);
     }
 });
 

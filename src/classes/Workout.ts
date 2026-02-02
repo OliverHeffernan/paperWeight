@@ -66,6 +66,8 @@ export default class Workout implements WorkoutInfoFunctions {
 
         this.exercises = exercises;
         this.pbCount = object.count_pbs || 0;
+
+		console.log(this.createTextLog());
     }
 
     public static async fetchById(workoutId: string): Promise<{ workout: Workout | null, error: object | null }> {
@@ -575,5 +577,16 @@ export default class Workout implements WorkoutInfoFunctions {
     public getPBCount(): number {
         return this.pbCount;
     }
+
+	public createTextLog(): string {
+		let log: string = 'Workout logged with PaperWeight \n';
+		log += 'https://paperweight.olihef.com\n\n';
+
+		log += `Workout: ${this.getTitle()}\nDate: ${this.getDateString()}\nDuration: ${this.getDurationString()}\n\n`;
+		for (const exercise of this.exercises) {
+			log += exercise.createTextLog() + '\n';
+		}
+		return log;
+	}
 
 }
