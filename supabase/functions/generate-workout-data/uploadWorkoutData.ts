@@ -35,7 +35,7 @@ export default async function uploadWorkoutData(
 	for (const exercise of exercises) {
 		// start the uploadExerciseData function for each exercise, such that they occur in parallel. Not using await, as that would make them sequential.
 		// Collect the promises in an array
-		promises.push(uploadExerciseData(supabase, exercise, workoutData));
+		promises.push(uploadExerciseData(supabase, exercise, workoutData, user_id));
 	}
 	// Wait for all the promises to resolve
 	const results = await Promise.all(promises);
@@ -56,24 +56,27 @@ export default async function uploadWorkoutData(
 async function uploadExerciseData(
 	supabase: any,
 	exercise: Exercise,
-	workoutData: WorkoutResponse
+	workoutData: WorkoutResponse,
+	user_id: string,
 ): Promise<{ error: string | null }> {
-	const { data, error } = await supabase.from('exercise_aliases').select('exercise_id').eq('name', exercise.exercise.toLowerCase()).single();
+	const { data, error } = await supabase.from('exercise_aliases').select('exercise_id').eq('alias', exercise.exercise.toLowerCase().trim()).single();
+	console.log(data);
 	if (error || !data) {
 		// Insert new exercise
-		const insertResult = await supabase.from('exercises').insert({ name: exercise.exercise.toLowerCase() }).select('id').single();
+		console.log('Inserting new exercise:', exercise.exercise);
+		const insertResult = await supabase.from('exercises').insert({ name: exercise.exercise.toLowerCase().trim(), user_id }).select('id').single();
 		if (insertResult.error) {
-			console.error('Error inserting exercise:', insertResult.error);
+			console.error('Error inserting exercise ' + exercise.exercise + ':', insertResult.error);
 			return { error: insertResult.error.message };
 		}
-		const insertAliasResult = await supabase.from('exercise_aliases').insert({ alias: exercise.exercise.toLowerCase(), exercise_id: insertResult.data.id });
+		const insertAliasResult = await supabase.from('exercise_aliases').insert({ alias: exercise.exercise.toLowerCase().trim(), exercise_id: insertResult.data.id });
 		if (insertAliasResult.error) {
 			console.error('Error inserting exercise alias:', insertAliasResult.error);
 			return { error: insertAliasResult.error.message };
 		}
-		exercise.id = insertResult.data.id;
+		exercise.id = insertResult.data.exercise_id;
 	} else {
-		exercise.id = data.id;
+		exercise.id = data.exercise_id;
 	}
 	const { error: uploadError } = await uploadSetData(supabase, exercise, workoutData);
 	if (uploadError) {
