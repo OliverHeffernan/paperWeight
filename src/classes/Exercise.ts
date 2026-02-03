@@ -363,4 +363,19 @@ export default class Exercise {
         }
         return count;
     }
+
+	public createTextLog(): string {
+		let log: string = `Exercise: ${this.name}\n`;
+		for (let i = 0; i < this.sets.length; i++) {
+			const set = this.sets[i];
+			log += `  ${i + 1}: ${set.getReps()} x ${set.getWeight()} kg`;
+			if (set.isItWeightPB()) {
+				log += " (Weight PB!)";
+			} else if (set.isItVolumePB()) {
+				log += " (Volume PB!)";
+			}
+			log += `\n`;
+		}
+		return log;
+	}
 }

@@ -176,15 +176,15 @@ export default class DateUtils {
         switch (graphSize) {
             case 'month':
                 return `
-                    ${start.toLocaleString('default', { month: 'long', timeZone: 'UTC' })} 
+                    ${start.toLocaleString('default', { month: 'long' })} 
                     ${start.getFullYear()}
                 `
             case 'year':
                 return `${start.getFullYear()}`;
             case 'week':
                 return `
-                    ${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })} – 
-                    ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
+                    ${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} – 
+                    ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                 `;
             default:
                 return '';

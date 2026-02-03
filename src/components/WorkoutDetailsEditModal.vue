@@ -25,18 +25,29 @@ function update() {
     props.workout.setEndDate(endDateRef.value);
     emit('cancel');
 }
+
+function getDateUTC(value: string): Date {
+	const date = new Date();
+	date.setUTCFullYear(Number(value.slice(0, 4)));
+	date.setUTCMonth(Number(value.slice(5, 7)) - 1);
+	date.setUTCDate(Number(value.slice(8, 10)));
+	date.setUTCHours(Number(value.slice(11, 13)));
+	date.setUTCMinutes(Number(value.slice(14, 16)));
+	return date;
+}
 const startDate = computed({
     get() {
         // Convert Date to YYYY-MM-DD format for the input
         //return startDateRef.value.toISOString().slice(0, 16);
         return startDateRef.value.getFullYear() + '-' +
-               String(startDateRef.value.getUTCMonth() + 1).padStart(2, '0') + '-' +
-               String(startDateRef.value.getUTCDate()).padStart(2, '0') + 'T' +
-               String(startDateRef.value.getUTCHours()).padStart(2, '0') + ':' +
-               String(startDateRef.value.getUTCMinutes()).padStart(2, '0');
+               String(startDateRef.value.getMonth() + 1).padStart(2, '0') + '-' +
+               String(startDateRef.value.getDate()).padStart(2, '0') + 'T' +
+               String(startDateRef.value.getHours()).padStart(2, '0') + ':' +
+               String(startDateRef.value.getMinutes()).padStart(2, '0');
     },
     set(value) {
         // Convert the input string (YYYY-MM-DD) back to a Date object
+		//startDateRef.value = getDateUTC(value);
         startDateRef.value = new Date(value);
     }
 });
@@ -46,14 +57,15 @@ const endDate = computed({
         // Convert Date to YYYY-MM-DD format for the input
         //return endDateRef.value.toISOString().slice(0, 16);
         return endDateRef.value.getFullYear() + '-' +
-               String(endDateRef.value.getUTCMonth() + 1).padStart(2, '0') + '-' +
-               String(endDateRef.value.getUTCDate()).padStart(2, '0') + 'T' +
-               String(endDateRef.value.getUTCHours()).padStart(2, '0') + ':' +
-               String(endDateRef.value.getUTCMinutes()).padStart(2, '0');
+               String(endDateRef.value.getMonth() + 1).padStart(2, '0') + '-' +
+               String(endDateRef.value.getDate()).padStart(2, '0') + 'T' +
+               String(endDateRef.value.getHours()).padStart(2, '0') + ':' +
+               String(endDateRef.value.getMinutes()).padStart(2, '0');
     },
     set(value) {
         // Convert the input string (YYYY-MM-DD) back to a Date object
-        endDateRef.value = new Date(value);
+        //endDateRef.value = new Date(value);
+		endDateRef.value = new Date(value);
     }
 });
 

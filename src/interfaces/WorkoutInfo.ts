@@ -59,7 +59,7 @@ export default class WorkoutInfo implements WorkoutInfoFunctions {
 
     public getDateString(): string {
 		const date = new Date(this.start_time);
-		return `${PadNumber(date.getUTCDate(), 2)}/${PadNumber(date.getUTCMonth()+1, 2)}/${date.getUTCFullYear()}`;
+		return `${PadNumber(date.getDate(), 2)}/${PadNumber(date.getMonth()+1, 2)}/${date.getFullYear()}`;
     }
 
     public getWorkoutId(): string {
