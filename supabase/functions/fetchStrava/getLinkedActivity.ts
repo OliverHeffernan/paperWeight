@@ -100,6 +100,7 @@ async function parseData(workout: any, data: any, opts: any, supabase: any, acce
 	});
 	
 	var bestMatch = getBestMatch(data, opts);
+	addDescriptionToStrava(bestMatch.id, description, accessToken);
 	console.log("Best match found:", bestMatch ? { 
 		id: bestMatch.id, 
 		name: bestMatch.name, 
