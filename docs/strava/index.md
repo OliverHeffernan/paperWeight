@@ -59,20 +59,6 @@ PaperWeight's integration is designed to meet all Strava Developer Program requi
 - **API terms** strictly adhered to
 - **Review-ready** implementation meeting all guidelines
 
-## Value for Athletes
-
-### Training Insights
-- **Recovery monitoring** - see how strength training affects your cardio
-- **Overtraining prevention** - combined load across all activities
-- **Performance correlation** - understand how different training affects strength
-- **Periodization support** - plan training blocks across multiple disciplines
-
-### Social Features
-- **Strava timeline** shows your complete training story
-- **Community engagement** with proper strength training documentation
-- **Achievement sharing** for personal records and milestones
-- **Training buddies** can see your complete fitness picture
-
 ## Technical Implementation
 
 ### OAuth 2.0 Flow

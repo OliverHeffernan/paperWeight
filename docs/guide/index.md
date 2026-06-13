@@ -14,20 +14,9 @@ Instead of forcing you to input data during your workout (which can be distracti
 4. **Analyze your progress** with powerful charts and insights
 
 ## Core Philosophy
-
-### Analog During, Digital After
-
 The key insight behind PaperWeight is timing. During your workout, you want to be present and focused. Screens, notifications, and complex interfaces are distractions. But after your workout, you want rich data analysis and progress tracking.
 
 PaperWeight respects this natural workflow by keeping the workout experience purely analog while providing sophisticated digital analysis afterward.
-
-### Your Data, Your Way
-
-We believe your workout data should belong to you and integrate with your existing fitness ecosystem. That's why we provide:
-
-- **Strava integration** for comprehensive fitness tracking
-- **Export capabilities** for your data
-- **Open APIs** for custom integrations
 
 ## Who Should Use PaperWeight?
 
