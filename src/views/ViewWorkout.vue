@@ -110,7 +110,7 @@ const syncWorkoutWithStrava = async () => {
 					'Authorization': `Bearer ${session.access_token}`,
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ workout_id: workout.value.getId() }),
+				body: JSON.stringify({ workout_id: workout.value.getId(), description: workout.value.createTextLog() }),
 			}
 		);
 

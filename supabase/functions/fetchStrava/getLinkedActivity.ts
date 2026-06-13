@@ -1,9 +1,10 @@
 import getAthleteActivities from './getAthleteActivities.ts'
 import getActivityStreams from './getActivityStreams.ts'
 import refreshStravaToken from './refreshStravaToken.ts'
+import addDescriptionToStrava from './addDescriptionToStrava.ts'
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
-export default async function getLinkedActivity(workout: any, supabase: any) {
+export default async function getLinkedActivity(workout: any, supabase: any, description: string) {
 	console.log("getLinkedActivity called for workout:", workout.workout_id, workout.start_time, workout.end_time);
 	
 	// checking that the activity has required properties
@@ -88,10 +89,10 @@ export default async function getLinkedActivity(workout: any, supabase: any) {
 	const activitiesResponse = await getAthleteActivities(accessToken, opts);
 	console.log("Strava API response:", activitiesResponse?.length, "activities found");
 	
-	return parseData(workout, activitiesResponse, opts, supabase);
+	return parseData(workout, activitiesResponse, opts, supabase, accessToken, description);
 }
 
-async function parseData(workout: any, data: any, opts: any, supabase: any) {
+async function parseData(workout: any, data: any, opts: any, supabase: any, accessToken: string, description: string) {
 	console.log("parseData called with:", { 
 		workoutId: workout.workout_id, 
 		activitiesFound: data?.length || 0,

@@ -52,11 +52,11 @@ Deno.serve(async (req: any) => {
 		}
 	);
 
-	const { workout_id } = await req.json()
+	const { workout_id, description } = await req.json()
 	if (workout_id) {
 		const { data, error } = await supabase.from('workouts').select('*').eq('workout_id', workout_id).single()
 		if (error) {
-			console.error("Error fetching workout:", error)
+			console.error("Error fetching workout:", error);
 			return new Response(
 				JSON.stringify({ error: "Failed to fetch workout" }),
 				{ 
@@ -69,7 +69,7 @@ Deno.serve(async (req: any) => {
 			)
 		}
 		if (data) {
-			const result = await getLinkedActivity(data, supabase)
+			const result = await getLinkedActivity(data, supabase, description);
 			return new Response(
 				JSON.stringify({ message: "Workout processed", workout: data, linkedActivity: result }),
 				{ 
@@ -88,12 +88,12 @@ Deno.serve(async (req: any) => {
 		console.error("Error fetching workouts:", error);
 		return new Response(
 			JSON.stringify({ error: "Failed to fetch workouts" }),
-			{ 
-				status: 500, 
-				headers: { 
+			{
+				status: 500,
+				headers: {
 					"Content-Type": "application/json",
 					'Access-Control-Allow-Origin': '*'
-				} 
+				}
 			},
 		)
 	}
@@ -101,7 +101,7 @@ Deno.serve(async (req: any) => {
 	let processedCount = 0;
 	for (const workout of data || []) {
 		try {
-			const result = await getLinkedActivity(workout, supabase);
+			const result = await getLinkedActivity(workout, supabase, description);
 			if (result) {
 				processedCount++;
 			}
